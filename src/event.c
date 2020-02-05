@@ -12,8 +12,8 @@ static int event_game(struct game_context *ctx)
 	ctx->ts_prev = ctx->ts_cur;
 
 	// TODO: DEBUG
-	if (ctx->action != ACTION_UP)
-		return 0;
+	/*if (ctx->action != ACTION_UP)
+		return 0;*/
 
 	/*SDL_Log("[%s][position = %d] ENTER with accel = %d, dt = %d, speed = %d\n",
 		__func__,

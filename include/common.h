@@ -11,6 +11,7 @@
 #include <time.h>
 #include <math.h>
 
+
 /////////////////////////////////////////////////////////////////
 // defines
 /////////////////////////////////////////////////////////////////
@@ -22,6 +23,9 @@
 #define FPS 30;
 #define MS_PER_SEC 1000
 
+#define PNG_CAR_PLAYER "./media/car_rear_01.png"
+
+//#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
 /////////////////////////////////////////////////////////////////
 // enums
@@ -60,6 +64,19 @@ enum color_road {
 /////////////////////////////////////////////////////////////////
 // structures
 /////////////////////////////////////////////////////////////////
+
+struct texture {
+    // width and height
+    int w, h;
+    // texture
+	SDL_Texture *texture;
+};
+
+// grapĥics of the game
+struct game_graphics{
+    // image textures
+	struct texture car_player;
+};
 
 struct color_desc {
 	int r;
@@ -128,7 +145,9 @@ struct game_context {
 	int draw_distance;
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)
-	int player_x;
+	float player_x;
+	// position of player car in pixel (top of texture)
+	int player_y;
 	// player relative z distance from camera (computed)
 	int player_z;
 	// exponential fog density
@@ -188,6 +207,9 @@ struct game_context {
 	Uint32 ts_prev;
 	Uint32 ts_cur;
 	Uint32 dt;
+
+	// struct containing all the sprites
+	struct game_graphics gfx;
 
     // quit game when set to 1
     int exit;

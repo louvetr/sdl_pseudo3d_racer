@@ -78,6 +78,38 @@ struct color_desc color_lane = {
 // static functions definition
 /////////////////////////////////////////////////////////////////
 
+static int texture_render(struct game_context *ctx,
+			  struct texture *t,
+			  int x,
+			  int y,
+			  SDL_Rect *clip,
+			  int scale_num,
+			  int scale_den)
+{
+	if (!t || !ctx) {
+		SDL_Log("[%s] invalid param\n", __func__);
+		return -EINVAL;
+	}
+
+	// set rendering space and render to screen
+	SDL_Rect render_quad = {x, y, t->w, t->h};
+
+	if (clip != NULL) {
+		render_quad.w = clip->w;
+		render_quad.h = clip->h;
+	}
+
+	// scaling
+	render_quad.w = render_quad.w * scale_num / scale_den;
+	render_quad.h = render_quad.h * scale_num / scale_den;
+
+	// SET 3rd PARAM to 'clip'
+	SDL_RenderCopy(ctx->renderer, t->texture, clip, &render_quad);
+
+	return 0;
+}
+
+
 static int display_render_quad(struct game_context *ctx,
 			       int x1,
 			       int y1,
@@ -192,8 +224,9 @@ static int display_render_segment(struct game_context *ctx,
 		for (int lane = 1; lane < lanes;
 		     lane_x1 += lane_w1, lane_x2 += lane_w2, lane++) {
 
-			if (y1 > 700) {
-				SDL_Log("[%s] draw lane (%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",
+			/*if (y1 > 700) {
+				SDL_Log("[%s] draw lane
+			(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",
 					__func__,
 					lane_x1 - l1 / 2,
 					y1,
@@ -203,7 +236,7 @@ static int display_render_segment(struct game_context *ctx,
 					y2,
 					lane_x2 - l2 / 2,
 					y2);
-			}
+			}*/
 
 			if (l1 <= 1) {
 				// far away lanes are simplified into rect
@@ -309,13 +342,13 @@ static int display_render_road(struct game_context *ctx)
 			ctx->road_width);
 
 
-		if (idx == 499 || idx == 0 || idx == 1)
-			SDL_Log("[%s][idx=%d] cam_pos=%d, p1.w.z=%f, p1.scr.z=%f",
-				__func__,
-				idx,
-				cam_position,
-				ctx->segments[idx].p1.world.z,
-				ctx->segments[idx].p1.screen.z);
+		// if (idx == 499 || idx == 0 || idx == 1)
+		/*SDL_Log("[%s][idx=%d] cam_pos=%d, p1.w.z=%f, p1.scr.z=%f",
+			__func__,
+			idx,
+			cam_position,
+			ctx->segments[idx].p1.world.z,
+			ctx->segments[idx].p1.screen.z);*/
 		/*
 				SDL_Log("[%s][idx=%d] p1: world(%d, %d, %f),
 		   cam(%d, %d, %f), " "screen(% d, % d, % f)\n ",
@@ -370,17 +403,17 @@ static int display_render_road(struct game_context *ctx)
 		max_y = ctx->segments[idx].p2.screen.y;
 	}
 
-	SDL_Log("[%s] last_seg_idx_lane = %d, last_seg_idx = %d\n",
+	/*SDL_Log("[%s] last_seg_idx_lane = %d, last_seg_idx = %d\n",
 		__func__,
 		last_seg_idx_lane,
-		last_seg_idx);
+		last_seg_idx);*/
 
 	// if (dbgcpt % 10)
-	if (memcmp(seglist_prev, seglist, 2048))
+	/*if (memcmp(seglist_prev, seglist, 2048))
 		SDL_Log("%s\n", seglist);
 
 	memcpy(seglist_prev, seglist, 2048);
-	dbgcpt++;
+	dbgcpt++;*/
 
 	return 0;
 }
@@ -443,6 +476,7 @@ static int display_screen_game_test(struct game_context *ctx)
 static int display_screen_game(struct game_context *ctx)
 {
 	int ret = 0;
+	int player_x_in_pixels;
 
 	// SDL_Log("[%s] ENTER\n", __func__);
 
@@ -454,6 +488,30 @@ static int display_screen_game(struct game_context *ctx)
 
 	// render the road
 	ret = display_render_road(ctx);
+
+	player_x_in_pixels = (int)((ctx->player_x + 1) * SCREEN_WIDTH / 2) -
+			     (ctx->gfx.car_player.w * 1 / (2 * 2));
+
+	// TODO put somewhere else
+	if (!ctx->player_y)
+		ctx->player_y =
+			SCREEN_HEIGHT - (ctx->gfx.car_player.h * 1 / 2) - 30;
+
+	/*SDL_Log("[%s] car_player x = %f => %d, y = %d\n",
+		__func__,
+		ctx->player_x,
+		player_x_in_pixels,
+		ctx->player_y);*/
+
+	ret = texture_render(ctx,
+			     &ctx->gfx.car_player,
+			     player_x_in_pixels,
+			     ctx->player_y,
+			     NULL,
+			     1,
+			     2);
+	if (ret < 0)
+		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
 
 	// update screen
 	SDL_RenderPresent(ctx->renderer);

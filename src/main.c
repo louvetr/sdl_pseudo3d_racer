@@ -86,12 +86,16 @@ static int main_init(struct game_context *ctx)
 
 static int main_load_media(struct game_context *ctx)
 {
+	int ret;
 	// load png
-	/*ret = load_texture_from_file(ctx, PATH_BG_TITLE,
-	&ctx->gfx.t_bg_title); if (ret < 0) { printf("[%s] Failed to load title
-	PNG!\n", __func__); return ret;
+	ret = load_texture_from_file(ctx, PNG_CAR_PLAYER, &ctx->gfx.car_player);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load title PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
 	}
-	ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
+	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
 		printf("[%s] Failed to load game PNG!\n", __func__);
 		return ret;
@@ -162,8 +166,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->camera_height = 1000;
 	ctx->camera_depth = 0;
 	ctx->draw_distance = 300; // 300 ????
-	//ctx->draw_distance = 100; // 300 ????
-	//ctx->draw_distance = 300; // 300 ????
+	// ctx->draw_distance = 100; // 300 ????
+	// ctx->draw_distance = 300; // 300 ????
 	ctx->player_x = 0;
 	ctx->player_z = 0;
 	ctx->fog_density = 5;
@@ -186,6 +190,8 @@ static int main_ctx_init(struct game_context *ctx)
 
 static int main_destroy(struct game_context *ctx)
 {
+	// TODO
+
 	// free textures
 	// SDL_DestroyTexture(ctx->gfx.t_bg_title.texture);
 
@@ -242,6 +248,49 @@ static int main_build_track(struct game_context *ctx)
 // Main function
 ////////////////////////////////////////////////////////////////
 
+int load_texture_from_file(struct game_context *ctx,
+			   char *path,
+			   struct texture *in)
+{
+	SDL_Texture *new_texture;
+
+	SDL_Surface *loaded_surface = IMG_Load(path);
+	if (!loaded_surface) {
+		SDL_Log("[%s] Unable to load image %s! SDL_image Error: %s\n",
+			__func__,
+			path,
+			IMG_GetError());
+		return -EINVAL;
+	}
+
+	// set color key to cyan
+	SDL_SetColorKey(loaded_surface,
+			SDL_TRUE,
+			SDL_MapRGB(loaded_surface->format, 0, 0xFF, 0xFF));
+
+	// create texture from surface pixels
+	new_texture =
+		SDL_CreateTextureFromSurface(ctx->renderer, loaded_surface);
+	if (!new_texture) {
+		printf("[%s] Unable to create texture from %s! SDL Error: %s\n",
+		       __func__,
+		       path,
+		       SDL_GetError());
+		return -EINVAL;
+	}
+
+	// get image dimensions
+	in->w = loaded_surface->w;
+	in->h = loaded_surface->h;
+
+	// discard old surface
+	SDL_FreeSurface(loaded_surface);
+
+	in->texture = new_texture;
+
+	return 0;
+}
+
 int main()
 {
 	struct game_context *ctx;
@@ -261,7 +310,7 @@ int main()
 	// game loop
 	while (!ctx->exit) {
 
-		//main_build_track(ctx); // TODO: move out of loop !!!!!
+		// main_build_track(ctx); // TODO: move out of loop !!!!!
 
 		// TODO: MOVE
 		double cam_depth =
@@ -269,7 +318,8 @@ int main()
 		ctx->camera_depth = (float)cam_depth;
 		ctx->player_z =
 			(int)((float)ctx->camera_height * ctx->camera_depth);
-		/*SDL_Log("[%s] camera_depth: double=%f, float=%f, player_z=%d\n",
+		/*SDL_Log("[%s] camera_depth: double=%f, float=%f,
+		   player_z=%d\n",
 			__func__,
 			cam_depth,
 			ctx->camera_depth,
