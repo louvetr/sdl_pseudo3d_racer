@@ -107,6 +107,14 @@ struct road_segment {
 
 };
 
+struct keys_status {
+	int accel;
+	int brake;
+	int left;
+	int right;
+	int nitro;
+};
+
 // game context, contains all information of the game
 struct game_context {
 
@@ -156,21 +164,21 @@ struct game_context {
 	// position)
 	int position;
 	// current speed
-	int speed;
+	float speed;
 	// top speed (ensure we can't move more than 1 segment in
 	// a single frame to make collision detection easier)
-	int max_speed;
+	float max_speed;
 	// acceleration rate - tuned until it 'felt' right
-	int accel;
+	float accel;
 	// deceleration rate when braking
-	int breaking;
+	float breaking;
 	// 'natural' deceleration rate when neither accelerating, nor braking
-	int decel;
+	float decel;
 	// off road deceleration is somewhere in between
-	int off_road_decel;
+	float off_road_decel;
 	// limit when off road deceleration no longer applies (e.g.
 	// you can always go at least this speed even when off road)
-	int off_road_limit;
+	float off_road_limit;
 
     // window
     SDL_Window *window;
@@ -206,10 +214,12 @@ struct game_context {
     
 	Uint32 ts_prev;
 	Uint32 ts_cur;
-	Uint32 dt;
+	float dt;
 
 	// struct containing all the sprites
 	struct game_graphics gfx;
+
+	struct keys_status keys;
 
     // quit game when set to 1
     int exit;
@@ -220,13 +230,13 @@ struct game_context {
 // inline function
 /////////////////////////////////////////////////////////////////
 
-static inline int inline_accelerate( int speed, int coef, int dt)
+static inline float inline_accelerate( float speed, float coef, float dt)
 {
-	return speed + coef * dt;
+	return speed + coef * dt / 100.f; 
 }
 
 
-static inline int inline_limit(int value, int min, int max)
+static inline float inline_limit(float value, float min, float max)
 {
 	if (value < min)
 		return min;

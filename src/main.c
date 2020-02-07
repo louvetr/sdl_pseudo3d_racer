@@ -174,11 +174,14 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->position = 0; // TODO: 0 ????
 	ctx->speed = 0;
 	ctx->max_speed = (2 * ctx->segment_length) / ctx->step;
-	ctx->accel = ctx->max_speed / 5;
+	//ctx->accel = ctx->max_speed / 5;
+	ctx->accel = ctx->max_speed / 50;
 	ctx->breaking = ctx->max_speed * -1;
-	ctx->decel = (ctx->max_speed / 5) * -1;
-	ctx->off_road_decel = (ctx->max_speed / 2) * -1;
-	ctx->off_road_limit = (ctx->max_speed / 4) * -1;
+	//ctx->decel = (ctx->max_speed / 5) * -1;
+	ctx->decel = (ctx->max_speed / 50) * -1;
+	ctx->off_road_decel = (ctx->max_speed / 20) * -1;
+	ctx->off_road_limit = (ctx->max_speed / 4);
+	SDL_Log("tktjgkmjgsmklnglmqkngqlknglmkqsnlmkgnqlmksgnlk\n");
 
 
 	ctx->status_cur = GAME_STATE_GAME;
