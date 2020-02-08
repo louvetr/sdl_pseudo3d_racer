@@ -282,6 +282,11 @@ static int display_render_road(struct game_context *ctx)
 {
 
 	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
+	float ratio_modulus =
+		(ctx->position % ROAD_SEGMENT_LENGTH) / ROAD_SEGMENT_LENGTH;
+	float dx = -(ctx->segments[base_segment_idx].curve * ratio_modulus);
+	float x = 0;
+
 	int max_y = SCREEN_HEIGHT;
 	static int dbgcpt = 0;
 
@@ -301,10 +306,7 @@ static int display_render_road(struct game_context *ctx)
 		int cam_position = ctx->position;
 		int idx = (base_segment_idx + i) % ctx->nb_segments;
 
-		// TODO: fix transition from high to low idx segments.
-		//		 There is stil a video glitch. horizon
-		// goes down
-		// a bit briefly.
+		// fix transition from high to low idx segments.
 		if (idx < base_segment_idx) {
 			// continue;
 			/*cam_position =
@@ -323,7 +325,7 @@ static int display_render_road(struct game_context *ctx)
 					  .p1.world
 					  .z /* + ctx->segment_length */
 				: 0,
-			ctx->player_x * ctx->road_width,
+			(ctx->player_x * ctx->road_width) - x,
 			ctx->camera_height,
 			// cam_position,
 			ctx->position,
@@ -337,7 +339,7 @@ static int display_render_road(struct game_context *ctx)
 			add_z_offset_to_first_segments
 				? ctx->segments[ctx->nb_segments - 1].p2.world.z
 				: 0,
-			ctx->player_x * ctx->road_width,
+			(ctx->player_x * ctx->road_width) - x - dx,
 			ctx->camera_height,
 			// cam_position,
 			ctx->position,
@@ -346,6 +348,8 @@ static int display_render_road(struct game_context *ctx)
 			SCREEN_HEIGHT,
 			ctx->road_width);
 
+		x += dx;
+		dx += ctx->segments[idx].curve;
 
 		// if (idx == 499 || idx == 0 || idx == 1)
 		/*SDL_Log("[%s][idx=%d] cam_pos=%d, p1.w.z=%f, p1.scr.z=%f",
@@ -494,9 +498,12 @@ static int display_screen_game(struct game_context *ctx)
 	// render the road
 	ret = display_render_road(ctx);
 
-	// just draw the player in middle of the screen. It doesn't move, that's the world around it which moves.
-	player_x_in_pixels = (int)(SCREEN_WIDTH / 2) -
-			     (ctx->gfx.car_player.w * 1 / (2 * 2)); // reduce texture by 2 then remove it half width
+	// just draw the player in middle of the screen. It doesn't move, that's
+	// the world around it which moves.
+	player_x_in_pixels =
+		(int)(SCREEN_WIDTH / 2) -
+		(ctx->gfx.car_player.w * 1 /
+		 (2 * 2)); // reduce texture by 2 then remove it half width
 
 	//////////////// render player car
 	// TODO put somewhere else

@@ -12,6 +12,11 @@
 
 static int logic_game(struct game_context *ctx)
 {
+
+	int player_segment =
+		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+	float speed_ratio = ctx->speed / ctx->max_speed;
+
 	ctx->ts_cur = SDL_GetTicks();
 	ctx->dt = ctx->ts_cur - ctx->ts_prev;
 
@@ -25,6 +30,7 @@ static int logic_game(struct game_context *ctx)
 
 	ctx->ts_prev = ctx->ts_cur;
 
+	// TODO: remove ?
 	if (ctx->dt > 35) {
 		ctx->dt = 35;
 	}
@@ -56,6 +62,10 @@ static int logic_game(struct game_context *ctx)
 		ctx->player_x = ctx->player_x - dx;
 	else if (ctx->keys.right)
 		ctx->player_x = ctx->player_x + dx;
+
+	ctx->player_x = ctx->player_x - (dx * speed_ratio *
+					 ctx->segments[player_segment].curve *
+					 ctx->centrifugal);
 
 	// if (!(cpt % 30))
 	// if (player_x_prev != ctx->player_x) {
@@ -108,7 +118,7 @@ static int logic_game(struct game_context *ctx)
 		ctx->off_road_decel);*/
 
 
-	SDL_Log("[offroad] player_x = %f\n", ctx->player_x);
+	// SDL_Log("[offroad] player_x = %f\n", ctx->player_x);
 
 
 	speed_prev = ctx->speed;
@@ -181,6 +191,9 @@ int logic_project_coord(struct segment_point *p,
 	p->screen.w =
 		/*Math.round(*/ (p->screen.scale * road_width * width /
 				 2) /*)*/;
+
+	// p->screen.y = p->screen.y * 98 / 100;
+	p->screen.y = p->screen.y;
 
 	return 0;
 }

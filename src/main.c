@@ -158,8 +158,8 @@ static int main_ctx_init(struct game_context *ctx)
 	}
 
 	ctx->road_width = 2100;
-	ctx->segment_length = 200;
-	ctx->rumble_length = 3;
+	// ctx->segment_length = 200;
+	ctx->rumble_length = RUMBLE_LENGTH;
 	ctx->track_length = 0; // null;
 	ctx->lanes = 3;
 	ctx->field_of_view = 100;
@@ -173,16 +173,15 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->fog_density = 5;
 	ctx->position = 0; // TODO: 0 ????
 	ctx->speed = 0;
-	ctx->max_speed = (2 * ctx->segment_length) / ctx->step;
-	//ctx->accel = ctx->max_speed / 5;
+	ctx->max_speed = (2 * ROAD_SEGMENT_LENGTH) / ctx->step;
+	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
 	ctx->breaking = ctx->max_speed * -1;
-	//ctx->decel = (ctx->max_speed / 5) * -1;
+	// ctx->decel = (ctx->max_speed / 5) * -1;
 	ctx->decel = (ctx->max_speed / 50) * -1;
 	ctx->off_road_decel = (ctx->max_speed / 20) * -1;
 	ctx->off_road_limit = (ctx->max_speed / 3);
-	SDL_Log("tktjgkmjgsmklnglmqkngqlknglmkqsnlmkgnqlmksgnlk\n");
-
+	ctx->centrifugal = 0.3;
 
 	ctx->status_cur = GAME_STATE_GAME;
 	ctx->status_prev = GAME_STATE_GAME;
@@ -218,9 +217,65 @@ static int main_destroy(struct game_context *ctx)
 	return 0;
 }
 
+
+static int main_road_add_segment(struct road_segment *segment,
+				 int idx,
+				 enum road_curve curve)
+{
+	memset(&segment->p1, 0, sizeof(segment->p1));
+	memset(&segment->p2, 0, sizeof(segment->p2));
+
+	segment->p1.world.z = idx * ROAD_SEGMENT_LENGTH;
+	segment->p2.world.z = (idx + 1) * ROAD_SEGMENT_LENGTH;
+
+	segment->curve = curve;
+
+	/* TODO: use ctx->rumble_length */
+	segment->color = (idx / RUMBLE_LENGTH /*ctx->rumble_length*/) % 2
+				 ? COLOR_DARK
+				 : COLOR_BRIGHT;
+}
+
+
+static int main_road_add_sector(struct road_segment *segments,
+				int start_idx,
+				int curve_enter_lg,
+				int curve_hold_lg,
+				int curve_exit_lg,
+				enum road_curve curve)
+{
+	int i, idx, nb_segment_added;
+	idx = start_idx;
+
+	for (i = 0; i < curve_enter_lg; i++) {
+		main_road_add_segment(&segments[idx], idx, curve);
+		idx++;
+	}
+	nb_segment_added += i;
+
+	for (i = 0; i < curve_hold_lg; i++) {
+		// idx = start_idx + nb_segment_added + i;
+		main_road_add_segment(&segments[idx], idx, curve);
+		idx++;
+	}
+	nb_segment_added += i;
+
+	for (i = 0; i < curve_exit_lg; i++) {
+		// idx = start_idx + nb_segment_added + i;
+		main_road_add_segment(&segments[idx], idx, curve);
+		idx++;
+	}
+	nb_segment_added += i;
+
+	return (idx - start_idx);
+}
+
+
 static int main_build_track(struct game_context *ctx)
 {
-	ctx->nb_segments = 500;
+	int nb_segments_added = 0;
+
+	ctx->nb_segments = 1050;
 
 	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
@@ -228,21 +283,108 @@ static int main_build_track(struct game_context *ctx)
 		return -ENOMEM;
 	}
 
-
+	/*
 	for (int i = 0; i < ctx->nb_segments; i++) {
 
 		memset(&ctx->segments[i].p1, 0, sizeof(ctx->segments[i].p1));
 		memset(&ctx->segments[i].p2, 0, sizeof(ctx->segments[i].p2));
 
-		ctx->segments[i].p1.world.z = i * ctx->segment_length;
-		ctx->segments[i].p2.world.z = (i + 1) * ctx->segment_length;
+		ctx->segments[i].p1.world.z = i * ROAD_SEGMENT_LENGTH;
+		ctx->segments[i].p2.world.z = (i + 1) * ROAD_SEGMENT_LENGTH;
+
+		ctx->segments[i].curve = CURVE_NONE;
 
 		ctx->segments[i].color = (i / ctx->rumble_length) % 2
 						 ? COLOR_DARK
 						 : COLOR_BRIGHT;
 	}
+	*/
 
-	ctx->track_length = ctx->segment_length * ctx->nb_segments;
+	/*
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						   nb_segments_added,
+						   ROAD_LENGTH_LONG,
+						   ROAD_LENGTH_LONG,
+						   ROAD_LENGTH_LONG,
+						   CURVE_NONE);
+
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						   nb_segments_added,
+						   ROAD_LENGTH_LONG,
+						   ROAD_LENGTH_LONG,
+						   ROAD_LENGTH_LONG,
+						   CURVE_NONE);
+	*/
+
+
+	// 75 straight --- 75
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  CURVE_NONE);
+
+	// 150 left --- 225
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_MEDIUM,
+						  ROAD_LENGTH_MEDIUM,
+						  ROAD_LENGTH_MEDIUM,
+						  CURVE_LEFT_EASY);
+
+	// 75 straight --- 300
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  CURVE_NONE);
+
+	// 150 right --- 450
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_MEDIUM,
+						  ROAD_LENGTH_MEDIUM,
+						  ROAD_LENGTH_MEDIUM,
+						  CURVE_RIGHT_MEDIUM);
+
+	// 75 straight --- 525
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  CURVE_NONE);
+
+	// 300 left --- 825
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_LONG,
+						  ROAD_LENGTH_LONG,
+						  ROAD_LENGTH_LONG,
+						  CURVE_LEFT_EASY);
+
+
+	// 75 straight --- 900
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_SHORT,
+						  CURVE_NONE);
+
+	// 150 right --- 1050
+	nb_segments_added += main_road_add_sector(ctx->segments,
+						  nb_segments_added,
+						  ROAD_LENGTH_SHORT,
+						  ROAD_LENGTH_LONG,
+						  ROAD_LENGTH_SHORT,
+						  CURVE_RIGHT_HARD);
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+	ctx->track_length = ROAD_SEGMENT_LENGTH * ctx->nb_segments;
 
 	return 0;
 }

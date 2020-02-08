@@ -27,6 +27,17 @@
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
+
+// length in segment of a road sector
+#define ROAD_LENGTH_NONE 0
+#define ROAD_LENGTH_SHORT 25
+#define ROAD_LENGTH_MEDIUM 50
+#define ROAD_LENGTH_LONG 100
+
+#define ROAD_SEGMENT_LENGTH 200
+
+#define RUMBLE_LENGTH 3
+
 /////////////////////////////////////////////////////////////////
 // enums
 /////////////////////////////////////////////////////////////////
@@ -59,6 +70,23 @@ enum color_road {
 	COLOR_DARK,
 	COLOR_BRIGHT,
 };
+
+enum road_curve {
+	CURVE_LEFT_HARD = -6,
+	CURVE_LEFT_MEDIUM = -4,
+	CURVE_LEFT_EASY = -2,
+	CURVE_NONE = 0,
+	CURVE_RIGHT_EASY = 2,
+	CURVE_RIGHT_MEDIUM = 4,
+	CURVE_RIGHT_HARD = 6
+};
+
+
+// curve of a road sector
+#define ROAD_CURVE_NONE 0
+#define ROAD_CURVE_SHORT 2
+#define ROAD_CURVE_MEDIUM 4
+#define ROAD_CURVE_LONG 6
 
 
 /////////////////////////////////////////////////////////////////
@@ -103,6 +131,7 @@ struct road_segment {
 
 	struct segment_point p1;
 	struct segment_point p2;
+	enum road_curve curve;
 	enum color_road color;
 
 };
@@ -136,7 +165,7 @@ struct game_context {
 	// +roadWidth
 	int road_width;
 	// length of a single segment
-	int segment_length;
+	//int segment_length;
 	// number of segments per red/white rumble strip
 	int rumble_length;
 	// z length of entire track (computed)
@@ -179,6 +208,8 @@ struct game_context {
 	// limit when off road deceleration no longer applies (e.g.
 	// you can always go at least this speed even when off road)
 	float off_road_limit;
+	// centrifugal force applying to player in curves
+	float centrifugal;
 
     // window
     SDL_Window *window;
@@ -271,7 +302,7 @@ static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
   //return ctx->segments[Math.floor(z/segmentLength) % segments.length];
   //return ctx->segments[(z/ctx->segment_length) % ctx->nb_segments];
 
-  return ((z/ctx->segment_length) % ctx->nb_segments);
+  return ((z/ROAD_SEGMENT_LENGTH) % ctx->nb_segments);
 }
 
 
@@ -295,6 +326,20 @@ static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
 	return width; // == 0 ? 1 : width;
  }
 
+static inline float inline_curve_in (float a, float b, float percent)
+{
+	return a + (b-a) * powf(percent, 2.);
+}
+
+static inline float inline_curve_out (float a, float b, float percent)
+{
+	return a + (b-a) * (1-powf(percent, 2.));
+}
+
+static inline float inline_curve_inout (float a, float b, float percent)
+{
+	return a + (b-a) * ( 0.5 - (cosf(percent * M_PI) / 2));
+}
 
 /////////////////////////////////////////////////////////////////
 // functions declarations
