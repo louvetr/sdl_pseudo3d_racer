@@ -74,6 +74,11 @@ struct color_desc color_lane = {
 	.a = 255,
 };
 
+/* TODO: several lanes styles
+		- 1 cental yellow
+		- 2 central yellow
+*/
+
 /////////////////////////////////////////////////////////////////
 // static functions definition
 /////////////////////////////////////////////////////////////////
@@ -489,9 +494,11 @@ static int display_screen_game(struct game_context *ctx)
 	// render the road
 	ret = display_render_road(ctx);
 
-	player_x_in_pixels = (int)((ctx->player_x + 1) * SCREEN_WIDTH / 2) -
-			     (ctx->gfx.car_player.w * 1 / (2 * 2));
+	// just draw the player in middle of the screen. It doesn't move, that's the world around it which moves.
+	player_x_in_pixels = (int)(SCREEN_WIDTH / 2) -
+			     (ctx->gfx.car_player.w * 1 / (2 * 2)); // reduce texture by 2 then remove it half width
 
+	//////////////// render player car
 	// TODO put somewhere else
 	if (!ctx->player_y)
 		ctx->player_y =
