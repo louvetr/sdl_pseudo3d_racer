@@ -28,12 +28,6 @@
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
 
-// length in segment of a road sector
-#define ROAD_LENGTH_NONE 0
-#define ROAD_LENGTH_SHORT 25
-#define ROAD_LENGTH_MEDIUM 50
-#define ROAD_LENGTH_LONG 100
-
 #define ROAD_SEGMENT_LENGTH 200
 
 #define RUMBLE_LENGTH 3
@@ -71,6 +65,8 @@ enum color_road {
 	COLOR_BRIGHT,
 };
 
+
+// turn curve level and direction
 enum road_curve {
 	CURVE_LEFT_HARD = -6,
 	CURVE_LEFT_MEDIUM = -4,
@@ -81,13 +77,23 @@ enum road_curve {
 	CURVE_RIGHT_HARD = 6
 };
 
+// 'altitude' of the road
+enum road_hill {
+	HILL_DOWN_HIGH = -60,
+	HILL_DOWN_MEDIUM = -40,
+	HILL_DOWN_LOW = -20,
+	HILL_NONE = 0,
+	HILL_UP_LOW = 20,
+	HILL_UP_MEDIUM = 40,
+	HILL_UP_HIGH = 60
+};
 
-// curve of a road sector
-#define ROAD_CURVE_NONE 0
-#define ROAD_CURVE_SHORT 2
-#define ROAD_CURVE_MEDIUM 4
-#define ROAD_CURVE_LONG 6
-
+// length in segment of a road sector
+enum road_sector_length {
+ 	SECTOR_LENGTH_SHORT = 25,
+ 	SECTOR_LENGTH_MEDIUM = 50,
+ 	SECTOR_LENGTH_LONG = 100
+};
 
 /////////////////////////////////////////////////////////////////
 // structures
@@ -115,7 +121,7 @@ struct color_desc {
 
 struct segment_point_coord {
 	int x;
-	int y;
+	float y;
 	float z;
 	int w;
 	float scale; // TODO: num + den ?
@@ -131,7 +137,8 @@ struct road_segment {
 
 	struct segment_point p1;
 	struct segment_point p2;
-	enum road_curve curve;
+	//enum road_curve curve;
+	float curve;
 	enum color_road color;
 
 };
@@ -183,10 +190,12 @@ struct game_context {
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)
 	float player_x;
-	// position of player car in pixel (top of texture)
+	// position of player car in the world
 	int player_y;
 	// player relative z distance from camera (computed)
 	int player_z;
+	// position of player car sprite in pixel(top of texture)
+	int player_sprite_y;
 	// exponential fog density
 	int fog_density;
 	// current camera Z position (add playerZ to get player's absolute Z
@@ -339,6 +348,11 @@ static inline float inline_curve_out (float a, float b, float percent)
 static inline float inline_curve_inout (float a, float b, float percent)
 {
 	return a + (b-a) * ( 0.5 - (cosf(percent * M_PI) / 2));
+}
+
+static inline float inline_interpolate (float a,float b, float percent)
+{ 
+	return a + (b-a)*percent;
 }
 
 /////////////////////////////////////////////////////////////////

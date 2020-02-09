@@ -326,7 +326,7 @@ static int display_render_road(struct game_context *ctx)
 					  .z /* + ctx->segment_length */
 				: 0,
 			(ctx->player_x * ctx->road_width) - x,
-			ctx->camera_height,
+			ctx->player_y + ctx->camera_height,
 			// cam_position,
 			ctx->position,
 			ctx->camera_depth,
@@ -340,7 +340,7 @@ static int display_render_road(struct game_context *ctx)
 				? ctx->segments[ctx->nb_segments - 1].p2.world.z
 				: 0,
 			(ctx->player_x * ctx->road_width) - x - dx,
-			ctx->camera_height,
+			ctx->player_y + ctx->camera_height,
 			// cam_position,
 			ctx->position,
 			ctx->camera_depth,
@@ -358,34 +358,44 @@ static int display_render_road(struct game_context *ctx)
 			cam_position,
 			ctx->segments[idx].p1.world.z,
 			ctx->segments[idx].p1.screen.z);*/
-		/*
-				SDL_Log("[%s][idx=%d] p1: world(%d, %d, %f),
-		   cam(%d, %d, %f), " "screen(% d, % d, % f)\n ",
-					__func__,
-					idx,
-					ctx->segments[idx].p1.world.x,
-					ctx->segments[idx].p1.world.y,
-					ctx->segments[idx].p1.world.z,
-					ctx->segments[idx].p1.camera.x,
-					ctx->segments[idx].p1.camera.y,
-					ctx->segments[idx].p1.camera.z,
-					ctx->segments[idx].p1.screen.x,
-					ctx->segments[idx].p1.screen.y,
-					ctx->segments[idx].p1.screen.z);
-				SDL_Log("[%s][idx=%d] p2: world(%d, %d, %f),
-		   cam(%d, %d, %f), " "screen(% d, % d, % f)\n ",
-					__func__,
-					idx,
-					ctx->segments[idx].p2.world.x,
-					ctx->segments[idx].p2.world.y,
-					ctx->segments[idx].p2.world.z,
-					ctx->segments[idx].p2.camera.x,
-					ctx->segments[idx].p2.camera.y,
-					ctx->segments[idx].p2.camera.z,
-					ctx->segments[idx].p2.screen.x,
-					ctx->segments[idx].p2.screen.y,
-					ctx->segments[idx].p2.screen.z);
-		*/
+
+		int static cpt = 0;
+
+		//if (/*!(cpt % 30) && */ idx < 11) {
+		if (!(cpt % 30) && idx == inline_get_segment_idx(ctx, ctx->position + ctx->player_z)) {
+			SDL_Log("[%s][idx=%d] p1: world(%d, %f, %f), "
+				"cam(%d, %f, %f), "
+				"screen(% d, %f, %f)\n ",
+				__func__,
+				idx,
+				ctx->segments[idx].p1.world.x,
+				ctx->segments[idx].p1.world.y,
+				ctx->segments[idx].p1.world.z,
+				ctx->segments[idx].p1.camera.x,
+				ctx->segments[idx].p1.camera.y,
+				ctx->segments[idx].p1.camera.z,
+				ctx->segments[idx].p1.screen.x,
+				ctx->segments[idx].p1.screen.y,
+				ctx->segments[idx].p1.screen.z);
+			SDL_Log("[%s][idx=%d] p2: world(%d, %f, %f), "
+				"cam(%d, %f, %f), "
+				"screen(%d, %f, %f)\n ",
+				__func__,
+				idx,
+				ctx->segments[idx].p2.world.x,
+				ctx->segments[idx].p2.world.y,
+				ctx->segments[idx].p2.world.z,
+				ctx->segments[idx].p2.camera.x,
+				ctx->segments[idx].p2.camera.y,
+				ctx->segments[idx].p2.camera.z,
+				ctx->segments[idx].p2.screen.x,
+				ctx->segments[idx].p2.screen.y,
+				ctx->segments[idx].p2.screen.z);
+		}
+
+		if (idx == inline_get_segment_idx(ctx, ctx->position + ctx->player_z))
+			cpt++;
+
 		// skip segment behind camera and thoses already
 		// rendered
 		if (ctx->segments[idx].p1.camera.z <= ctx->camera_depth ||
@@ -507,8 +517,8 @@ static int display_screen_game(struct game_context *ctx)
 
 	//////////////// render player car
 	// TODO put somewhere else
-	if (!ctx->player_y)
-		ctx->player_y =
+	if (!ctx->player_sprite_y)
+		ctx->player_sprite_y =
 			SCREEN_HEIGHT - (ctx->gfx.car_player.h * 1 / 2) - 30;
 
 	/*SDL_Log("[%s] car_player x = %f => %d, y = %d\n",
@@ -520,7 +530,7 @@ static int display_screen_game(struct game_context *ctx)
 	ret = texture_render(ctx,
 			     &ctx->gfx.car_player,
 			     player_x_in_pixels,
-			     ctx->player_y,
+			     ctx->player_sprite_y,
 			     NULL,
 			     1,
 			     2);
