@@ -63,6 +63,8 @@ enum input_action {
 enum color_road {
 	COLOR_DARK,
 	COLOR_BRIGHT,
+	COLOR_START
+
 };
 
 
@@ -82,7 +84,9 @@ enum road_hill {
 	HILL_DOWN_HIGH = -60,
 	HILL_DOWN_MEDIUM = -40,
 	HILL_DOWN_LOW = -20,
+	HILL_DOWN_SLIGHT = -10,
 	HILL_NONE = 0,
+	HILL_UP_SLIGHT = 10,
 	HILL_UP_LOW = 20,
 	HILL_UP_MEDIUM = 40,
 	HILL_UP_HIGH = 60
@@ -180,7 +184,7 @@ struct game_context {
 	// number of lanes
 	int lanes;
 	// angle (degrees) for field of view
-	int field_of_view;
+	float field_of_view;
 	// z height of camera
 	int camera_height;
 	// z distance camera is from screen (computed)

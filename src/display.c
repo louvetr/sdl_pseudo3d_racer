@@ -168,12 +168,14 @@ static int display_render_segment(struct game_context *ctx,
 				       color_dark_grass.g,
 				       color_dark_grass.b,
 				       255);
-	else
+	else if (color == COLOR_BRIGHT)
 		SDL_SetRenderDrawColor(ctx->renderer,
 				       color_bright_grass.r,
 				       color_bright_grass.g,
 				       color_bright_grass.b,
 				       255);
+	else if (color == COLOR_START)
+		SDL_SetRenderDrawColor(ctx->renderer, 255, 255, 0, 255);
 
 	// SDL_SetRenderDrawColor(ctx->renderer, 50, 205, 50,
 	// 255);
@@ -249,6 +251,7 @@ static int display_render_segment(struct game_context *ctx,
 				r.y = y2;
 				r.h = 2;
 				r.w = 2;
+
 				SDL_SetRenderDrawColor(ctx->renderer,
 						       color_lane.r,
 						       color_lane.g,
@@ -361,8 +364,10 @@ static int display_render_road(struct game_context *ctx)
 
 		int static cpt = 0;
 
-		//if (/*!(cpt % 30) && */ idx < 11) {
-		if (!(cpt % 30) && idx == inline_get_segment_idx(ctx, ctx->position + ctx->player_z)) {
+		// if (/*!(cpt % 30) && */ idx < 11) {
+		/*if (!(cpt % 30) &&
+		    idx == inline_get_segment_idx(
+				   ctx, ctx->position + ctx->player_z)) {
 			SDL_Log("[%s][idx=%d] p1: world(%d, %f, %f), "
 				"cam(%d, %f, %f), "
 				"screen(% d, %f, %f)\n ",
@@ -391,9 +396,10 @@ static int display_render_road(struct game_context *ctx)
 				ctx->segments[idx].p2.screen.x,
 				ctx->segments[idx].p2.screen.y,
 				ctx->segments[idx].p2.screen.z);
-		}
+		}*/
 
-		if (idx == inline_get_segment_idx(ctx, ctx->position + ctx->player_z))
+		if (idx ==
+		    inline_get_segment_idx(ctx, ctx->position + ctx->player_z))
 			cpt++;
 
 		// skip segment behind camera and thoses already
@@ -521,19 +527,36 @@ static int display_screen_game(struct game_context *ctx)
 		ctx->player_sprite_y =
 			SCREEN_HEIGHT - (ctx->gfx.car_player.h * 1 / 2) - 30;
 
-	/*SDL_Log("[%s] car_player x = %f => %d, y = %d\n",
+	/*SDL_Log("[%s] car_player y = %d => %d\n",
 		__func__,
-		ctx->player_x,
-		player_x_in_pixels,
-		ctx->player_y);*/
+		ctx->player_y,
+		ctx->player_sprite_y);*/
 
-	ret = texture_render(ctx,
-			     &ctx->gfx.car_player,
-			     player_x_in_pixels,
-			     ctx->player_sprite_y,
-			     NULL,
-			     1,
-			     2);
+
+	// TODO : "zoom" car sprite on HIGH downhill
+	int player_segment =
+		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+
+	/*float delta_y = ctx->player_y - ctx->segments[player_segment].p2.world.y;
+	if (fabsf(delta_y) < 20 ) {*/
+
+		ret = texture_render(ctx,
+				     &ctx->gfx.car_player,
+				     player_x_in_pixels,
+				     ctx->player_sprite_y,
+				     NULL,
+				     1,
+				     2);
+	/*} else {
+		ret = texture_render(ctx,
+				     &ctx->gfx.car_player,
+				     player_x_in_pixels,
+				     ctx->player_sprite_y,
+				     NULL,
+				     60,
+				     100);
+	}*/
+
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
 

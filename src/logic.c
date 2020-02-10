@@ -17,8 +17,9 @@ static int logic_game(struct game_context *ctx)
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 	float speed_ratio = ctx->speed / ctx->max_speed;
 	float player_ratio =
-		((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
-		ROAD_SEGMENT_LENGTH;
+		(float)((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
+		(float) ROAD_SEGMENT_LENGTH;
+
 	ctx->ts_cur = SDL_GetTicks();
 	ctx->dt = ctx->ts_cur - ctx->ts_prev;
 
@@ -150,10 +151,14 @@ static int logic_game(struct game_context *ctx)
 		ctx->speed);*/
 
 
-	ctx->player_y =
+	ctx->player_y = /*ctx->segments[player_segment].p2.world.y;*/
 		inline_interpolate(ctx->segments[player_segment].p1.world.y,
 				   ctx->segments[player_segment].p2.world.y,
 				   player_ratio);
+
+	if (ctx->player_y - ctx->segments[player_segment].p2.world.y != 0)
+		SDL_Log("[%s] player_y - p2.world.y = %f \n", __func__, ctx->player_y - ctx->segments[player_segment].p2.world.y);
+
 
 	return 0;
 }
