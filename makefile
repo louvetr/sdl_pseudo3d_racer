@@ -1,7 +1,7 @@
 #.PHONY: using-gcc using-gcc-static using-clang
 
 #OBJS specifies which files to compile as part of the project
-OBJS = ./src/main.c ./src/event.c ./src/display.c ./src/logic.c
+OBJS = ./src/main.c ./src/event.c ./src/display.c ./src/logic.c  ./src/road.c  ./src/track.c
 
 #CC specifies which compiler we're using
 CC = gcc
@@ -11,6 +11,7 @@ INC=-I${CURDIR}/include
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings
 COMPILER_FLAGS = -Wall -ggdb -gdwarf-2
+//COMPILER_FLAGS = -Wall -Wconversion -ggdb -gdwarf-2
 #COMPILER_FLAGS = -Wall -fsanitize=address -O1 -fno-omit-frame-pointer
 
 #LINKER_FLAGS specifies the libraries we're linking against

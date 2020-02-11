@@ -363,6 +363,15 @@ static inline float inline_interpolate (float a,float b, float percent)
 // functions declarations
 /////////////////////////////////////////////////////////////////
 
+int track_build(struct game_context *ctx);
+
+int road_add_sector(struct road_segment *segments,
+				int start_idx,
+				int sector_enter_lg,
+				int sector_hold_lg,
+				int sector_exit_lg,
+				int y,
+				enum road_curve curve);
 
 int logic_project_coord(struct segment_point *p,
 			int first_segments_z_offset,
