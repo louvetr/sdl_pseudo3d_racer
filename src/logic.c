@@ -13,12 +13,12 @@
 static int logic_game(struct game_context *ctx)
 {
 
-	int player_segment =
+	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 	float speed_ratio = ctx->speed / ctx->max_speed;
 	float player_ratio =
 		(float)((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
-		(float) ROAD_SEGMENT_LENGTH;
+		(float)ROAD_SEGMENT_LENGTH;
 
 	ctx->ts_cur = SDL_GetTicks();
 	ctx->dt = ctx->ts_cur - ctx->ts_prev;
@@ -67,7 +67,7 @@ static int logic_game(struct game_context *ctx)
 		ctx->player_x = ctx->player_x + dx;
 
 	ctx->player_x = ctx->player_x - (dx * speed_ratio *
-					 ctx->segments[player_segment].curve *
+					 ctx->segments[ctx->player_segment].curve *
 					 ctx->centrifugal);
 
 	// if (!(cpt % 30))
@@ -152,13 +152,16 @@ static int logic_game(struct game_context *ctx)
 
 
 	ctx->player_y = /*ctx->segments[player_segment].p2.world.y;*/
-		inline_interpolate(ctx->segments[player_segment].p1.world.y,
-				   ctx->segments[player_segment].p2.world.y,
+		inline_interpolate(ctx->segments[ctx->player_segment].p1.world.y,
+				   ctx->segments[ctx->player_segment].p2.world.y,
 				   player_ratio);
 
-	if (ctx->player_y - ctx->segments[player_segment].p2.world.y != 0)
-		SDL_Log("[%s] player_y - p2.world.y = %f \n", __func__, ctx->player_y - ctx->segments[player_segment].p2.world.y);
-
+	/*if (ctx->player_y - ctx->segments[player_segment].p2.world.y != 0)
+		SDL_Log("[%s] player_y - p2.world.y = %f \n",
+			__func__,
+			ctx->player_y -
+				ctx->segments[player_segment].p2.world.y);*/
+	SDL_Log("[%s] curve = %f \n", __func__, ctx->segments[ctx->player_segment].curve);
 
 	return 0;
 }

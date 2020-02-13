@@ -24,6 +24,7 @@
 #define MS_PER_SEC 1000
 
 #define PNG_CAR_PLAYER "./media/car_rear_01.png"
+#define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -114,6 +115,7 @@ struct texture {
 struct game_graphics{
     // image textures
 	struct texture car_player;
+	struct texture bg_mountains;
 };
 
 struct color_desc {
@@ -223,7 +225,8 @@ struct game_context {
 	float off_road_limit;
 	// centrifugal force applying to player in curves
 	float centrifugal;
-
+	// index of the current player segment in segments array
+	int player_segment;
     // window
     SDL_Window *window;
     // renderer
