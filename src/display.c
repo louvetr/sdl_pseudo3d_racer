@@ -539,10 +539,18 @@ static int display_screen_game(struct game_context *ctx)
 
 	// init bg_clip_rect.x the 1st time
 	if (!bg_mountains_x_prev)
-		bg_mountains_x_prev = ctx->gfx.bg_mountains.w / 2 - SCREEN_WIDTH / 2;
+		bg_mountains_x_prev =
+			ctx->gfx.bg_mountains.w / 2 - SCREEN_WIDTH / 2;
 
 	// TODO : BG rotation % speed, no rotation if speed == 0
+	// TODO : do some modulus to avoid going too far
 	bg_mountains_x_prev += ctx->segments[ctx->player_segment].curve * 4;
+
+	if (bg_mountains_x_prev > ctx->gfx.bg_mountains.w)
+		bg_mountains_x_prev -= ctx->gfx.bg_mountains.w;
+	else if (bg_mountains_x_prev < -SCREEN_WIDTH)
+		bg_mountains_x_prev += ctx->gfx.bg_mountains.w;
+
 	bg_clip_rect.x = bg_mountains_x_prev;
 
 	enum another_bg_type another_bg;
@@ -586,7 +594,7 @@ static int display_screen_game(struct game_context *ctx)
 	} else if (another_bg == ANOTHER_BG_LEFT) {
 		bg_x2 = 0;
 		bg_clip_rect.w = bg_x1;
-		bg_clip_rect.x = ctx->gfx.bg_mountains.w - bg_clip_rect.x;
+		bg_clip_rect.x = ctx->gfx.bg_mountains.w - bg_clip_rect.w;
 	}
 
 	if (another_bg != ANOTHER_BG_NONE) {
