@@ -5,6 +5,15 @@
 
 enum another_bg_type { ANOTHER_BG_NONE, ANOTHER_BG_LEFT, ANOTHER_BG_RIGHT };
 
+/* identifies the different layers. Their value is the coefficient to which
+ * they scroll */
+enum background_layer {
+	BG_LAYER_SKY_FAR = 2,
+	BG_LAYER_LANDSCAPE_FAR = 4,
+	BG_LAYER_LANDSCAPE_CLOSE = 6,
+	BG_LAYER_SKY_CLOSE = 8
+};
+
 
 char seglist_prev[2048];
 
@@ -502,6 +511,137 @@ static int display_screen_game_test(struct game_context *ctx)
 }
 #endif
 
+
+// render a background layer
+static int display_render_background_layer(struct game_context *ctx,
+					   enum background_layer bg_layer,
+					   int *texture_x_offset,
+					   struct texture *bg_texture)
+{
+	int ret;
+	SDL_Rect bg_clip_rect = {.x = 0, .y = 0, .h = 0, .w = 0};
+
+	bg_clip_rect.h = bg_texture->h;
+	bg_clip_rect.w = SCREEN_WIDTH;
+	bg_clip_rect.y = 0;
+
+	// init bg_clip_rect.x the 1st time
+	if (!*texture_x_offset)
+		*texture_x_offset = bg_texture->w / 2 - SCREEN_WIDTH / 2;
+
+	// TODO : BG rotation % speed, no rotation if speed == 0
+	// TODO : do some modulus to avoid going too far
+	*texture_x_offset += ctx->segments[ctx->player_segment].curve *
+			     bg_layer * ctx->speed / ctx->max_speed;
+
+	/*SDL_Log("speed = %f, texture_x_offset = %d, delta_x = %d\n",
+		ctx->speed,
+		*texture_x_offset,
+		(int) (ctx->segments[ctx->player_segment].curve * bg_layer *
+			ctx->speed / ctx->max_speed));*/
+
+
+	if (*texture_x_offset > bg_texture->w)
+		*texture_x_offset -= bg_texture->w;
+	else if (*texture_x_offset < -SCREEN_WIDTH)
+		*texture_x_offset += bg_texture->w;
+
+	bg_clip_rect.x = *texture_x_offset;
+
+	enum another_bg_type another_bg;
+	int bg_x1, bg_x2;
+
+	if (bg_clip_rect.x > bg_texture->w - SCREEN_WIDTH) {
+		bg_x1 = 0;
+		bg_clip_rect.w = bg_texture->w - bg_clip_rect.x;
+		another_bg = ANOTHER_BG_RIGHT;
+	} else if (bg_clip_rect.x < 0) {
+		bg_x1 = -bg_clip_rect.x;
+		bg_clip_rect.w = SCREEN_WIDTH + bg_clip_rect.x;
+		bg_clip_rect.x = 0;
+		another_bg = ANOTHER_BG_LEFT;
+	} else {
+		bg_x1 = 0;
+		another_bg = ANOTHER_BG_NONE;
+	}
+
+	ret = texture_render(ctx,
+			     bg_texture,
+			     bg_x1,
+			     SCREEN_HEIGHT * 59 / 100 - bg_texture->h,
+			     &bg_clip_rect,
+			     1,
+			     1);
+
+	/*SDL_Log("[Rect_1] x = %d, clip { x = %d, w = %d }\n",
+		bg_x1,
+		bg_clip_rect.x,
+		bg_clip_rect.w);*/
+
+	if (another_bg == ANOTHER_BG_RIGHT) {
+		bg_x2 = bg_clip_rect.w;
+		bg_clip_rect.x = 0;
+		bg_clip_rect.w = SCREEN_WIDTH - bg_clip_rect.w;
+	} else if (another_bg == ANOTHER_BG_LEFT) {
+		bg_x2 = 0;
+		bg_clip_rect.w = bg_x1;
+		bg_clip_rect.x = bg_texture->w - bg_clip_rect.w;
+	}
+
+	if (another_bg != ANOTHER_BG_NONE) {
+		ret = texture_render(ctx,
+				     bg_texture,
+				     bg_x2,
+				     SCREEN_HEIGHT * 59 / 100 - bg_texture->h,
+				     &bg_clip_rect,
+				     1,
+				     1);
+
+		/*SDL_Log("[Rect_2] x = %d, clip { x = %d, w = %d }\n",
+			bg_x2,
+			bg_clip_rect.x,
+			bg_clip_rect.w);*/
+	}
+
+	return 0;
+}
+
+
+static int display_render_backgrounds(struct game_context *ctx)
+{
+	int ret;
+
+	/*
+	ret = display_render_background_layer(
+		ctx,
+		BG_LAYER_SKY_FAR,
+		&ctx->layers_x_offset.sky_far,
+		&ctx->gfx.?);*/
+
+	ret = display_render_background_layer(
+		ctx,
+		BG_LAYER_LANDSCAPE_FAR,
+		&ctx->layers_x_offset.landscape_far,
+		&ctx->gfx.bg_mountains);
+
+	/*
+	ret = display_render_background_layer(
+		ctx,
+		BG_LAYER_LANDSCAPE_CLOSE,
+		&ctx->layers_x_offset.landscape_close,
+		&ctx->gfx.bg_?);
+
+	ret = display_render_background_layer(
+		ctx,
+		BG_LAYER_SKY_CLOSE,
+		&ctx->layers_x_offset.sky_close,
+		&ctx->gfx.?);
+	*/
+
+	return 0;
+}
+
+
 static int display_screen_game(struct game_context *ctx)
 {
 	int ret = 0;
@@ -517,101 +657,8 @@ static int display_screen_game(struct game_context *ctx)
 	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
 	SDL_RenderClear(ctx->renderer);
 
-	// render back ground
-	// 1 --- mountains
-
-	static SDL_Rect bg_clip_rect = {.x = 0, .y = 0, .h = 0, .w = 0};
-	static int bg_mountains_scrolling_offset = 0;
-
-	bg_mountains_scrolling_offset -=
-		ctx->segments[ctx->player_segment].curve * 4;
-	if (bg_mountains_scrolling_offset < -ctx->gfx.bg_mountains.w)
-		bg_mountains_scrolling_offset = 0;
-
-	bg_clip_rect.h = ctx->gfx.bg_mountains.h;
-	// bg_clip_rect.w = SCREEN_WIDTH + bg_mountains_scrolling_offset;
-	bg_clip_rect.w = SCREEN_WIDTH;
-	// bg_clip_rect.w = ctx->gfx.bg_mountains.w;
-
-	bg_clip_rect.y =
-		0; // SCREEN_HEIGHT * 59 / 100 - ctx->gfx.bg_mountains.h;
-
-
-	// init bg_clip_rect.x the 1st time
-	if (!bg_mountains_x_prev)
-		bg_mountains_x_prev =
-			ctx->gfx.bg_mountains.w / 2 - SCREEN_WIDTH / 2;
-
-	// TODO : BG rotation % speed, no rotation if speed == 0
-	// TODO : do some modulus to avoid going too far
-	bg_mountains_x_prev += ctx->segments[ctx->player_segment].curve * 4;
-
-	if (bg_mountains_x_prev > ctx->gfx.bg_mountains.w)
-		bg_mountains_x_prev -= ctx->gfx.bg_mountains.w;
-	else if (bg_mountains_x_prev < -SCREEN_WIDTH)
-		bg_mountains_x_prev += ctx->gfx.bg_mountains.w;
-
-	bg_clip_rect.x = bg_mountains_x_prev;
-
-	enum another_bg_type another_bg;
-	int bg_x1, bg_x2;
-
-	if (bg_clip_rect.x > ctx->gfx.bg_mountains.w - SCREEN_WIDTH) {
-		bg_x1 = 0;
-		bg_clip_rect.w = ctx->gfx.bg_mountains.w - bg_clip_rect.x;
-		another_bg = ANOTHER_BG_RIGHT;
-	} else if (bg_clip_rect.x < 0) {
-		bg_x1 = -bg_clip_rect.x;
-		bg_clip_rect.w = SCREEN_WIDTH + bg_clip_rect.x;
-		bg_clip_rect.x = 0;
-		another_bg = ANOTHER_BG_LEFT;
-	} else {
-		bg_x1 = 0;
-		another_bg = ANOTHER_BG_NONE;
-	}
-
-	/*if (bg_clip_rect.x + SCREEN_WIDTH > ctx->gfx.bg_mountains.w)
-		bg_clip_rect.w = ctx->gfx.bg_mountains.w - bg_clip_rect.x;*/
-
-	ret = texture_render(ctx,
-			     &ctx->gfx.bg_mountains,
-			     bg_x1, // bg_mountains_scrolling_offset,
-			     SCREEN_HEIGHT * 59 / 100 - ctx->gfx.bg_mountains.h,
-			     &bg_clip_rect,
-			     1,
-			     1);
-
-	SDL_Log("[Rect_1] x = %d, clip { x = %d, w = %d }\n",
-		bg_x1,
-		bg_clip_rect.x,
-		bg_clip_rect.w);
-
-	// bg_clip_rect.w = SCREEN_WIDTH + bg_mountains_scrolling_offset;
-	if (another_bg == ANOTHER_BG_RIGHT) {
-		bg_x2 = bg_clip_rect.w;
-		bg_clip_rect.x = 0;
-		bg_clip_rect.w = SCREEN_WIDTH - bg_clip_rect.w;
-	} else if (another_bg == ANOTHER_BG_LEFT) {
-		bg_x2 = 0;
-		bg_clip_rect.w = bg_x1;
-		bg_clip_rect.x = ctx->gfx.bg_mountains.w - bg_clip_rect.w;
-	}
-
-	if (another_bg != ANOTHER_BG_NONE) {
-		ret = texture_render(
-			ctx,
-			&ctx->gfx.bg_mountains,
-			bg_x2, // bg_mountains_scrolling_offset + SCREEN_WIDTH,
-			SCREEN_HEIGHT * 59 / 100 - ctx->gfx.bg_mountains.h,
-			&bg_clip_rect,
-			1,
-			1);
-
-		SDL_Log("[Rect_2] x = %d, clip { x = %d, w = %d }\n",
-			bg_x2,
-			bg_clip_rect.x,
-			bg_clip_rect.w);
-	}
+	// render the different layers of background
+	ret = display_render_backgrounds(ctx);
 
 	// render the road
 	ret = display_render_road(ctx);

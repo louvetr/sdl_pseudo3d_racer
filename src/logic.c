@@ -161,7 +161,7 @@ static int logic_game(struct game_context *ctx)
 			__func__,
 			ctx->player_y -
 				ctx->segments[player_segment].p2.world.y);*/
-	SDL_Log("[%s] curve = %f \n", __func__, ctx->segments[ctx->player_segment].curve);
+	//SDL_Log("[%s] curve = %f \n", __func__, ctx->segments[ctx->player_segment].curve);
 
 	return 0;
 }

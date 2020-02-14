@@ -104,6 +104,13 @@ enum road_sector_length {
 // structures
 /////////////////////////////////////////////////////////////////
 
+struct background_layers_x_offset {
+	int sky_far;
+	int landscape_far;
+	int landscape_close;
+	int sky_close;
+};
+
 struct texture {
     // width and height
     int w, h;
@@ -250,6 +257,8 @@ struct game_context {
 
     int mute_sfx;
     int mute_music;
+
+	struct background_layers_x_offset layers_x_offset;
 
     // event
     SDL_Event event;
