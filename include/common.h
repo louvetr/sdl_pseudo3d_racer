@@ -25,6 +25,8 @@
 
 #define PNG_CAR_PLAYER "./media/car_rear_01.png"
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
+#define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
+#define PNG_BG_SKY_FAR "./media/bg_clouds_far.png"
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -107,8 +109,8 @@ enum road_sector_length {
 struct background_layers_x_offset {
 	int sky_far;
 	int landscape_far;
-	int landscape_close;
-	int sky_close;
+	int landscape_near;
+	int sky_near;
 };
 
 struct texture {
@@ -123,6 +125,8 @@ struct game_graphics{
     // image textures
 	struct texture car_player;
 	struct texture bg_mountains;
+	struct texture bg_sky_near;
+	struct texture bg_sky_far;
 };
 
 struct color_desc {

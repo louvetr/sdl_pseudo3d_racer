@@ -10,8 +10,8 @@ enum another_bg_type { ANOTHER_BG_NONE, ANOTHER_BG_LEFT, ANOTHER_BG_RIGHT };
 enum background_layer {
 	BG_LAYER_SKY_FAR = 2,
 	BG_LAYER_LANDSCAPE_FAR = 4,
-	BG_LAYER_LANDSCAPE_CLOSE = 6,
-	BG_LAYER_SKY_CLOSE = 8
+	BG_LAYER_LANDSCAPE_NEAR = 5,
+	BG_LAYER_SKY_NEAR = 6
 };
 
 
@@ -519,11 +519,15 @@ static int display_render_background_layer(struct game_context *ctx,
 					   struct texture *bg_texture)
 {
 	int ret;
+	int bg_y_offset_num = 50;
 	SDL_Rect bg_clip_rect = {.x = 0, .y = 0, .h = 0, .w = 0};
 
 	bg_clip_rect.h = bg_texture->h;
 	bg_clip_rect.w = SCREEN_WIDTH;
 	bg_clip_rect.y = 0;
+
+	if(bg_layer == BG_LAYER_LANDSCAPE_FAR)
+		bg_y_offset_num = 59;
 
 	// init bg_clip_rect.x the 1st time
 	if (!*texture_x_offset)
@@ -568,7 +572,7 @@ static int display_render_background_layer(struct game_context *ctx,
 	ret = texture_render(ctx,
 			     bg_texture,
 			     bg_x1,
-			     SCREEN_HEIGHT * 59 / 100 - bg_texture->h,
+			     SCREEN_HEIGHT * bg_y_offset_num / 100 - bg_texture->h,
 			     &bg_clip_rect,
 			     1,
 			     1);
@@ -592,7 +596,7 @@ static int display_render_background_layer(struct game_context *ctx,
 		ret = texture_render(ctx,
 				     bg_texture,
 				     bg_x2,
-				     SCREEN_HEIGHT * 59 / 100 - bg_texture->h,
+				     SCREEN_HEIGHT * bg_y_offset_num / 100 - bg_texture->h,
 				     &bg_clip_rect,
 				     1,
 				     1);
@@ -611,12 +615,11 @@ static int display_render_backgrounds(struct game_context *ctx)
 {
 	int ret;
 
-	/*
 	ret = display_render_background_layer(
 		ctx,
 		BG_LAYER_SKY_FAR,
 		&ctx->layers_x_offset.sky_far,
-		&ctx->gfx.?);*/
+		&ctx->gfx.bg_sky_far);
 
 	ret = display_render_background_layer(
 		ctx,
@@ -627,16 +630,15 @@ static int display_render_backgrounds(struct game_context *ctx)
 	/*
 	ret = display_render_background_layer(
 		ctx,
-		BG_LAYER_LANDSCAPE_CLOSE,
-		&ctx->layers_x_offset.landscape_close,
-		&ctx->gfx.bg_?);
+		BG_LAYER_LANDSCAPE_NEAR,
+		&ctx->layers_x_offset.landscape_near,
+		&ctx->gfx.bg_?);*/
 
 	ret = display_render_background_layer(
 		ctx,
-		BG_LAYER_SKY_CLOSE,
-		&ctx->layers_x_offset.sky_close,
-		&ctx->gfx.?);
-	*/
+		BG_LAYER_SKY_NEAR,
+		&ctx->layers_x_offset.sky_near,
+		&ctx->gfx.bg_sky_near);
 
 	return 0;
 }
@@ -646,10 +648,6 @@ static int display_screen_game(struct game_context *ctx)
 {
 	int ret = 0;
 	int player_x_in_pixels;
-
-	static int bg_mountains_x = 0;
-	static int bg_mountains_x_prev = 0;
-
 
 	// SDL_Log("[%s] ENTER\n", __func__);
 
