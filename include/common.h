@@ -27,6 +27,7 @@
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/bg_clouds_far.png"
+#define PNG_SCENE_TREE_OAK "./media/scene_tree_oak.png"
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -127,6 +128,8 @@ struct game_graphics{
 	struct texture bg_mountains;
 	struct texture bg_sky_near;
 	struct texture bg_sky_far;
+	struct texture scene_tree_oak;
+
 };
 
 struct color_desc {
@@ -150,6 +153,11 @@ struct segment_point {
 	struct segment_point_coord camera;
 };
 
+struct scene_sprite_desc {
+	struct texture *t;
+	float position;	
+};
+
 struct road_segment {
 
 	struct segment_point p1;
@@ -157,6 +165,7 @@ struct road_segment {
 	//enum road_curve curve;
 	float curve;
 	enum color_road color;
+	struct scene_sprite_desc sprite_desc;
 
 };
 
@@ -204,6 +213,10 @@ struct game_context {
 	float camera_depth;
 	// number of segments to draw
 	int draw_distance;
+
+	int max_y;
+	int max_y_idx;
+
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)
 	float player_x;

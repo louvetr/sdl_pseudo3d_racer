@@ -28,9 +28,9 @@ static int road_add_segment(struct road_segment *segment,
 	// SDL_Log("[%s] p2.w.y = %f\n", __func__, segment->p2.world.y);
 	// prev_p2_y = segment->p2.world.y;
 
-	static int local_idx = 0;
+	/*static int local_idx = 0;
 	SDL_Log("[%s][%d] idx = %f\n", __func__, local_idx, curve);
-	local_idx++;
+	local_idx++;*/
 
 
 	/* TODO: use ctx->rumble_length */

@@ -601,6 +601,15 @@ int track_build(struct game_context *ctx)
 
     SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
 
+
+	/////// add trees
+	for(int i = 0; i < nb_segments_added; i+=25) {
+		ctx->segments[i].sprite_desc.position = 1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+	}
+
+
+
 	return 0;
 
 }

@@ -90,7 +90,7 @@ static int main_load_media(struct game_context *ctx)
 	// load png
 	ret = load_texture_from_file(ctx, PNG_CAR_PLAYER, &ctx->gfx.car_player);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load title PNG!\n",
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
 			__func__,
 			__LINE__);
 		return ret;
@@ -99,7 +99,7 @@ static int main_load_media(struct game_context *ctx)
 
 	ret = load_texture_from_file(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load title PNG!\n",
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
 			__func__,
 			__LINE__);
 		return ret;
@@ -107,7 +107,7 @@ static int main_load_media(struct game_context *ctx)
 
 	ret = load_texture_from_file(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load title PNG!\n",
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
 			__func__,
 			__LINE__);
 		return ret;
@@ -115,7 +115,15 @@ static int main_load_media(struct game_context *ctx)
 
 	ret = load_texture_from_file(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load title PNG!\n",
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
 			__func__,
 			__LINE__);
 		return ret;
@@ -191,9 +199,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->field_of_view = 100;
 	ctx->camera_height = 1000;
 	ctx->camera_depth = 0;
-	ctx->draw_distance = 300; // 300 ????
-	// ctx->draw_distance = 100; // 300 ????
-	// ctx->draw_distance = 300; // 300 ????
+	ctx->draw_distance = 400; // 300 ????
 	ctx->player_x = 0;
 	ctx->player_z = 0;
 	ctx->fog_density = 5;
