@@ -376,10 +376,31 @@ static int display_render_scenery(struct game_context *ctx)
 		}
 
 
+		int tmp_idx;
+		int tmp_max_y_idx;
+		int tmp_max_y_bis_idx;
+		if (ctx->max_y_idx > base_segment_idx) {
+			tmp_max_y_idx = ctx->max_y_idx; 
+		}
+		else {
+			tmp_max_y_idx = ctx->max_y_idx + ctx->nb_segments; 
+		}
+		if (ctx->max_y_bis_idx > base_segment_idx) {
+			tmp_max_y_bis_idx = ctx->max_y_bis_idx; 
+		}
+		else {
+			tmp_max_y_bis_idx = ctx->max_y_bis_idx + ctx->nb_segments; 
+		}				
+		if (idx > base_segment_idx) {
+			tmp_idx = idx; 
+		}
+		else {
+			tmp_idx = idx + ctx->nb_segments; 
+		}
 		// if sprite is behind a hill, set a clip to crop its lower part
 		// if ((idx > ctx->max_y_idx && idx < last_idx) || (idx <
 		// ctx->max_y_idx && idx > last_idx)) {
-		if (idx > ctx->max_y_idx && base_segment_idx < last_idx) {
+		if (tmp_idx > tmp_max_y_idx /*&& base_segment_idx < last_idx*/) {
 
 			if (sprite_y >= ctx->max_y) {
 				SDL_Log("[%s:%d] no CLIPPING\n",
@@ -416,7 +437,7 @@ static int display_render_scenery(struct game_context *ctx)
 				r->h = ctx->segments[idx].sprite_desc.t->h;
 				// continue;
 			}
-		} else if (idx > ctx->max_y_bis_idx && base_segment_idx < last_idx) {
+		} else if (tmp_idx > tmp_max_y_bis_idx /*&& base_segment_idx < last_idx*/) {
 			if (sprite_y >= ctx->max_y_bis) {
 				SDL_Log("[%s:%d] no CLIPPING\n",
 					__func__,

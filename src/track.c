@@ -489,7 +489,8 @@ int track_build(struct game_context *ctx)
 {
 	int nb_segments_added = 0;
 
-	ctx->nb_segments = 2750;
+	//ctx->nb_segments = 2750;
+	ctx->nb_segments = 2450;
 
 	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
@@ -598,13 +599,13 @@ int track_build(struct game_context *ctx)
 						  CURVE_NONE);
 
 	//L: 300 --- 2725 --- y = 0
-	nb_segments_added += road_add_sector(ctx->segments,
+	/*nb_segments_added += road_add_sector(ctx->segments,
 						  nb_segments_added,
 						  SECTOR_LENGTH_LONG,
 						  SECTOR_LENGTH_LONG,
 						  SECTOR_LENGTH_LONG,
 						  HILL_NONE,
-						  CURVE_NONE);
+						  CURVE_NONE);*/
 
 	ctx->track_length = ROAD_SEGMENT_LENGTH * ctx->nb_segments;
 
