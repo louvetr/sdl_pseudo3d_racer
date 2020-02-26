@@ -214,8 +214,13 @@ struct game_context {
 	// number of segments to draw
 	int draw_distance;
 
+	// highest point on screen
 	int max_y;
 	int max_y_idx;
+
+	// highest point on screen
+	int max_y_bis;
+	int max_y_bis_idx;
 
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)

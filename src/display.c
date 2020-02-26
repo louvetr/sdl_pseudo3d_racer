@@ -127,7 +127,7 @@ static int texture_render(struct game_context *ctx,
 	render_quad.h = (int)((float)render_quad.h * scale);
 
 	// fix a glich: sprite seems to float 1 pixel above the road
-	if(clip != NULL)
+	if (clip != NULL)
 		render_quad.h++;
 
 	if (RLTDBG_texture_render_log)
@@ -321,6 +321,8 @@ static int display_render_scenery(struct game_context *ctx)
 	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
 	int last_idx =
 		(base_segment_idx + ctx->draw_distance) % ctx->nb_segments;
+	/*int first_idx =
+		(base_segment_idx + ctx->draw_distance) % ctx->nb_segments;*/
 
 	for (int i = ctx->draw_distance; i >= 0; i--) {
 
@@ -375,9 +377,9 @@ static int display_render_scenery(struct game_context *ctx)
 
 
 		// if sprite is behind a hill, set a clip to crop its lower part
-		int real_max_y = SCREEN_HEIGHT - ctx->max_y;
-		if (idx > ctx->max_y_idx && idx < last_idx) {
-			// if (1) {
+		// if ((idx > ctx->max_y_idx && idx < last_idx) || (idx <
+		// ctx->max_y_idx && idx > last_idx)) {
+		if (idx > ctx->max_y_idx && base_segment_idx < last_idx) {
 
 			if (sprite_y >= ctx->max_y) {
 				SDL_Log("[%s:%d] no CLIPPING\n",
@@ -412,7 +414,43 @@ static int display_render_scenery(struct game_context *ctx)
 					clip_h_inv_scale);
 			} else {
 				r->h = ctx->segments[idx].sprite_desc.t->h;
-				//continue;
+				// continue;
+			}
+		} else if (idx > ctx->max_y_bis_idx && base_segment_idx < last_idx) {
+			if (sprite_y >= ctx->max_y_bis) {
+				SDL_Log("[%s:%d] no CLIPPING\n",
+					__func__,
+					__LINE__);
+				continue;
+			}
+
+			r = calloc(1, sizeof(SDL_Rect));
+			r->x = 0;
+			r->y = 0;
+			r->w = (float)ctx->segments[idx]
+				       .sprite_desc.t->w /**
+	      zoom*/;
+			int clip_h = ctx->max_y_bis - sprite_y;
+			int clip_h_inv_scale =
+				// int clip_h =
+				(float)(ctx->max_y_bis - sprite_y) / zoom;
+			// int clip_h = /*ctx->max_y*/ real_max_y - sprite_y;
+			if (clip_h < ctx->segments[idx].sprite_desc.t->h *
+					     zoom &&
+			    clip_h > 0) {
+				// r->h = clip_h;
+				r->h = clip_h_inv_scale;
+				/*SDL_Log("[%s] CLIPPING --- idx = %d, y_max_idx = %d, y_max = %d, sprite_y = %d, clip_h = %d, clip_h_inv_h = %d ------------------------\n",
+					__func__,
+					idx,
+					ctx->max_y_idx,
+					ctx->max_y,
+					sprite_y,
+					clip_h,
+					clip_h_inv_scale);*/
+			} else {
+				r->h = ctx->segments[idx].sprite_desc.t->h;
+				// continue;
 			}
 		} else {
 			SDL_Log("[%s:%d] no CLIPPING\n", __func__, __LINE__);
@@ -472,9 +510,13 @@ static int display_render_road(struct game_context *ctx)
 		(ctx->position % ROAD_SEGMENT_LENGTH) / ROAD_SEGMENT_LENGTH;
 	float dx = -(ctx->segments[base_segment_idx].curve * ratio_modulus);
 	float x = 0;
+	int i, idx;
 
 	ctx->max_y = SCREEN_HEIGHT;
 	ctx->max_y_idx = 0;
+	ctx->max_y_bis = SCREEN_HEIGHT;
+	ctx->max_y_bis_idx = 0;
+
 	static int dbgcpt = 0;
 
 	float highest_world_y = 0;
@@ -489,11 +531,11 @@ static int display_render_road(struct game_context *ctx)
 	int last_seg_idx_lane = 0;
 	int last_seg_idx = 0;
 
-	for (int i = 0; i < ctx->draw_distance; i++) {
+	for (i = 0; i < ctx->draw_distance; i++) {
 
 		int add_z_offset_to_first_segments = 0;
 		int cam_position = ctx->position;
-		int idx = (base_segment_idx + i) % ctx->nb_segments;
+		idx = (base_segment_idx + i) % ctx->nb_segments;
 
 		// fix transition from high to low idx segments.
 		if (idx < base_segment_idx) {
@@ -589,13 +631,27 @@ static int display_render_road(struct game_context *ctx)
 			cpt++;
 
 
-		// skip segment behind camera and thoses already
-		// rendered
-		if (ctx->segments[idx].p1.camera.z <= ctx->camera_depth ||
-		    ctx->segments[idx].p2.screen.y >=
+		// skip segment behind hills
+		if (ctx->segments[idx].p2.screen.y >=
 			    ctx->segments[idx].p1.screen.y ||
-		    ctx->segments[idx].p2.screen.y >= ctx->max_y)
+		    ctx->segments[idx].p2.screen.y >= ctx->max_y) {
+
+			/*if (ctx->segments[idx].p1.screen.y < ctx->max_y_bis &&
+			    ctx->segments[idx].p1.screen.y > ctx->max_y)*/
+			/*if (!ctx->max_y_bis_idx &&
+			    ctx->segments[idx].p1.screen.y > 0 &&
+			    ctx->segments[idx].p1.screen.y < ctx->max_y)*/
+			if (!ctx->max_y_bis_idx && ctx->max_y_idx)
+			{
+				ctx->max_y_bis = ctx->max_y;
+				ctx->max_y_bis_idx = idx;
+			}
 			continue;
+		} else if (ctx->segments[idx].p1.camera.z <=
+			   ctx->camera_depth) {
+			// skip segment behind camera and thoses already
+			continue;
+		}
 
 		if (ctx->segments[idx].p2.world.y > highest_world_y)
 			highest_world_y = ctx->segments[idx].p2.world.y;
@@ -620,6 +676,18 @@ static int display_render_road(struct game_context *ctx)
 		// if(ctx->segments[idx].p2.screen.y > ctx->max_y) {
 		ctx->max_y = ctx->segments[idx].p1.screen.y;
 		ctx->max_y_idx = idx;
+		// if (base_segment_idx + i < ctx->nb_segments) {
+		/*ctx->max_y =
+			ctx->segments[base_segment_idx + i].p1.screen.y;
+		ctx->max_y_idx = base_segment_idx + i;*/
+		/*} else if (ctx->max_y_idx < ctx->nb_segments - 1) {
+			// ctx->max_y_idx++;
+			ctx->max_y_idx++;
+			ctx->max_y = ctx->segments[ctx->max_y_idx].p1.screen.y;
+		}*/ /*else {
+			ctx->max_y = ctx->segments[idx].p1.screen.y;
+			ctx->max_y_idx = idx;
+		}*/
 		//}
 	}
 
