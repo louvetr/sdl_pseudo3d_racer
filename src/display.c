@@ -340,20 +340,33 @@ static int display_render_scenery(struct game_context *ctx)
 		if (!ctx->segments[idx].sprite_desc.t)
 			continue;
 
+
 		float screen_scale = ctx->segments[idx].p1.screen.scale;
-		int sprite_x = ctx->segments[idx].p1.screen.x +
-			       (int)(screen_scale *
-				     ctx->segments[idx].sprite_desc.position *
-				     (float)ctx->road_width /*2100*/ *
-				     (float)SCREEN_WIDTH / 2.f);
+		int sprite_x;
+		float zoom /*= (1.f - (float)i / (float)ctx->draw_distance) *
+	     (float)0.5*/
+			;
+		zoom = screen_scale * SCREEN_WIDTH * 2;
+
+		if (ctx->segments[idx].sprite_desc.position >= 0)
+			sprite_x =
+				ctx->segments[idx].p1.screen.x +
+				(int)(screen_scale *
+				      ctx->segments[idx].sprite_desc.position *
+				      (float)ctx->road_width /*2100*/ *
+				      (float)SCREEN_WIDTH / 2.f);
+		else
+			sprite_x =
+				ctx->segments[idx].p1.screen.x +
+				(int)(screen_scale *
+				      ctx->segments[idx].sprite_desc.position *
+				      (float)ctx->road_width /*2100*/ *
+				      (float)SCREEN_WIDTH / 2.f) -
+				ctx->segments[idx].sprite_desc.t->w * zoom;
 
 		// TODO: filter porperly % sprite width ?
 		if (sprite_x > SCREEN_WIDTH)
 			continue;
-
-		float zoom = (1.f - (float)i / (float)ctx->draw_distance) *
-			     (float)0.5;
-		zoom = screen_scale * SCREEN_WIDTH * 2;
 
 		float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
@@ -380,27 +393,26 @@ static int display_render_scenery(struct game_context *ctx)
 		int tmp_max_y_idx;
 		int tmp_max_y_bis_idx;
 		if (ctx->max_y_idx > base_segment_idx) {
-			tmp_max_y_idx = ctx->max_y_idx; 
-		}
-		else {
-			tmp_max_y_idx = ctx->max_y_idx + ctx->nb_segments; 
+			tmp_max_y_idx = ctx->max_y_idx;
+		} else {
+			tmp_max_y_idx = ctx->max_y_idx + ctx->nb_segments;
 		}
 		if (ctx->max_y_bis_idx > base_segment_idx) {
-			tmp_max_y_bis_idx = ctx->max_y_bis_idx; 
+			tmp_max_y_bis_idx = ctx->max_y_bis_idx;
+		} else {
+			tmp_max_y_bis_idx =
+				ctx->max_y_bis_idx + ctx->nb_segments;
 		}
-		else {
-			tmp_max_y_bis_idx = ctx->max_y_bis_idx + ctx->nb_segments; 
-		}				
 		if (idx > base_segment_idx) {
-			tmp_idx = idx; 
-		}
-		else {
-			tmp_idx = idx + ctx->nb_segments; 
+			tmp_idx = idx;
+		} else {
+			tmp_idx = idx + ctx->nb_segments;
 		}
 		// if sprite is behind a hill, set a clip to crop its lower part
 		// if ((idx > ctx->max_y_idx && idx < last_idx) || (idx <
 		// ctx->max_y_idx && idx > last_idx)) {
-		if (tmp_idx > tmp_max_y_idx /*&& base_segment_idx < last_idx*/) {
+		if (tmp_idx >
+		    tmp_max_y_idx /*&& base_segment_idx < last_idx*/) {
 
 			if (sprite_y >= ctx->max_y) {
 				SDL_Log("[%s:%d] no CLIPPING\n",
@@ -437,7 +449,9 @@ static int display_render_scenery(struct game_context *ctx)
 				r->h = ctx->segments[idx].sprite_desc.t->h;
 				// continue;
 			}
-		} else if (tmp_idx > tmp_max_y_bis_idx /*&& base_segment_idx < last_idx*/) {
+		} else if (
+			tmp_idx >
+			tmp_max_y_bis_idx /*&& base_segment_idx < last_idx*/) {
 			if (sprite_y >= ctx->max_y_bis) {
 				SDL_Log("[%s:%d] no CLIPPING\n",
 					__func__,
@@ -461,7 +475,10 @@ static int display_render_scenery(struct game_context *ctx)
 			    clip_h > 0) {
 				// r->h = clip_h;
 				r->h = clip_h_inv_scale;
-				/*SDL_Log("[%s] CLIPPING --- idx = %d, y_max_idx = %d, y_max = %d, sprite_y = %d, clip_h = %d, clip_h_inv_h = %d ------------------------\n",
+				/*SDL_Log("[%s] CLIPPING --- idx = %d, y_max_idx
+				   = %d, y_max = %d, sprite_y = %d, clip_h = %d,
+				   clip_h_inv_h = %d
+				   ------------------------\n",
 					__func__,
 					idx,
 					ctx->max_y_idx,
@@ -480,9 +497,9 @@ static int display_render_scenery(struct game_context *ctx)
 		ret = texture_render(
 			ctx,
 			ctx->segments[idx].sprite_desc.t,
-			// sprite_x + destW,
-			ctx->segments[idx].p1.screen.x +
-				((float)ctx->segments[idx].p1.screen.w) * 1.3,
+			sprite_x,
+			/*ctx->segments[idx].p1.screen.x +
+				((float)ctx->segments[idx].p1.screen.w) * 1.3,*/
 			sprite_y,
 			r,
 			zoom);
@@ -662,8 +679,7 @@ static int display_render_road(struct game_context *ctx)
 			/*if (!ctx->max_y_bis_idx &&
 			    ctx->segments[idx].p1.screen.y > 0 &&
 			    ctx->segments[idx].p1.screen.y < ctx->max_y)*/
-			if (!ctx->max_y_bis_idx && ctx->max_y_idx)
-			{
+			if (!ctx->max_y_bis_idx && ctx->max_y_idx) {
 				ctx->max_y_bis = ctx->max_y;
 				ctx->max_y_bis_idx = idx;
 			}
