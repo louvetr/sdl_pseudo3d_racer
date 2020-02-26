@@ -612,14 +612,35 @@ int track_build(struct game_context *ctx)
     SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
 
 
-	/////// add trees
-	for(int i = 0; i < nb_segments_added; i+=25) {
+	/////// add trees --- oak
+	for(int i = 0; i < nb_segments_added / 3; i+=20) {
 		ctx->segments[i].sprite_desc.position = 1;
 		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
 	}
+	for(int i = 10; i < nb_segments_added / 3 ; i+=20) {
+		ctx->segments[i].sprite_desc.position = -1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+	}
 
+	/////// add trees --- willow
+	for(int i = nb_segments_added / 3; i < nb_segments_added * 2/ 3; i+=20) {
+		ctx->segments[i].sprite_desc.position = 1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+	}
+	for(int i = nb_segments_added / 3 + 10; i < nb_segments_added * 2/ 3 ; i+=20) {
+		ctx->segments[i].sprite_desc.position = -1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+	}
 
-
+	/////// add trees --- pine
+	for(int i = nb_segments_added * 2 / 3; i < nb_segments_added; i+=20) {
+		ctx->segments[i].sprite_desc.position = 1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
+	}
+	for(int i = nb_segments_added * 2 / 3 + 10; i < nb_segments_added; i+=20) {
+		ctx->segments[i].sprite_desc.position = -1;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
+	}
 	return 0;
 
 }

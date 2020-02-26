@@ -129,6 +129,22 @@ static int main_load_media(struct game_context *ctx)
 		return ret;
 	}
 
+	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_PINE, &ctx->gfx.scene_tree_pine);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
 		printf("[%s] Failed to load game PNG!\n", __func__);
