@@ -30,6 +30,12 @@
 #define PNG_SCENE_TREE_OAK "./media/scene_tree_oak.png"
 #define PNG_SCENE_TREE_WILLOW "./media/scene_tree_willow.png"
 #define PNG_SCENE_TREE_PINE "./media/scene_tree_pine.png"
+#define PNG_SCENE_CABIN "./media/scene_cabin.png"
+#define PNG_SCENE_FENCE "./media/scene_fence.png"
+#define PNG_SCENE_GRASS "./media/scene_grass.png"
+#define PNG_SCENE_BUSH "./media/scene_bush.png"
+#define PNG_SCENE_WINDMILL "./media/scene_windmill.png"
+#define PNG_SCENE_BARN "./media/scene_barn.png"
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -133,6 +139,13 @@ struct game_graphics{
 	struct texture scene_tree_oak;
 	struct texture scene_tree_willow;
 	struct texture scene_tree_pine;
+	struct texture scene_cabin;
+	
+	struct texture scene_fence;
+	struct texture scene_grass;
+	struct texture scene_bush;
+	struct texture scene_barn;
+	struct texture scene_windmill;
 
 };
 

@@ -145,6 +145,49 @@ static int main_load_media(struct game_context *ctx)
 		return ret;
 	}
 
+	ret = load_texture_from_file(ctx, PNG_SCENE_CABIN, &ctx->gfx.scene_cabin);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(ctx, PNG_SCENE_FENCE, &ctx->gfx.scene_fence);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(ctx, PNG_SCENE_GRASS, &ctx->gfx.scene_grass);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(ctx, PNG_SCENE_WINDMILL, &ctx->gfx.scene_windmill);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(ctx, PNG_SCENE_BARN, &ctx->gfx.scene_barn);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(ctx, PNG_SCENE_BUSH, &ctx->gfx.scene_bush);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
 		printf("[%s] Failed to load game PNG!\n", __func__);

@@ -615,33 +615,46 @@ int track_build(struct game_context *ctx)
 	/////// add trees --- oak
 	for(int i = 0; i < nb_segments_added / 3; i+=20) {
 		ctx->segments[i].sprite_desc.position = 1;
-		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_grass;
 	}
 	for(int i = 10; i < nb_segments_added / 3 ; i+=20) {
 		ctx->segments[i].sprite_desc.position = -1;
-		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_oak;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_bush;
 	}
 
 	/////// add trees --- willow
 	for(int i = nb_segments_added / 3; i < nb_segments_added * 2/ 3; i+=20) {
 		ctx->segments[i].sprite_desc.position = 1;
-		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_fence;
 	}
 	for(int i = nb_segments_added / 3 + 10; i < nb_segments_added * 2/ 3 ; i+=20) {
 		ctx->segments[i].sprite_desc.position = -1;
-		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_willow;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_barn;
 	}
 
 	/////// add trees --- pine
 	for(int i = nb_segments_added * 2 / 3; i < nb_segments_added; i+=20) {
 		ctx->segments[i].sprite_desc.position = 1;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
 		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
 	}
 	for(int i = nb_segments_added * 2 / 3 + 10; i < nb_segments_added; i+=20) {
 		ctx->segments[i].sprite_desc.position = -1;
-		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
+		//ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_tree_pine;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_windmill;
 	}
-	return 0;
 
+
+	/*for(int i = 0; i < nb_segments_added; i+=40) {
+		ctx->segments[i].sprite_desc.position = 4.f;
+		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_cabin;
+	}*/
+
+
+	return 0;
 }
 
