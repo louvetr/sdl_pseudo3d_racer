@@ -175,6 +175,11 @@ struct scene_sprite_desc {
 	float position;	
 };
 
+struct scene_segment_desc {
+	int nb_sprites;
+	struct scene_sprite_desc *sprite;
+};
+
 struct road_segment {
 
 	struct segment_point p1;
@@ -182,7 +187,8 @@ struct road_segment {
 	//enum road_curve curve;
 	float curve;
 	enum color_road color;
-	struct scene_sprite_desc sprite_desc;
+	struct scene_segment_desc *scene;
+	//struct scene_sprite_desc sprite_desc;
 
 };
 
