@@ -610,26 +610,100 @@ int track_build(struct game_context *ctx)
 
 	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
 
-	struct scene_sprite_desc *oak_desc =
+	//////////////////////////////////////////////////////////////
+	struct scene_sprite_desc *oak_desc_1 =
 		calloc(1, sizeof(struct scene_sprite_desc));
-	if (!oak_desc)
+	if (!oak_desc_1)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_1->position = 1;
+	oak_desc_1->t = &ctx->gfx.scene_tree_oak;
 
-	oak_desc->position = 1;
-	oak_desc->t = &ctx->gfx.scene_tree_oak;
+	struct scene_sprite_desc *oak_desc_2 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_2)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_2->position = 3;
+	oak_desc_2->t = &ctx->gfx.scene_tree_oak;
 
+	struct scene_sprite_desc *oak_desc_3 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_3)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_3->position = 5;
+	oak_desc_3->t = &ctx->gfx.scene_tree_oak;
 
-	struct scene_segment_desc *seg_oak =
+	struct scene_sprite_desc *oak_desc_4 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_4)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_4->position = 7;
+	oak_desc_4->t = &ctx->gfx.scene_tree_oak;
+
+	struct scene_sprite_desc *oak_desc_5 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_5)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_5->position = 2;
+	oak_desc_5->t = &ctx->gfx.scene_tree_oak;
+
+	struct scene_sprite_desc *oak_desc_6 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_6)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_6->position = 4;
+	oak_desc_6->t = &ctx->gfx.scene_tree_oak;
+
+	struct scene_sprite_desc *oak_desc_7 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_7)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_7->position = 6;
+	oak_desc_7->t = &ctx->gfx.scene_tree_oak;
+
+	/*struct scene_sprite_desc *oak_desc_4 =
+		calloc(1, sizeof(struct scene_sprite_desc));
+	if (!oak_desc_4)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+	oak_desc_4->position = 7;
+	oak_desc_4->t = &ctx->gfx.scene_tree_oak;*/
+
+	/////////////////////////////////////////////////////////
+
+	struct scene_segment_desc *seg_oaks_forest_1 =
 		calloc(1, sizeof(struct scene_segment_desc));
-	if (!seg_oak)
+	if (!seg_oaks_forest_1)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
-	seg_oak->nb_sprites = 1;
-	seg_oak->sprite = oak_desc;
+	seg_oaks_forest_1->nb_sprites = 4;
+	seg_oaks_forest_1->sprite = calloc(seg_oaks_forest_1->nb_sprites,
+					   sizeof(struct scene_sprite_desc *));
+
+	seg_oaks_forest_1->sprite[0] = oak_desc_1;
+	seg_oaks_forest_1->sprite[1] = oak_desc_2;
+	seg_oaks_forest_1->sprite[2] = oak_desc_3;
+	seg_oaks_forest_1->sprite[3] = oak_desc_4;
 
 
-	for (int i = 0; i < nb_segments_added; i += 20)
-		ctx->segments[i].scene = seg_oak;
+	struct scene_segment_desc *seg_oaks_forest_2 =
+		calloc(1, sizeof(struct scene_segment_desc));
+	if (!seg_oaks_forest_2)
+		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
+
+	seg_oaks_forest_2->nb_sprites = 3;
+	seg_oaks_forest_2->sprite = calloc(seg_oaks_forest_2->nb_sprites,
+					   sizeof(struct scene_sprite_desc *));
+
+	seg_oaks_forest_2->sprite[0] = oak_desc_5;
+	seg_oaks_forest_2->sprite[1] = oak_desc_6;
+	seg_oaks_forest_2->sprite[2] = oak_desc_7;
+
+
+	for (int i = 0; i < nb_segments_added; i += 10)
+		ctx->segments[i].scene = seg_oaks_forest_1;
+
+	for (int i = 5; i < nb_segments_added; i += 10)
+		ctx->segments[i].scene = seg_oaks_forest_2;
+
 
 #if 0
 	/////// add trees --- oak

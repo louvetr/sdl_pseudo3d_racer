@@ -177,7 +177,7 @@ struct scene_sprite_desc {
 
 struct scene_segment_desc {
 	int nb_sprites;
-	struct scene_sprite_desc *sprite;
+	struct scene_sprite_desc **sprite;
 };
 
 struct road_segment {
