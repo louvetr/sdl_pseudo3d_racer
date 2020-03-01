@@ -86,6 +86,8 @@ static int main_init(struct game_context *ctx)
 
 static int main_load_media(struct game_context *ctx)
 {
+	// TODO, use macro for texture loading
+
 	int ret;
 	// load png
 	ret = load_texture_from_file(ctx, PNG_CAR_PLAYER, &ctx->gfx.car_player);
@@ -242,7 +244,7 @@ static int main_ctx_init(struct game_context *ctx)
 {
 	ctx->dt = 0;
 	ctx->step = 1000 / FPS;
-	ctx->nb_segments = 500; // ???????????????????
+	ctx->nb_segments = 0; // to be set later
 
 	ctx->segments = calloc(ctx->nb_segments, sizeof(struct road_segment));
 	if (!ctx->segments) {
@@ -253,16 +255,16 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->road_width = 2100;
 	// ctx->segment_length = 200;
 	ctx->rumble_length = RUMBLE_LENGTH;
-	ctx->track_length = 0; // null;
+	ctx->track_length = 0;
 	ctx->lanes = 3;
 	ctx->field_of_view = 100;
 	ctx->camera_height = 1000;
 	ctx->camera_depth = 0;
-	ctx->draw_distance = 400; // 300 ????
+	ctx->draw_distance = 500;
 	ctx->player_x = 0;
 	ctx->player_z = 0;
 	ctx->fog_density = 5;
-	ctx->position = 0; // TODO: 0 ????
+	ctx->position = 0;
 	ctx->speed = 0;
 	ctx->max_speed = (2 * ROAD_SEGMENT_LENGTH) / ctx->step;
 	// ctx->accel = ctx->max_speed / 5;

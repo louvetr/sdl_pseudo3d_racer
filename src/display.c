@@ -15,8 +15,6 @@ enum background_layer {
 };
 
 
-char seglist_prev[2048];
-
 /*struct color_desc color_bright_road_asphalt = {
 	.r = 169,
 	.g = 169,
@@ -447,9 +445,9 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 			} else if (tmp_idx > tmp_max_y_bis_idx) {
 				if (sprite_y >= ctx->max_y_bis) {
-					SDL_Log("[%s:%d] no CLIPPING\n",
+					/*SDL_Log("[%s:%d] no CLIPPING\n",
 						__func__,
-						__LINE__);
+						__LINE__);*/
 					continue;
 				}
 
@@ -511,9 +509,6 @@ static int display_render_road(struct game_context *ctx)
 
 	float highest_world_y = 0;
 
-	char seglist[2048];
-	memset(seglist, 0, 2048);
-
 	/*SDL_Log("[%s] ENTER, base_segment_idx = %d\n",
 		__func__,
 		base_segment_idx);*/
@@ -535,8 +530,6 @@ static int display_render_road(struct game_context *ctx)
 				ctx->segments[base_segment_idx].p1.world.z;*/
 			add_z_offset_to_first_segments = 1;
 		}
-
-		sprintf(seglist, "%s%03d,", seglist, idx);
 
 		// world to screen conversion
 		logic_project_coord(
@@ -687,70 +680,8 @@ static int display_render_road(struct game_context *ctx)
 		last_seg_idx,
 		highest_world_y);*/
 
-	// if (dbgcpt % 10)
-	/*if (memcmp(seglist_prev, seglist, 2048))
-		SDL_Log("%s\n", seglist);
-
-	memcpy(seglist_prev, seglist, 2048);
-	dbgcpt++;*/
-
 	return 0;
 }
-
-#if 0
-static int display_screen_game_test(struct game_context *ctx)
-{
-	int ret = 0;
-
-
-	// clear screen
-	// SDL_SetRenderDrawColor(ctx->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	// SDL_RenderClear(ctx->renderer);
-
-	SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 0xFF);
-	// SDL_SetRenderDrawColor(ctx->renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-	SDL_RenderClear(ctx->renderer);
-
-	// draw a rectangle
-	/*SDL_Color text_color = {255, 255, 255};
-	SDL_Rect r;
-	// outer border
-	r.w = SCREEN_WIDTH * 2 / 3;
-	r.h = SCREEN_HEIGHT / 4;
-	r.x = SCREEN_WIDTH / 2 - r.w / 2;
-	r.y = SCREEN_HEIGHT / 2 - r.h / 2;*/
-	/*SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 255);
-	SDL_RenderFillRect(ctx->renderer, &r);*/
-
-
-	Sint16 s[4] = {400, 800, 1000, 200};
-	Sint16 t[4] = {150, 150, 580, 580};
-
-	filledPolygonRGBA(ctx->renderer, s, t, 4, 100, 100, 100, 255);
-
-	// SetViewport(ctx->renderer,0,60,SCREEN_WIDTH/2,60+(SCREEN_HEIGHT-80)/2);
-	// SetViewport(ctx->renderer, 300, 500, 1100 , 700);
-	/*filledTrigonRGBA (ctx->renderer, 700, 500, 300, 700, 1100, 700,
-		200, 200, 200, 255);*/
-
-	filledTrigonRGBA(
-		ctx->renderer, 100, 50, 50, 100, 150, 100, 200, 200, 200, 255);
-
-	// filledTrigonColor (ctx->renderer, 100, 50, 50, 100, 150, 100,
-	// 0xff00ffcc);
-
-	filledCircleColor(ctx->renderer,
-			  SCREEN_WIDTH / 4,
-			  SCREEN_HEIGHT / 4,
-			  30,
-			  0xff00ffcc);
-
-	// update screen
-	SDL_RenderPresent(ctx->renderer);
-
-	return ret;
-}
-#endif
 
 
 // render a background layer

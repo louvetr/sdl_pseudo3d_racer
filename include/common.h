@@ -213,9 +213,7 @@ struct game_context {
     int nb_segments;
 	// array of road segments
 	struct road_segment *segments; // array of road segments
-	// var background    = null;                    // our background image
-	// (loaded below) var sprites       = null;                    // our
-	// spritesheet (loaded below) var resolution    = null; // scaling
+
 	// factor to provide resolution independence (computed) actually half
 	// the roads width, easier math if the road spans from -roadWidth to
 	// +roadWidth
@@ -350,8 +348,6 @@ static inline float inline_limit(float value, float min, float max)
 
 static inline int  inline_increase ( int start, int increment, int max)
 {
-	//SDL_Log("[%s] ENTER with %d, %d, %d\n", __func__, start, increment, max);
-
 	if(max == 0) {
 		SDL_Log("[%s] ERROR: max == 0", __func__);
 		return 0;
@@ -369,8 +365,6 @@ static inline int  inline_increase ( int start, int increment, int max)
 
 
 static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
-  //return ctx->segments[Math.floor(z/segmentLength) % segments.length];
-  //return ctx->segments[(z/ctx->segment_length) % ctx->nb_segments];
 
   return ((z/ROAD_SEGMENT_LENGTH) % ctx->nb_segments);
 }

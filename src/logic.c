@@ -66,9 +66,10 @@ static int logic_game(struct game_context *ctx)
 	else if (ctx->keys.right)
 		ctx->player_x = ctx->player_x + dx;
 
-	ctx->player_x = ctx->player_x - (dx * speed_ratio *
-					 ctx->segments[ctx->player_segment].curve *
-					 ctx->centrifugal);
+	ctx->player_x =
+		ctx->player_x -
+		(dx * speed_ratio * ctx->segments[ctx->player_segment].curve *
+		 ctx->centrifugal);
 
 	// if (!(cpt % 30))
 	// if (player_x_prev != ctx->player_x) {
@@ -152,16 +153,18 @@ static int logic_game(struct game_context *ctx)
 
 
 	ctx->player_y = /*ctx->segments[player_segment].p2.world.y;*/
-		inline_interpolate(ctx->segments[ctx->player_segment].p1.world.y,
-				   ctx->segments[ctx->player_segment].p2.world.y,
-				   player_ratio);
+		inline_interpolate(
+			ctx->segments[ctx->player_segment].p1.world.y,
+			ctx->segments[ctx->player_segment].p2.world.y,
+			player_ratio);
 
 	/*if (ctx->player_y - ctx->segments[player_segment].p2.world.y != 0)
 		SDL_Log("[%s] player_y - p2.world.y = %f \n",
 			__func__,
 			ctx->player_y -
 				ctx->segments[player_segment].p2.world.y);*/
-	//SDL_Log("[%s] curve = %f \n", __func__, ctx->segments[ctx->player_segment].curve);
+	// SDL_Log("[%s] curve = %f \n", __func__,
+	// ctx->segments[ctx->player_segment].curve);
 
 	return 0;
 }
@@ -177,18 +180,9 @@ int logic_project_coord(struct segment_point *p,
 			int road_width)
 {
 	// translate coordinates from world to camera
-	/*p->camera.x = (p->world.x || 0) - camera_x;
-	p->camera.y = (p->world.y || 0) - camera_y;
-	p->camera.z = (p->world.z || 0) - camera_z;*/
 	p->camera.x = p->world.x - camera_x;
 	p->camera.y = p->world.y - camera_y;
 	p->camera.z = p->world.z - camera_z + first_segments_z_offset;
-
-	/*if (p->camera.z < 0) {
-		SDL_Log("[%s] p->camera.z = %f, p->world.z = %f, camera_z
-	=%d\n",
-		__func__, p->camera.z, p->world.z, camera_z);
-	}*/
 
 
 	// compute scaling factor
@@ -197,19 +191,12 @@ int logic_project_coord(struct segment_point *p,
 	else
 		p->screen.scale = 1;
 
-
 	// TODO: scaling num/den, rounding
 	// scale coordinate to screen
-	p->screen.x = /*Math.round(*/
-		(width / 2) + (p->screen.scale * p->camera.x * width / 2) /*)*/;
-	p->screen.y = /*Math.round(*/ (height / 2) -
-		      (p->screen.scale * p->camera.y * height / 2) /*)*/;
-	p->screen.w =
-		/*Math.round(*/ (p->screen.scale * road_width * width /
-				 2) /*)*/;
-
-	// p->screen.y = p->screen.y * 98 / 100;
-	// p->screen.y = p->screen.y;
+	p->screen.x = (width / 2) + (p->screen.scale * p->camera.x * width / 2);
+	p->screen.y =
+		(height / 2) - (p->screen.scale * p->camera.y * height / 2);
+	p->screen.w = (p->screen.scale * road_width * width / 2);
 
 	return 0;
 }
@@ -217,7 +204,6 @@ int logic_project_coord(struct segment_point *p,
 
 int main_logic(struct game_context *ctx)
 {
-
 
 	if (!ctx) {
 		printf("invalid parameter\n");
