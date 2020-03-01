@@ -375,8 +375,8 @@ static int display_render_scenery(struct game_context *ctx)
 
 			float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
-			int destW = (seg->scene->sprite[j]->t->w * screen_scale *
-				     SCREEN_WIDTH / 2) *
+			int destW = (seg->scene->sprite[j]->t->w *
+				     screen_scale * SCREEN_WIDTH / 2) *
 				    (SPRITES_SCALE * (float)ctx->road_width);
 
 			// TODO: apply 0.9 coeff only for trees
@@ -384,7 +384,7 @@ static int display_render_scenery(struct game_context *ctx)
 				       (float)seg->scene->sprite[j]->t->h *
 					       zoom /** .7f*/ /*+ 10*/;
 
-			RLTDBG_texture_render_log = 1;
+			RLTDBG_texture_render_log = 0;
 
 			SDL_Rect *r = NULL;
 
@@ -413,9 +413,9 @@ static int display_render_scenery(struct game_context *ctx)
 			if (tmp_idx > tmp_max_y_idx) {
 
 				if (sprite_y >= ctx->max_y) {
-					SDL_Log("[%s:%d] no CLIPPING\n",
+					/*SDL_Log("[%s:%d] no CLIPPING\n",
 						__func__,
-						__LINE__);
+						__LINE__);*/
 					continue;
 				}
 
@@ -427,18 +427,21 @@ static int display_render_scenery(struct game_context *ctx)
 				int clip_h = ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
 					(float)(ctx->max_y - sprite_y) / zoom;
-				if (clip_h <
-					    seg->scene->sprite[j]->t->h * zoom &&
+				if (clip_h < seg->scene->sprite[j]->t->h *
+						     zoom &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
-					SDL_Log("[%s] CLIPPING --- idx = %d, y_max_idx = %d, y_max = %d, sprite_y = %d, clip_h = %d, clip_h_inv_h = %d ------------------------\n",
+					/*SDL_Log("[%s] CLIPPING --- idx = %d,
+					   y_max_idx = %d, y_max = %d, sprite_y
+					   = %d, clip_h = %d, clip_h_inv_h = %d
+					   ------------------------\n",
 						__func__,
 						idx,
 						ctx->max_y_idx,
 						ctx->max_y,
 						sprite_y,
 						clip_h,
-						clip_h_inv_scale);
+						clip_h_inv_scale);*/
 				} else {
 					r->h = seg->scene->sprite[j]->t->h;
 				}
@@ -459,18 +462,18 @@ static int display_render_scenery(struct game_context *ctx)
 				int clip_h_inv_scale =
 					(float)(ctx->max_y_bis - sprite_y) /
 					zoom;
-				if (clip_h <
-					    seg->scene->sprite[j]->t->h * zoom &&
+				if (clip_h < seg->scene->sprite[j]->t->h *
+						     zoom &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
 				} else {
 					r->h = seg->scene->sprite[j]->t->h;
 				}
-			} else {
+			} /*else {
 				SDL_Log("[%s:%d] no CLIPPING\n",
 					__func__,
 					__LINE__);
-			}
+			}*/
 
 			ret = texture_render(ctx,
 					     seg->scene->sprite[j]->t,
@@ -677,11 +680,12 @@ static int display_render_road(struct game_context *ctx)
 		//}
 	}
 
-	SDL_Log("[%s] last_seg_idx_lane = %d, last_seg_idx = %d, highest_world_y = %f\n",
+	/*SDL_Log("[%s] last_seg_idx_lane = %d, last_seg_idx = %d,
+	   highest_world_y = %f\n",
 		__func__,
 		last_seg_idx_lane,
 		last_seg_idx,
-		highest_world_y);
+		highest_world_y);*/
 
 	// if (dbgcpt % 10)
 	/*if (memcmp(seglist_prev, seglist, 2048))
