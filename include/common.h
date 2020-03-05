@@ -23,6 +23,9 @@
 #define FPS 30;
 #define MS_PER_SEC 1000
 
+#define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
+//#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
+
 #define PNG_CAR_PLAYER "./media/car_rear_01.png"
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
@@ -111,6 +114,8 @@ enum road_sector_length {
  	SECTOR_LENGTH_LONG = 100
 };
 
+static SDL_Rect hitbox_oak = { .x=262 , .y=0 , .w=240 , .h=711  };
+
 /////////////////////////////////////////////////////////////////
 // structures
 /////////////////////////////////////////////////////////////////
@@ -146,6 +151,18 @@ struct game_graphics{
 	struct texture scene_bush;
 	struct texture scene_barn;
 	struct texture scene_windmill;
+	
+	//struct texture font_game_speed_title;
+	struct texture font_game_speed_value;
+	struct texture font_game_speed_unit;
+	//struct texture font_game_position_title;
+	struct texture font_game_position_value;
+	struct texture font_game_position_unit;
+	struct texture font_game_lap_title;
+	struct texture font_game_lap_value;
+	/*struct texture font_game_laptime_title;
+	struct texture font_game_laptime_value;
+	struct texture font_game_laptime_unit;*/
 
 };
 
@@ -172,7 +189,10 @@ struct segment_point {
 
 struct scene_sprite_desc {
 	struct texture *t;
-	float position;	
+	float position;
+	float scale;
+	int flip;
+	SDL_Rect *hitbox;	
 };
 
 struct scene_segment_desc {
@@ -288,7 +308,9 @@ struct game_context {
     enum game_status status_prev;
 
     // font to display text
-    TTF_Font *font;
+    TTF_Font *sc_font_big;
+    TTF_Font *sc_font_medium;
+
     TTF_Font *font_choice;
     TTF_Font *font_game_text;
 

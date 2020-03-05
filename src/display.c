@@ -96,6 +96,43 @@ static int RLTDBG_texture_render_log = 0;
 // static functions definition
 /////////////////////////////////////////////////////////////////
 
+
+static int load_text_message(struct game_context *ctx,
+			     TTF_Font *font,
+			     struct texture *t,
+			     char *string,
+			     SDL_Color text_color)
+{
+	if (t->texture)
+		SDL_DestroyTexture(t->texture);
+
+	SDL_Surface *text_surface =
+		TTF_RenderText_Solid(font, string, text_color);
+
+	if (!text_surface) {
+		SDL_Log("[%s] Unable to render text surface! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	t->texture = SDL_CreateTextureFromSurface(ctx->renderer, text_surface);
+	if (!t->texture) {
+		SDL_Log("[%s] Unable to create texture from rendered text! SDL Error: %s\n",
+			__func__,
+			SDL_GetError());
+		return -EINVAL;
+	}
+
+	t->w = text_surface->w;
+	t->h = text_surface->h;
+
+	SDL_FreeSurface(text_surface);
+
+	return 0;
+}
+
+
 static int texture_render(struct game_context *ctx,
 			  struct texture *t,
 			  int x,
@@ -313,6 +350,123 @@ static int display_render_segment(struct game_context *ctx,
 	return 0;
 }
 
+
+static int display_load_render_text(struct game_context *ctx,
+				    TTF_Font *font,
+				    struct texture *t,
+				    char *msg,
+				    SDL_Color *color,
+				    int x,
+				    int y)
+{
+	int ret;
+
+	ret = load_text_message(ctx, font, t, msg, *color);
+	ret = texture_render(ctx, t, x, y, NULL, 1);
+
+	// TODO: manage error
+
+	return ret;
+}
+
+static int display_render_text(struct game_context *ctx)
+{
+	int ret;
+	SDL_Rect r;
+	SDL_Color text_color = {0, 0, 0};
+	char speed[8];
+	sprintf(speed,
+		"%03d",
+		(int)(ctx->speed * 240.f /
+		      ctx->max_speed)); // TODO: set max_speed in kph per car
+
+	// Right
+	// part///////////////////////////////////////////////////////////////
+	// speed
+	/*display_load_render_text(
+		ctx,
+		ctx->sc_font_medium,
+		&ctx->gfx.font_game_speed_title,
+		"speed:",
+		&text_color,
+		SCREEN_WIDTH - ctx->gfx.font_game_speed_title.w * 15 / 10,
+		0);*/
+	display_load_render_text(ctx,
+				 ctx->sc_font_medium,
+				 &ctx->gfx.font_game_speed_unit,
+				 "kph",
+				 &text_color,
+				 SCREEN_WIDTH - ctx->gfx.font_game_speed_unit.w,
+				 0 /*ctx->gfx.font_game_speed_title.h*/);
+	display_load_render_text(ctx,
+				 ctx->sc_font_big,
+				 &ctx->gfx.font_game_speed_value,
+				 speed,
+				 &text_color,
+				 SCREEN_WIDTH -
+					 ctx->gfx.font_game_speed_value.w -
+					 ctx->gfx.font_game_speed_unit.w,
+				 0 /*ctx->gfx.font_game_speed_title.h*/);
+
+
+	// Mid
+	// part///////////////////////////////////////////////////////////////
+	// position
+	/*display_load_render_text(
+		ctx,
+		ctx->sc_font_medium,
+		&ctx->gfx.font_game_position_title,
+		"position:",
+		&text_color,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_title.w / 2,
+		0);*/
+	display_load_render_text(
+		ctx,
+		ctx->sc_font_big,
+		&ctx->gfx.font_game_position_value,
+		" 1",
+		&text_color,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2,
+		0 /*ctx->gfx.font_game_position_title.h*/);
+	display_load_render_text(
+		ctx,
+		ctx->sc_font_medium,
+		&ctx->gfx.font_game_position_unit,
+		"st",
+		&text_color,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2 +
+			ctx->gfx.font_game_position_value.w,
+		0 /*ctx->gfx.font_game_position_unit.h*/);
+
+	// Left
+	// part///////////////////////////////////////////////////////////////
+	// lap
+	/*display_load_render_text(ctx,
+				 ctx->sc_font_medium,
+				 &ctx->gfx.font_game_lap_title,
+				 "lap:",
+				 &text_color,
+				 0,
+				 0);*/
+	display_load_render_text(ctx,
+				 ctx->sc_font_big,
+				 &ctx->gfx.font_game_lap_value,
+				 "1/5",
+				 &text_color,
+				 0,
+				 0 /*ctx->gfx.font_game_lap_title.h*/);
+	display_load_render_text(ctx,
+				 ctx->sc_font_medium,
+				 &ctx->gfx.font_game_lap_title,
+				 "lap",
+				 &text_color,
+				 ctx->gfx.font_game_lap_value.w,
+				 0 /*ctx->gfx.font_game_lap_title.h*/);
+
+	return 0;
+}
+
+
 static int display_render_scenery(struct game_context *ctx)
 {
 	int ret;
@@ -378,9 +532,9 @@ static int display_render_scenery(struct game_context *ctx)
 				    (SPRITES_SCALE * (float)ctx->road_width);
 
 			// TODO: apply 0.9 coeff only for trees
-			int sprite_y = (float)seg->p1.screen.y -
-				       (float)seg->scene->sprite[j]->t->h *
-					       zoom /** .7f*/ /*+ 10*/;
+			int sprite_y =
+				(float)seg->p1.screen.y -
+				(float)seg->scene->sprite[j]->t->h * zoom;
 
 			RLTDBG_texture_render_log = 0;
 
@@ -443,6 +597,7 @@ static int display_render_scenery(struct game_context *ctx)
 				} else {
 					r->h = seg->scene->sprite[j]->t->h;
 				}
+				// sprite is behind a hill, crop it accodingly
 			} else if (tmp_idx > tmp_max_y_bis_idx) {
 				if (sprite_y >= ctx->max_y_bis) {
 					/*SDL_Log("[%s:%d] no CLIPPING\n",
@@ -879,6 +1034,9 @@ static int display_screen_game(struct game_context *ctx)
 				     60,
 				     100);
 	}*/
+
+	// render scenery text message
+	ret = display_render_text(ctx);
 
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);

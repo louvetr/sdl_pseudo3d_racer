@@ -217,12 +217,19 @@ static int main_load_media(struct game_context *ctx)
 	}*/
 
 	// Open the font
-	/*ctx->font = TTF_OpenFont(PATH_FONT, 52);
-	if (!ctx->font) {
+	ctx->sc_font_big = TTF_OpenFont(SOFACHROME_FONT, 72);
+	if (!ctx->sc_font_big) {
 		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
 		       __func__, TTF_GetError());
 		return -EINVAL;
-	}*/
+	}
+	
+	ctx->sc_font_medium = TTF_OpenFont(SOFACHROME_FONT, 36);
+	if (!ctx->sc_font_medium) {
+		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
+		       __func__, TTF_GetError());
+		return -EINVAL;
+	}
 
 	SDL_Log("media loaded\n");
 
