@@ -279,8 +279,10 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->breaking = ctx->max_speed * -1;
 	// ctx->decel = (ctx->max_speed / 5) * -1;
 	ctx->decel = (ctx->max_speed / 50) * -1;
-	ctx->off_road_decel = (ctx->max_speed / 20) * -1;
-	ctx->off_road_limit = (ctx->max_speed / 3);
+	//ctx->off_road_decel = (ctx->max_speed / 20) * -1;
+	ctx->off_road_decel = (ctx->max_speed / 30) * -1;
+	//ctx->off_road_limit = (ctx->max_speed / 3);
+	ctx->off_road_limit = (ctx->max_speed / 2);
 	ctx->centrifugal = 0.3;
 
 	ctx->status_cur = GAME_STATE_GAME;
