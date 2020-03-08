@@ -10,11 +10,65 @@
 /////////////////////////////////////////////////////////////////
 
 
-static int logic_game(struct game_context *ctx)
+static int logic_game_collision(struct game_context *ctx)
 {
 
-	ctx->player_segment =
-		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+	int idx = (ctx->player_segment + 3) % ctx->nb_segments;
+	struct road_segment *seg = &ctx->segments[idx];
+	struct scene_sprite_desc *sprite_left = NULL;
+	struct scene_sprite_desc *sprite_right = NULL;
+	float closest_right_position = 100.f;
+	float closest_left_position = -100.f;
+
+	if (!seg->scene)
+		return 0;
+
+	for (int j = 0; j < seg->scene->nb_sprites; j++) {
+		if (seg->scene->sprite[j]->position > 0) {
+			if (seg->scene->sprite[j]->position <
+			    closest_right_position) {
+				sprite_right = seg->scene->sprite[j];
+				closest_right_position =
+					seg->scene->sprite[j]->position;
+			}
+		} else {
+			if (seg->scene->sprite[j]->position >
+			    closest_left_position) {
+				sprite_left = seg->scene->sprite[j];
+				closest_left_position =
+					seg->scene->sprite[j]->position;
+			}
+		}
+	}
+
+	int sprite_left_hb_x = 0;
+	int sprite_right_hb_x = SCREEN_WIDTH;
+	/*if (sprite_left->hitbox)
+		sprite_left_hb_x = (sprite_left->hitbox->x +
+	sprite_left->hitbox->w) * seg->p1.screen.scale; else*/
+	if (sprite_left->scaled_x < SCREEN_WIDTH)
+		sprite_left_hb_x =
+			sprite_left->scaled_x + sprite_left->t->w * sprite_left->scale;
+	/*if (sprite_right->hitbox)
+		sprite_right_hb_x = sprite_right->hitbox->x *
+	seg->p1.screen.scale; else*/
+	if (sprite_right->scaled_x > 0 && sprite_right->scaled_x < SCREEN_WIDTH)
+		sprite_right_hb_x = sprite_right->scaled_x;
+	// check car collision with sprite on left
+	if (ctx->player_car_x_in_pixels < sprite_left_hb_x) {
+		SDL_Log("[%s] collision detected on LEFT\n", __func__);
+	} else if (ctx->player_car_x_in_pixels + ctx->gfx.car_player.w >
+		   sprite_right_hb_x) {
+		SDL_Log("[%s] collision detected on RIGHT\n", __func__);
+	}
+
+	return 0;
+}
+
+static int logic_game_control(struct game_context *ctx)
+{
+
+
 	float speed_ratio = ctx->speed / ctx->max_speed;
 	float player_ratio =
 		(float)((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
@@ -168,6 +222,21 @@ static int logic_game(struct game_context *ctx)
 
 	return 0;
 }
+
+
+static int logic_game(struct game_context *ctx)
+{
+	int ret;
+
+	ctx->player_segment =
+		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+
+	ret = logic_game_collision(ctx);
+	ret = logic_game_control(ctx);
+
+	return ret;
+}
+
 
 int logic_project_coord(struct segment_point *p,
 			int first_segments_z_offset,

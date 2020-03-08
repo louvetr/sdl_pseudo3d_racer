@@ -114,6 +114,9 @@ enum road_sector_length {
  	SECTOR_LENGTH_LONG = 100
 };
 
+
+static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
+
 static SDL_Rect hitbox_oak = { .x=262 , .y=0 , .w=240 , .h=711  };
 
 /////////////////////////////////////////////////////////////////
@@ -192,7 +195,9 @@ struct scene_sprite_desc {
 	float position;
 	float scale;
 	int flip;
-	SDL_Rect *hitbox;	
+	SDL_Rect *hitbox;
+	int scaled_x;	
+	//int scaled_w;	// TODO: useless ???
 };
 
 struct scene_segment_desc {
@@ -297,6 +302,9 @@ struct game_context {
 	float centrifugal;
 	// index of the current player segment in segments array
 	int player_segment;
+
+	int player_car_x_in_pixels;
+
     // window
     SDL_Window *window;
     // renderer
