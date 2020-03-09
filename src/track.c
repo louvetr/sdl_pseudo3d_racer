@@ -1,9 +1,8 @@
 #include "common.h"
 
 
-static struct scene_sprite_desc *create_scene_sprite_desc(struct texture *t,
-							  float position,
-							  SDL_Rect *hitbox)
+static struct scene_sprite_desc *
+create_scene_sprite_desc(struct texture *t, float position, SDL_Rect *hitbox)
 {
 	struct scene_sprite_desc *sprite_desc =
 		calloc(1, sizeof(struct scene_sprite_desc));
@@ -629,35 +628,35 @@ int track_build(struct game_context *ctx)
 
 	//////////////////////////////////////////////////////////////
 
-	struct scene_sprite_desc *oak_desc_p1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 1, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p2 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 2, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p3 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 3, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p4 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 4, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p5 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 5, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p6 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 6, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_p7 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, 7, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 1, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p2 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 2, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p3 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 3, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p4 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 4, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p5 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 5, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p6 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 6, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_p7 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, 7, &hitbox_oak);
 
-	struct scene_sprite_desc *oak_desc_m1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -1, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m2 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -2, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m3 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -3, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m4 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -4, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m5 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -5, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m6 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -6, &hitbox_oak);
-	struct scene_sprite_desc *oak_desc_m7 =
-		create_scene_sprite_desc(&ctx->gfx.scene_tree_oak, -7, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -1, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m2 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -2, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m3 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -3, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m4 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -4, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m5 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -5, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m6 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -6, &hitbox_oak);
+	struct scene_sprite_desc *oak_desc_m7 = create_scene_sprite_desc(
+		&ctx->gfx.scene_tree_oak, -7, &hitbox_oak);
 
 
 	struct scene_sprite_desc *grass_desc_p1 =
@@ -673,15 +672,15 @@ int track_build(struct game_context *ctx)
 	struct scene_sprite_desc *grass_desc_m3 =
 		create_scene_sprite_desc(&ctx->gfx.scene_grass, -4.5, NULL);
 
-	struct scene_sprite_desc *fence_desc_p1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_fence, 1.5, &hitbox_oak);
-	struct scene_sprite_desc *fence_desc_m1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_fence, -1.5, &hitbox_oak);
+	struct scene_sprite_desc *fence_desc_p1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_fence, 1.5, &hitbox_oak);
+	struct scene_sprite_desc *fence_desc_m1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_fence, -1.5, &hitbox_oak);
 
-	struct scene_sprite_desc *windmill_desc_p1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_windmill, 2, &hitbox_oak);
-	struct scene_sprite_desc *bush_desc_m1 =
-		create_scene_sprite_desc(&ctx->gfx.scene_bush, -1.5, &hitbox_oak);
+	struct scene_sprite_desc *windmill_desc_p1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_windmill, 2, &hitbox_oak);
+	struct scene_sprite_desc *bush_desc_m1 = create_scene_sprite_desc(
+		&ctx->gfx.scene_bush, -1.5, &hitbox_oak);
 
 
 	struct scene_sprite_desc *cabin_desc_p1 =
@@ -762,7 +761,7 @@ int track_build(struct game_context *ctx)
 
 	seg_bush_mill->nb_sprites = 2;
 	seg_bush_mill->sprite = calloc(seg_bush_mill->nb_sprites,
-				   sizeof(struct scene_sprite_desc *));
+				       sizeof(struct scene_sprite_desc *));
 
 	seg_bush_mill->sprite[0] = windmill_desc_p1;
 	seg_bush_mill->sprite[1] = bush_desc_m1;
@@ -782,7 +781,7 @@ int track_build(struct game_context *ctx)
 	/////////////////////////////////////////////////////////////////////
 
 
-	for (int i = 0; i < nb_segments_added / 4; i += 4)
+	/*for (int i = 0; i < nb_segments_added / 4; i += 4)
 		ctx->segments[i].scene = seg_grass;
 
 	for (int i = nb_segments_added / 4; i < nb_segments_added / 2; i += 8)
@@ -797,10 +796,15 @@ int track_build(struct game_context *ctx)
 
 	for (int i = nb_segments_added * 3 / 4; i < nb_segments_added;
 	     i += 20)
-		ctx->segments[i].scene = seg_bush_mill;
+		ctx->segments[i].scene = seg_bush_mill;*/
 
 	/*for(int i = 0; i < nb_segments_added; i+=30)
 		ctx->segments[i].scene = seg_cabin;*/
+
+	for (int i = 0; i < nb_segments_added; i += 8)
+		ctx->segments[i].scene = seg_oaks_forest_1;
+	for (int i = 4; i < nb_segments_added; i += 8)
+		ctx->segments[i].scene = seg_oaks_forest_2;
 
 #if 0
 	/////// add trees --- oak

@@ -13,7 +13,7 @@
 static int logic_game_collision(struct game_context *ctx)
 {
 
-	int idx = (ctx->player_segment + 3) % ctx->nb_segments;
+	int idx = (ctx->player_segment + 1) % ctx->nb_segments;
 	struct road_segment *seg = &ctx->segments[idx];
 	struct scene_sprite_desc *sprite_left = NULL;
 	struct scene_sprite_desc *sprite_right = NULL;
@@ -43,24 +43,52 @@ static int logic_game_collision(struct game_context *ctx)
 
 	int sprite_left_hb_x = 0;
 	int sprite_right_hb_x = SCREEN_WIDTH;
-	/*if (sprite_left->hitbox)
-		sprite_left_hb_x = (sprite_left->hitbox->x +
-	sprite_left->hitbox->w) * seg->p1.screen.scale; else*/
-	if (sprite_left->scaled_x < SCREEN_WIDTH)
-		sprite_left_hb_x =
-			sprite_left->scaled_x + sprite_left->t->w * sprite_left->scale;
-	/*if (sprite_right->hitbox)
-		sprite_right_hb_x = sprite_right->hitbox->x *
-	seg->p1.screen.scale; else*/
-	if (sprite_right->scaled_x > 0 && sprite_right->scaled_x < SCREEN_WIDTH)
-		sprite_right_hb_x = sprite_right->scaled_x;
+
+	if (sprite_left->scaled_x < SCREEN_WIDTH && sprite_right->scale > 0) {
+		if (sprite_left->hitbox)
+			sprite_left_hb_x = sprite_left->scaled_x +
+					   (sprite_left->hitbox->x +
+					    sprite_left->hitbox->w) *
+						   sprite_left->scale;
+		// TODO: manage flipped sprites
+		/*sprite_left_hb_x =
+		sprite_left->scaled_x +
+		(sprite_left->t->w -
+		 sprite_left->hitbox->x) *
+			sprite_left->scale;*/
+		else
+			// if (sprite_left->scaled_x < SCREEN_WIDTH)
+			sprite_left_hb_x =
+				sprite_left->scaled_x +
+				sprite_left->t->w * sprite_left->scale;
+	}
+
+	if (sprite_right->scaled_x > 0 &&
+	    sprite_right->scaled_x < SCREEN_WIDTH && sprite_right->scale > 0) {
+		if (sprite_right->hitbox)
+			sprite_right_hb_x =
+				sprite_right->scaled_x +
+				sprite_right->hitbox->x * sprite_right->scale;
+		else /*if (sprite_right->scaled_x > 0 &&
+			 sprite_right->scaled_x < SCREEN_WIDTH)*/
+			sprite_right_hb_x = sprite_right->scaled_x;
+	}
 	// check car collision with sprite on left
 	if (ctx->player_car_x_in_pixels < sprite_left_hb_x) {
 		SDL_Log("[%s] collision detected on LEFT\n", __func__);
-	} else if (ctx->player_car_x_in_pixels + ctx->gfx.car_player.w >
+		//} else if (ctx->player_car_x_in_pixels +
+		//(float)ctx->gfx.car_player.w * PLAYER_CAR_SPRITE_ZOOM >
+	} else if (ctx->player_car_x_in_pixels + ctx->gfx.car_player.w / 2 /* TODO: use player car zoom define */>
 		   sprite_right_hb_x) {
 		SDL_Log("[%s] collision detected on RIGHT\n", __func__);
 	}
+	/*if (sprite_right_hb_x < SCREEN_WIDTH)
+		SDL_Log("[%s] car_x (%d) + car_w (%d) = %d, sprite_right_hb_x = %d\n",
+			__func__,
+			ctx->player_car_x_in_pixels,
+			ctx->gfx.car_player.w / 2,
+			ctx->player_car_x_in_pixels + ctx->gfx.car_player.w / 2,
+			sprite_right_hb_x);*/
 
 	return 0;
 }

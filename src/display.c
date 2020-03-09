@@ -1037,7 +1037,7 @@ static int display_screen_game(struct game_context *ctx)
 			     NULL,
 			     /*1,
 			     2*/
-			     0.5);
+			     PLAYER_CAR_SPRITE_ZOOM);
 	/*} else {
 		ret = texture_render(ctx,
 				     &ctx->gfx.car_player,
