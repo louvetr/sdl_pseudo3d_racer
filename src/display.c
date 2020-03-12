@@ -984,7 +984,7 @@ static int display_render_backgrounds(struct game_context *ctx)
 }
 
 
-static int display_screen_game(struct game_context *ctx)
+static int display_screen_race(struct game_context *ctx)
 {
 	int ret = 0;
 	// int player_car_x_in_pixels;
@@ -1080,8 +1080,9 @@ int main_display(struct game_context *ctx)
 		break;
 	case GAME_STATE_QUIT:
 		break;
-	case GAME_STATE_GAME:
-		display_screen_game(ctx);
+	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_COLLISION_SCENE:
+		display_screen_race(ctx);
 		break;
 	case GAME_STATE_PAUSE:
 		break;

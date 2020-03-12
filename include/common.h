@@ -59,6 +59,7 @@ enum game_status {
 	GAME_STATE_CREDIT,
 	GAME_STATE_GAME,
 	GAME_STATE_RACE,
+	GAME_STATE_RACE_COLLISION_SCENE,
 	GAME_STATE_PAUSE,
 	GAME_STATE_GAMEOVER,
 	GAME_STATE_QUIT
@@ -118,6 +119,7 @@ enum road_sector_length {
 
 
 static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
+static float COLLIONSION_SCENE_SHIFT = 0.5f;
 
 static SDL_Rect hitbox_oak = { .x=262 , .y=0 , .w=240 , .h=711  };
 
@@ -306,6 +308,9 @@ struct game_context {
 	int player_segment;
 
 	int player_car_x_in_pixels;
+	
+	// collion related
+	float collision_dst_x;
 
     // window
     SDL_Window *window;

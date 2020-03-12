@@ -4,7 +4,7 @@
 // static functions definition
 /////////////////////////////////////////////////////////////////
 
-static int event_game(struct game_context *ctx)
+static int event_race(struct game_context *ctx)
 {
 	while (SDL_PollEvent(&ctx->event) != 0) {
 		if (ctx->event.type == SDL_QUIT)
@@ -174,8 +174,8 @@ int main_event(struct game_context *ctx)
 		break;
 	case GAME_STATE_QUIT:
 		break;
-	case GAME_STATE_GAME:
-		event_game(ctx);
+	case GAME_STATE_RACE:
+		event_race(ctx);
 		break;
 	case GAME_STATE_PAUSE:
 		break;

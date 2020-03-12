@@ -10,7 +10,7 @@
 /////////////////////////////////////////////////////////////////
 
 
-static int logic_game_collision(struct game_context *ctx)
+static int logic_race_collision(struct game_context *ctx)
 {
 
 	int idx = (ctx->player_segment + 1) % ctx->nb_segments;
@@ -78,12 +78,24 @@ static int logic_game_collision(struct game_context *ctx)
 		SDL_Log("[%s] collision detected on LEFT\n", __func__);
 		//} else if (ctx->player_car_x_in_pixels +
 		//(float)ctx->gfx.car_player.w * PLAYER_CAR_SPRITE_ZOOM >
-	} else if (ctx->player_car_x_in_pixels + ctx->gfx.car_player.w / 2 /* TODO: use player car zoom define */>
-		   sprite_right_hb_x) {
+
+		ctx->collision_dst_x = ctx->player_x + COLLIONSION_SCENE_SHIFT;
+
+		ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
+
+	} else if (ctx->player_car_x_in_pixels +
+			   ctx->gfx.car_player.w /
+				   2 /* TODO: use player car zoom define */
+		   > sprite_right_hb_x) {
 		SDL_Log("[%s] collision detected on RIGHT\n", __func__);
+
+		ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
+
+		ctx->collision_dst_x = ctx->player_x - COLLIONSION_SCENE_SHIFT;
 	}
 	/*if (sprite_right_hb_x < SCREEN_WIDTH)
-		SDL_Log("[%s] car_x (%d) + car_w (%d) = %d, sprite_right_hb_x = %d\n",
+		SDL_Log("[%s] car_x (%d) + car_w (%d) = %d, sprite_right_hb_x =
+	   %d\n",
 			__func__,
 			ctx->player_car_x_in_pixels,
 			ctx->gfx.car_player.w / 2,
@@ -93,7 +105,7 @@ static int logic_game_collision(struct game_context *ctx)
 	return 0;
 }
 
-static int logic_game_control(struct game_context *ctx)
+static int logic_race_control(struct game_context *ctx)
 {
 
 
@@ -204,7 +216,7 @@ static int logic_game_control(struct game_context *ctx)
 		ctx->off_road_decel);*/
 
 
-	// SDL_Log("[offroad] player_x = %f\n", ctx->player_x);
+	//SDL_Log("[offroad] player_x = %f\n", ctx->player_x);
 
 
 	speed_prev = ctx->speed;
@@ -252,19 +264,40 @@ static int logic_game_control(struct game_context *ctx)
 }
 
 
-static int logic_game(struct game_context *ctx)
+static int logic_race(struct game_context *ctx)
 {
 	int ret;
 
 	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 
-	ret = logic_game_collision(ctx);
-	ret = logic_game_control(ctx);
+	ret = logic_race_collision(ctx);
+	ret = logic_race_control(ctx);
 
 	return ret;
 }
 
+static int logic_race_collision_scene(struct game_context *ctx)
+{
+	int ret;
+
+	ctx->player_segment =
+		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+
+	ret = logic_race_control(ctx);
+
+	if (ctx->collision_dst_x < 0) {
+		ctx->player_x = ctx->player_x + COLLIONSION_SCENE_SHIFT / 10.f;
+		if (ctx->player_x >= ctx->collision_dst_x)
+			ctx->status_cur = GAME_STATE_RACE;
+	} else {
+		ctx->player_x = ctx->player_x - COLLIONSION_SCENE_SHIFT / 10.f;
+		if (ctx->player_x <= ctx->collision_dst_x)
+			ctx->status_cur = GAME_STATE_RACE;
+	}
+
+	return ret;
+}
 
 int logic_project_coord(struct segment_point *p,
 			int first_segments_z_offset,
@@ -310,8 +343,11 @@ int main_logic(struct game_context *ctx)
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
 		break;
-	case GAME_STATE_GAME:
-		logic_game(ctx);
+	case GAME_STATE_RACE:
+		logic_race(ctx);
+		break;
+	case GAME_STATE_RACE_COLLISION_SCENE:
+		logic_race_collision_scene(ctx);
 		break;
 	case GAME_STATE_QUIT:
 	case GAME_STATE_PAUSE:
