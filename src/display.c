@@ -14,6 +14,12 @@ enum background_layer {
 	BG_LAYER_SKY_NEAR = 6
 };
 
+struct color_desc color_road_yellow = {
+	.r = 255,
+	.g = 234,
+	.b = 0,
+	.a = 255,
+};
 
 /*struct color_desc color_bright_road_asphalt = {
 	.r = 169,
@@ -177,13 +183,8 @@ static int texture_render(struct game_context *ctx,
 
 	// SET 3rd PARAM to 'clip'
 	// SDL_RenderCopy(ctx->renderer, t->texture, clip, &render_quad);
-	SDL_RenderCopyEx(ctx->renderer,
-			 t->texture,
-			 clip,
-			 &render_quad,
-			 0,
-			 NULL,
-			 flip);
+	SDL_RenderCopyEx(
+		ctx->renderer, t->texture, clip, &render_quad, 0, NULL, flip);
 
 	return 0;
 }
@@ -210,6 +211,7 @@ static int display_render_quad(struct game_context *ctx,
 }
 
 static int display_render_segment(struct game_context *ctx,
+				  int seg_idx,
 				  int width,
 				  int lanes,
 				  int x1,
@@ -282,6 +284,18 @@ static int display_render_segment(struct game_context *ctx,
 						: &color_bright_rumble);
 
 	// render road
+
+	struct color_desc *road_color;
+	if (seg_idx < 3) {
+		road_color = &color_road_yellow;
+	} else {
+		if (color == COLOR_DARK)
+			road_color = &color_dark_road_asphalt;
+		else
+			road_color = &color_bright_road_asphalt;
+	}
+
+
 	display_render_quad(ctx,
 			    x1 - w1,
 			    y1,
@@ -291,8 +305,9 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 - w2,
 			    y2,
+				road_color/*
 			    color == COLOR_DARK ? &color_dark_road_asphalt
-						: &color_bright_road_asphalt);
+						: &color_bright_road_asphalt*/);
 
 	// render lanes
 	if (color == COLOR_DARK && lanes > 0) {
@@ -510,150 +525,151 @@ static int display_render_scenery(struct game_context *ctx)
 			// int sprite_x;
 			/*float zoom*/ /*= (1.f - (float)i /
 		     (float)ctx->draw_distance) * (float)0.5*/
-				//;
-		     seg->scene->sprite[j]->scale =
-			     screen_scale * SCREEN_WIDTH * 2;
+			//;
+			seg->scene->sprite[j]->scale =
+				screen_scale * SCREEN_WIDTH * 2;
 
-		     if (seg->scene->sprite[j]->position >= 0)
-			     seg->scene->sprite[j]->scaled_x =
-				     seg->p1.screen.x +
-				     (int)(screen_scale *
-					   seg->scene->sprite[j]->position *
-					   (float)ctx->road_width *
-					   (float)SCREEN_WIDTH / 2.f);
-		     else
-			     seg->scene->sprite[j]->scaled_x =
-				     seg->p1.screen.x +
-				     (int)(screen_scale *
-					   seg->scene->sprite[j]->position *
-					   (float)ctx->road_width *
-					   (float)SCREEN_WIDTH / 2.f) -
-				     seg->scene->sprite[j]->t->w *
-					     seg->scene->sprite[j]->scale;
+			if (seg->scene->sprite[j]->position >= 0)
+				seg->scene->sprite[j]->scaled_x =
+					seg->p1.screen.x +
+					(int)(screen_scale *
+					      seg->scene->sprite[j]->position *
+					      (float)ctx->road_width *
+					      (float)SCREEN_WIDTH / 2.f);
+			else
+				seg->scene->sprite[j]->scaled_x =
+					seg->p1.screen.x +
+					(int)(screen_scale *
+					      seg->scene->sprite[j]->position *
+					      (float)ctx->road_width *
+					      (float)SCREEN_WIDTH / 2.f) -
+					seg->scene->sprite[j]->t->w *
+						seg->scene->sprite[j]->scale;
 
 
-		     // TODO: filter porperly % sprite width ?
-		     if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
-			     continue;
+			// TODO: filter porperly % sprite width ?
+			if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
+				continue;
 
-		     // float SPRITES_SCALE = 0.3 * (1.f / 80.f);
+			// float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
-		     /*seg->scene->sprite[j]->scaled_w =
-			     (seg->scene->sprite[j]->t->w * screen_scale *
-			      SCREEN_WIDTH / 2) *
-			     (SPRITES_SCALE * (float)ctx->road_width);*/
+			/*seg->scene->sprite[j]->scaled_w =
+				(seg->scene->sprite[j]->t->w * screen_scale *
+				 SCREEN_WIDTH / 2) *
+				(SPRITES_SCALE * (float)ctx->road_width);*/
 
-		     // TODO: apply 0.9 coeff only for trees
-		     int sprite_y = (float)seg->p1.screen.y -
-				    (float)seg->scene->sprite[j]->t->h *
-					    seg->scene->sprite[j]->scale;
+			// TODO: apply 0.9 coeff only for trees
+			int sprite_y = (float)seg->p1.screen.y -
+				       (float)seg->scene->sprite[j]->t->h *
+					       seg->scene->sprite[j]->scale;
 
-		     RLTDBG_texture_render_log = 0;
+			RLTDBG_texture_render_log = 0;
 
-		     SDL_Rect *r = NULL;
+			SDL_Rect *r = NULL;
 
-		     int tmp_idx;
-		     int tmp_max_y_idx;
-		     int tmp_max_y_bis_idx;
-		     if (ctx->max_y_idx > base_segment_idx) {
-			     tmp_max_y_idx = ctx->max_y_idx;
-		     } else {
-			     tmp_max_y_idx = ctx->max_y_idx + ctx->nb_segments;
-		     }
-		     if (ctx->max_y_bis_idx > base_segment_idx) {
-			     tmp_max_y_bis_idx = ctx->max_y_bis_idx;
-		     } else {
-			     tmp_max_y_bis_idx =
-				     ctx->max_y_bis_idx + ctx->nb_segments;
-		     }
-		     if (idx > base_segment_idx) {
-			     tmp_idx = idx;
-		     } else {
-			     tmp_idx = idx + ctx->nb_segments;
-		     }
-		     // if sprite is behind a hill, set a clip to crop its
-		     // lower part
-		     if (tmp_idx > tmp_max_y_idx) {
+			int tmp_idx;
+			int tmp_max_y_idx;
+			int tmp_max_y_bis_idx;
+			if (ctx->max_y_idx > base_segment_idx) {
+				tmp_max_y_idx = ctx->max_y_idx;
+			} else {
+				tmp_max_y_idx =
+					ctx->max_y_idx + ctx->nb_segments;
+			}
+			if (ctx->max_y_bis_idx > base_segment_idx) {
+				tmp_max_y_bis_idx = ctx->max_y_bis_idx;
+			} else {
+				tmp_max_y_bis_idx =
+					ctx->max_y_bis_idx + ctx->nb_segments;
+			}
+			if (idx > base_segment_idx) {
+				tmp_idx = idx;
+			} else {
+				tmp_idx = idx + ctx->nb_segments;
+			}
+			// if sprite is behind a hill, set a clip to crop its
+			// lower part
+			if (tmp_idx > tmp_max_y_idx) {
 
-			     if (sprite_y >= ctx->max_y) {
-				     /*SDL_Log("[%s:%d] no CLIPPING\n",
-					     __func__,
-					     __LINE__);*/
-				     continue;
-			     }
+				if (sprite_y >= ctx->max_y) {
+					/*SDL_Log("[%s:%d] no CLIPPING\n",
+						__func__,
+						__LINE__);*/
+					continue;
+				}
 
-			     r = calloc(1, sizeof(SDL_Rect));
-			     r->x = 0;
-			     r->y = 0;
-			     r->w = (float)seg->scene->sprite[j]->t->w /**
-		 zoom*/;
-			     int clip_h = ctx->max_y - sprite_y;
-			     int clip_h_inv_scale =
-				     (float)(ctx->max_y - sprite_y) /
-				     seg->scene->sprite[j]->scale;
-			     if (clip_h <
-					 seg->scene->sprite[j]->t->h *
-						 seg->scene->sprite[j]->scale &&
-				 clip_h > 0) {
-				     r->h = clip_h_inv_scale;
-				     /*SDL_Log("[%s] CLIPPING --- idx = %d,
-					y_max_idx = %d, y_max = %d, sprite_y
-					= %d, clip_h = %d, clip_h_inv_h = %d
-					------------------------\n",
-					     __func__,
-					     idx,
-					     ctx->max_y_idx,
-					     ctx->max_y,
+				r = calloc(1, sizeof(SDL_Rect));
+				r->x = 0;
+				r->y = 0;
+				r->w = (float)seg->scene->sprite[j]->t->w /**
+		    zoom*/;
+				int clip_h = ctx->max_y - sprite_y;
+				int clip_h_inv_scale =
+					(float)(ctx->max_y - sprite_y) /
+					seg->scene->sprite[j]->scale;
+				if (clip_h < seg->scene->sprite[j]->t->h *
+						     seg->scene->sprite[j]
+							     ->scale &&
+				    clip_h > 0) {
+					r->h = clip_h_inv_scale;
+					/*SDL_Log("[%s] CLIPPING --- idx = %d,
+					   y_max_idx = %d, y_max = %d, sprite_y
+					   = %d, clip_h = %d, clip_h_inv_h = %d
+					   ------------------------\n",
+						__func__,
+						idx,
+						ctx->max_y_idx,
+						ctx->max_y,
+						sprite_y,
+						clip_h,
+						clip_h_inv_scale);*/
+				} else {
+					r->h = seg->scene->sprite[j]->t->h;
+				}
+				// sprite is behind a hill, crop it accodingly
+			} else if (tmp_idx > tmp_max_y_bis_idx) {
+				if (sprite_y >= ctx->max_y_bis) {
+					/*SDL_Log("[%s:%d] no CLIPPING\n",
+						__func__,
+						__LINE__);*/
+					continue;
+				}
+
+				r = calloc(1, sizeof(SDL_Rect));
+				r->x = 0;
+				r->y = 0;
+				r->w = (float)seg->scene->sprite[j]->t->w /**
+		    zoom*/;
+				int clip_h = ctx->max_y_bis - sprite_y;
+				int clip_h_inv_scale =
+					(float)(ctx->max_y_bis - sprite_y) /
+					seg->scene->sprite[j]->scale;
+				if (clip_h < seg->scene->sprite[j]->t->h *
+						     seg->scene->sprite[j]
+							     ->scale &&
+				    clip_h > 0) {
+					r->h = clip_h_inv_scale;
+				} else {
+					r->h = seg->scene->sprite[j]->t->h;
+				}
+			} /*else {
+				SDL_Log("[%s:%d] no CLIPPING\n",
+					__func__,
+					__LINE__);
+			}*/
+
+			ret = texture_render(ctx,
+					     seg->scene->sprite[j]->t,
+					     seg->scene->sprite[j]->scaled_x,
 					     sprite_y,
-					     clip_h,
-					     clip_h_inv_scale);*/
-			     } else {
-				     r->h = seg->scene->sprite[j]->t->h;
-			     }
-			     // sprite is behind a hill, crop it accodingly
-		     } else if (tmp_idx > tmp_max_y_bis_idx) {
-			     if (sprite_y >= ctx->max_y_bis) {
-				     /*SDL_Log("[%s:%d] no CLIPPING\n",
-					     __func__,
-					     __LINE__);*/
-				     continue;
-			     }
+					     r,
+					     seg->scene->sprite[j]->scale,
+					     seg->scene->sprite[j]->flip);
 
-			     r = calloc(1, sizeof(SDL_Rect));
-			     r->x = 0;
-			     r->y = 0;
-			     r->w = (float)seg->scene->sprite[j]->t->w /**
-		 zoom*/;
-			     int clip_h = ctx->max_y_bis - sprite_y;
-			     int clip_h_inv_scale =
-				     (float)(ctx->max_y_bis - sprite_y) /
-				     seg->scene->sprite[j]->scale;
-			     if (clip_h <
-					 seg->scene->sprite[j]->t->h *
-						 seg->scene->sprite[j]->scale &&
-				 clip_h > 0) {
-				     r->h = clip_h_inv_scale;
-			     } else {
-				     r->h = seg->scene->sprite[j]->t->h;
-			     }
-		     } /*else {
-			     SDL_Log("[%s:%d] no CLIPPING\n",
-				     __func__,
-				     __LINE__);
-		     }*/
+			if (r)
+				free(r);
 
-		     ret = texture_render(ctx,
-					  seg->scene->sprite[j]->t,
-					  seg->scene->sprite[j]->scaled_x,
-					  sprite_y,
-					  r,
-					  seg->scene->sprite[j]->scale,
-					  seg->scene->sprite[j]->flip);
-
-		     if (r)
-			     free(r);
-
-		     RLTDBG_texture_render_log = 0;
+			RLTDBG_texture_render_log = 0;
 		}
 	}
 
@@ -809,6 +825,7 @@ static int display_render_road(struct game_context *ctx)
 			highest_world_y = ctx->segments[idx].p2.world.y;
 
 		display_render_segment(ctx,
+				       idx,
 				       SCREEN_WIDTH,
 				       ctx->lanes,
 				       ctx->segments[idx].p1.screen.x,
@@ -919,7 +936,7 @@ static int display_render_background_layer(struct game_context *ctx,
 			     &bg_clip_rect,
 			     // 1,
 			     1,
-				 SDL_FLIP_NONE);
+			     SDL_FLIP_NONE);
 
 	/*SDL_Log("[Rect_1] x = %d, clip { x = %d, w = %d }\n",
 		bg_x1,
@@ -945,7 +962,7 @@ static int display_render_background_layer(struct game_context *ctx,
 				     &bg_clip_rect,
 				     // 1,
 				     1,
-					 SDL_FLIP_NONE);
+				     SDL_FLIP_NONE);
 
 		/*SDL_Log("[Rect_2] x = %d, clip { x = %d, w = %d }\n",
 			bg_x2,
@@ -1042,7 +1059,7 @@ static int display_screen_race(struct game_context *ctx)
 			     /*1,
 			     2*/
 			     PLAYER_CAR_SPRITE_ZOOM,
-				 SDL_FLIP_NONE);
+			     SDL_FLIP_NONE);
 	/*} else {
 		ret = texture_render(ctx,
 				     &ctx->gfx.car_player,
