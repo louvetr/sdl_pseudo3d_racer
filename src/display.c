@@ -140,7 +140,8 @@ static int texture_render(struct game_context *ctx,
 			  SDL_Rect *clip,
 			  /*int scale_num,
 			  int scale_den*/
-			  float scale)
+			  float scale,
+			  SDL_RendererFlip flip)
 {
 	if (!t || !ctx) {
 		SDL_Log("[%s] invalid param\n", __func__);
@@ -182,7 +183,7 @@ static int texture_render(struct game_context *ctx,
 			 &render_quad,
 			 0,
 			 NULL,
-			 SDL_FLIP_NONE);
+			 flip);
 
 	return 0;
 }
@@ -369,7 +370,7 @@ static int display_load_render_text(struct game_context *ctx,
 	int ret;
 
 	ret = load_text_message(ctx, font, t, msg, *color);
-	ret = texture_render(ctx, t, x, y, NULL, 1);
+	ret = texture_render(ctx, t, x, y, NULL, 1, SDL_FLIP_NONE);
 
 	// TODO: manage error
 
@@ -646,7 +647,8 @@ static int display_render_scenery(struct game_context *ctx)
 					  seg->scene->sprite[j]->scaled_x,
 					  sprite_y,
 					  r,
-					  seg->scene->sprite[j]->scale);
+					  seg->scene->sprite[j]->scale,
+					  seg->scene->sprite[j]->flip);
 
 		     if (r)
 			     free(r);
@@ -916,7 +918,8 @@ static int display_render_background_layer(struct game_context *ctx,
 				     bg_texture->h,
 			     &bg_clip_rect,
 			     // 1,
-			     1);
+			     1,
+				 SDL_FLIP_NONE);
 
 	/*SDL_Log("[Rect_1] x = %d, clip { x = %d, w = %d }\n",
 		bg_x1,
@@ -941,7 +944,8 @@ static int display_render_background_layer(struct game_context *ctx,
 					     bg_texture->h,
 				     &bg_clip_rect,
 				     // 1,
-				     1);
+				     1,
+					 SDL_FLIP_NONE);
 
 		/*SDL_Log("[Rect_2] x = %d, clip { x = %d, w = %d }\n",
 			bg_x2,
@@ -1037,7 +1041,8 @@ static int display_screen_race(struct game_context *ctx)
 			     NULL,
 			     /*1,
 			     2*/
-			     PLAYER_CAR_SPRITE_ZOOM);
+			     PLAYER_CAR_SPRITE_ZOOM,
+				 SDL_FLIP_NONE);
 	/*} else {
 		ret = texture_render(ctx,
 				     &ctx->gfx.car_player,

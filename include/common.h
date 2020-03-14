@@ -198,7 +198,7 @@ struct scene_sprite_desc {
 	struct texture *t;
 	float position;
 	float scale;
-	int flip;
+	SDL_RendererFlip flip;
 	SDL_Rect *hitbox;
 	int scaled_x;	
 	//int scaled_w;	// TODO: useless ???

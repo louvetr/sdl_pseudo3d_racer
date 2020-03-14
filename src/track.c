@@ -12,6 +12,11 @@ create_scene_sprite_desc(struct texture *t, float position, SDL_Rect *hitbox)
 	sprite_desc->t = t;
 	sprite_desc->hitbox = hitbox;
 
+	if(position < 0)
+		sprite_desc->flip = SDL_FLIP_HORIZONTAL;
+	else
+		sprite_desc->flip = SDL_FLIP_NONE;
+	
 	return sprite_desc;
 }
 

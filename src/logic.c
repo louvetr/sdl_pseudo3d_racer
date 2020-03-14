@@ -50,16 +50,18 @@ static int logic_race_collision(struct game_context *ctx)
 		if (sprite_left->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_left->hitbox)
-				sprite_left_hb_x = sprite_left->scaled_x +
-						   (sprite_left->hitbox->x +
-						    sprite_left->hitbox->w) *
-							   sprite_left->scale;
-			// TODO: manage flipped sprites
-			/*sprite_left_hb_x =
-			sprite_left->scaled_x +
-			(sprite_left->t->w -
-			 sprite_left->hitbox->x) *
-				sprite_left->scale;*/
+				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
+					sprite_left_hb_x =
+						sprite_left->scaled_x +
+						(sprite_left->t->w -
+						 sprite_left->hitbox->x) *
+							sprite_left->scale;
+				else /* SDL_FLIP_NONE */
+					sprite_left_hb_x =
+						sprite_left->scaled_x +
+						(sprite_left->hitbox->x +
+						 sprite_left->hitbox->w) *
+							sprite_left->scale;
 			else
 				// if (sprite_left->scaled_x < SCREEN_WIDTH)
 				sprite_left_hb_x =
