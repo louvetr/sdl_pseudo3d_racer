@@ -190,6 +190,16 @@ static int main_load_media(struct game_context *ctx)
 			__LINE__);
 		return ret;
 	}
+
+
+	ret = load_texture_from_file(ctx, PNG_AI_CAR_01, &ctx->ai_cars[0].t);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n",
+			__func__,
+			__LINE__);
+		return ret;
+	}
+
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
 		printf("[%s] Failed to load game PNG!\n", __func__);
@@ -259,7 +269,7 @@ static int main_ctx_init(struct game_context *ctx)
 		return -ENOMEM;
 	}
 
-	ctx->road_width = 2100;
+	ctx->road_width = 4200;
 	// ctx->segment_length = 200;
 	ctx->rumble_length = RUMBLE_LENGTH;
 	ctx->track_length = 0;
@@ -388,6 +398,8 @@ int main()
 
 	//main_build_track(ctx);
 	track_build(ctx);
+
+	ai_car_init(ctx);
 
 	// game loop
 	while (!ctx->exit) {

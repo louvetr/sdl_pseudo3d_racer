@@ -42,12 +42,18 @@
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
+#define PNG_AI_CAR_01 "./media/car_rear_02.png"
+//#define PNG_AI_CAR_01 "./media/rect_h.png"
 
 #define ROAD_SEGMENT_LENGTH 200
 
 #define RUMBLE_LENGTH 3
 
 #define PLAYER_CAR_SPRITE_ZOOM 0.5
+#define AI_CAR_SPRITE_ZOOM 0.22
+
+
+#define NB_AI_CARS 1
 
 /////////////////////////////////////////////////////////////////
 // enums
@@ -229,6 +235,32 @@ struct keys_status {
 	int nitro;
 };
 
+struct ai_car_info {
+	// lane on which is the car
+	int lane;
+	// x postion
+	float pos_x;
+	// current speed
+	float speed;
+	// max speed on straight road
+	float speed_max_straight;
+	// max speed in curves
+	float speed_max_curve;
+	// car position (distance) on the road
+	int pos_z;
+	// car position segment idx
+	int segment;
+	// distance done by this car
+	int distance;
+
+	// car hitbox
+	SDL_Rect hitbox;
+
+	// car sprite
+	struct texture t;
+
+};
+
 // game context, contains all information of the game
 struct game_context {
 
@@ -270,6 +302,7 @@ struct game_context {
 
 	// highest point on screen
 	int max_y_bis;
+	// second highest point on screen
 	int max_y_bis_idx;
 
 	// player x offset from center of road (-1 to 1 to
@@ -356,6 +389,8 @@ struct game_context {
 	struct game_graphics gfx;
 
 	struct keys_status keys;
+
+	struct ai_car_info ai_cars[NB_AI_CARS];
 
     // quit game when set to 1
     int exit;
@@ -470,6 +505,8 @@ int logic_project_coord(struct segment_point *p,
 			int width,
 			int height,
 			int road_width);
+
+int ai_car_init(struct game_context *ctx);
 
 int main_display(struct game_context *ctx);
 

@@ -511,6 +511,8 @@ int track_build(struct game_context *ctx)
 
 	// ctx->nb_segments = 2750;
 	ctx->nb_segments = 2450;
+	ctx->player_segment = ctx->nb_segments - 15;
+	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 
 	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
@@ -853,7 +855,11 @@ int track_build(struct game_context *ctx)
 		ctx->segments[i].sprite_desc.position = 4.f;
 		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_cabin;
 	}*/
+	
 #endif
+
+	/*for(int i = 0; i < nb_segments_added; i++)
+		SDL_Log("segment[%d].curve = %f\n", i, ctx->segments[i].curve);*/
 
 	return 0;
 }

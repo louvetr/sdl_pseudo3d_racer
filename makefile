@@ -1,7 +1,7 @@
 #.PHONY: using-gcc using-gcc-static using-clang
 
 #OBJS specifies which files to compile as part of the project
-OBJS = ./src/main.c ./src/event.c ./src/display.c ./src/logic.c  ./src/road.c  ./src/track.c
+OBJS = ./src/main.c ./src/event.c ./src/display.c ./src/logic.c  ./src/road.c  ./src/track.c ./src/cars_ai.c
 
 #CC specifies which compiler we're using
 CC = gcc
