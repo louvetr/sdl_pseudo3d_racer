@@ -292,6 +292,7 @@ static int logic_race(struct game_context *ctx)
 
 	ret = logic_race_collision(ctx);
 	ret = logic_race_control(ctx);
+	ret = logic_race_ai_cars(ctx);
 
 	return ret;
 }

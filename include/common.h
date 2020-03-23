@@ -20,7 +20,7 @@
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
-#define FPS 30;
+#define FPS 30
 #define MS_PER_SEC 1000
 
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
@@ -240,6 +240,8 @@ struct ai_car_info {
 	int lane;
 	// x postion
 	float pos_x;
+	// acceleration
+	float accel;
 	// current speed
 	float speed;
 	// max speed on straight road
@@ -248,6 +250,7 @@ struct ai_car_info {
 	float speed_max_curve;
 	// car position (distance) on the road
 	int pos_z;
+	float pos_z_rest_percent;
 	// car position segment idx
 	int segment;
 	// distance done by this car
@@ -507,6 +510,7 @@ int logic_project_coord(struct segment_point *p,
 			int road_width);
 
 int ai_car_init(struct game_context *ctx);
+int logic_race_ai_cars(struct game_context *ctx);
 
 int main_display(struct game_context *ctx);
 

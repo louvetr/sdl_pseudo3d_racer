@@ -788,7 +788,7 @@ int track_build(struct game_context *ctx)
 	/////////////////////////////////////////////////////////////////////
 
 
-	/*for (int i = 0; i < nb_segments_added / 4; i += 4)
+	for (int i = 0; i < nb_segments_added / 4; i += 4)
 		ctx->segments[i].scene = seg_grass;
 
 	for (int i = nb_segments_added / 4; i < nb_segments_added / 2; i += 8)
@@ -803,15 +803,15 @@ int track_build(struct game_context *ctx)
 
 	for (int i = nb_segments_added * 3 / 4; i < nb_segments_added;
 	     i += 20)
-		ctx->segments[i].scene = seg_bush_mill;*/
+		ctx->segments[i].scene = seg_bush_mill;
 
 	/*for(int i = 0; i < nb_segments_added; i+=30)
 		ctx->segments[i].scene = seg_cabin;*/
 
-	for (int i = 0; i < nb_segments_added; i += 8)
+	/*for (int i = 0; i < nb_segments_added; i += 8)
 		ctx->segments[i].scene = seg_oaks_forest_1;
 	for (int i = 4; i < nb_segments_added; i += 8)
-		ctx->segments[i].scene = seg_oaks_forest_2;
+		ctx->segments[i].scene = seg_oaks_forest_2;*/
 
 #if 0
 	/////// add trees --- oak

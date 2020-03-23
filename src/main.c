@@ -269,7 +269,8 @@ static int main_ctx_init(struct game_context *ctx)
 		return -ENOMEM;
 	}
 
-	ctx->road_width = 4200;
+	//ctx->road_width = 4200;
+	ctx->road_width = 2100;
 	// ctx->segment_length = 200;
 	ctx->rumble_length = RUMBLE_LENGTH;
 	ctx->track_length = 0;
@@ -283,7 +284,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->fog_density = 5;
 	ctx->position = 0;
 	ctx->speed = 0;
-	ctx->max_speed = (2 * ROAD_SEGMENT_LENGTH) / ctx->step;
+	ctx->max_speed = 1.f * (2 * ROAD_SEGMENT_LENGTH) / ctx->step * (30.f / (float)FPS);
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
 	ctx->breaking = ctx->max_speed * -1;
