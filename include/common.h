@@ -53,7 +53,7 @@
 #define AI_CAR_SPRITE_ZOOM 0.22
 
 
-#define NB_AI_CARS 1
+#define NB_AI_CARS 17
 
 /////////////////////////////////////////////////////////////////
 // enums
@@ -509,6 +509,7 @@ int logic_project_coord(struct segment_point *p,
 			int height,
 			int road_width);
 
+/*static*/ float ai_lane_to_posx(int idx_lane, int nb_lanes); // TODO: make static (inline) ?
 int ai_car_init(struct game_context *ctx);
 int logic_race_ai_cars(struct game_context *ctx);
 

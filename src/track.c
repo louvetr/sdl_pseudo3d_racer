@@ -12,11 +12,11 @@ create_scene_sprite_desc(struct texture *t, float position, SDL_Rect *hitbox)
 	sprite_desc->t = t;
 	sprite_desc->hitbox = hitbox;
 
-	if(position < 0)
+	if (position < 0)
 		sprite_desc->flip = SDL_FLIP_HORIZONTAL;
 	else
 		sprite_desc->flip = SDL_FLIP_NONE;
-	
+
 	return sprite_desc;
 }
 
@@ -511,8 +511,21 @@ int track_build(struct game_context *ctx)
 
 	// ctx->nb_segments = 2750;
 	ctx->nb_segments = 2450;
-	ctx->player_segment = ctx->nb_segments - 15;
+
+
+	///////////////////////////////////
+	// TODO: put this in a function elsewhere
+	//ctx->player_segment = ctx->nb_segments - 30;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+
+	int player_lane = NB_AI_CARS % ctx->lanes;
+	// ctx->position =
+	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
+
+	ctx->player_segment =
+		ctx->nb_segments - (NB_AI_CARS / ctx->lanes) * 5;
+	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+	///////////////////////////////////
 
 	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
@@ -801,17 +814,16 @@ int track_build(struct game_context *ctx)
 	     i += 6)
 		ctx->segments[i].scene = seg_fence;
 
-	for (int i = nb_segments_added * 3 / 4; i < nb_segments_added;
-	     i += 20)
+	for (int i = nb_segments_added * 3 / 4; i < nb_segments_added; i += 20)
 		ctx->segments[i].scene = seg_bush_mill;
 
-	/*for(int i = 0; i < nb_segments_added; i+=30)
-		ctx->segments[i].scene = seg_cabin;*/
+		/*for(int i = 0; i < nb_segments_added; i+=30)
+			ctx->segments[i].scene = seg_cabin;*/
 
-	/*for (int i = 0; i < nb_segments_added; i += 8)
-		ctx->segments[i].scene = seg_oaks_forest_1;
-	for (int i = 4; i < nb_segments_added; i += 8)
-		ctx->segments[i].scene = seg_oaks_forest_2;*/
+		/*for (int i = 0; i < nb_segments_added; i += 8)
+			ctx->segments[i].scene = seg_oaks_forest_1;
+		for (int i = 4; i < nb_segments_added; i += 8)
+			ctx->segments[i].scene = seg_oaks_forest_2;*/
 
 #if 0
 	/////// add trees --- oak
@@ -855,11 +867,12 @@ int track_build(struct game_context *ctx)
 		ctx->segments[i].sprite_desc.position = 4.f;
 		ctx->segments[i].sprite_desc.t = &ctx->gfx.scene_cabin;
 	}*/
-	
+
 #endif
 
 	/*for(int i = 0; i < nb_segments_added; i++)
-		SDL_Log("segment[%d].curve = %f\n", i, ctx->segments[i].curve);*/
+		SDL_Log("segment[%d].curve = %f\n", i,
+	   ctx->segments[i].curve);*/
 
 	return 0;
 }

@@ -92,112 +92,98 @@ static int main_load_media(struct game_context *ctx)
 	// load png
 	ret = load_texture_from_file(ctx, PNG_CAR_PLAYER, &ctx->gfx.car_player);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 
-	ret = load_texture_from_file(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
+	ret = load_texture_from_file(
+		ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	ret = load_texture_from_file(
+		ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_SCENE_TREE_PINE, &ctx->gfx.scene_tree_pine);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_TREE_PINE, &ctx->gfx.scene_tree_pine);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_SCENE_CABIN, &ctx->gfx.scene_cabin);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_CABIN, &ctx->gfx.scene_cabin);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
-	ret = load_texture_from_file(ctx, PNG_SCENE_FENCE, &ctx->gfx.scene_fence);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_FENCE, &ctx->gfx.scene_fence);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
-	ret = load_texture_from_file(ctx, PNG_SCENE_GRASS, &ctx->gfx.scene_grass);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_GRASS, &ctx->gfx.scene_grass);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
-	ret = load_texture_from_file(ctx, PNG_SCENE_WINDMILL, &ctx->gfx.scene_windmill);
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_WINDMILL, &ctx->gfx.scene_windmill);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 	ret = load_texture_from_file(ctx, PNG_SCENE_BARN, &ctx->gfx.scene_barn);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 	ret = load_texture_from_file(ctx, PNG_SCENE_BUSH, &ctx->gfx.scene_bush);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 
-	ret = load_texture_from_file(ctx, PNG_AI_CAR_01, &ctx->ai_cars[0].t);
-	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n",
-			__func__,
-			__LINE__);
-		return ret;
+	for (int i = 0; i < NB_AI_CARS; i++) {
+		ret = load_texture_from_file(
+			ctx, PNG_AI_CAR_01, &ctx->ai_cars[i].t);
+		if (ret < 0) {
+			SDL_Log("[%s:%d] Failed to load PNG!\n",
+				__func__,
+				__LINE__);
+			return ret;
+		}
 	}
 
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
@@ -230,14 +216,16 @@ static int main_load_media(struct game_context *ctx)
 	ctx->sc_font_big = TTF_OpenFont(SOFACHROME_FONT, 72);
 	if (!ctx->sc_font_big) {
 		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
-		       __func__, TTF_GetError());
+		       __func__,
+		       TTF_GetError());
 		return -EINVAL;
 	}
-	
+
 	ctx->sc_font_medium = TTF_OpenFont(SOFACHROME_FONT, 36);
 	if (!ctx->sc_font_medium) {
 		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
-		       __func__, TTF_GetError());
+		       __func__,
+		       TTF_GetError());
 		return -EINVAL;
 	}
 
@@ -269,7 +257,7 @@ static int main_ctx_init(struct game_context *ctx)
 		return -ENOMEM;
 	}
 
-	//ctx->road_width = 4200;
+	// ctx->road_width = 4200;
 	ctx->road_width = 2100;
 	// ctx->segment_length = 200;
 	ctx->rumble_length = RUMBLE_LENGTH;
@@ -284,15 +272,16 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->fog_density = 5;
 	ctx->position = 0;
 	ctx->speed = 0;
-	ctx->max_speed = 1.f * (2 * ROAD_SEGMENT_LENGTH) / ctx->step * (30.f / (float)FPS);
+	ctx->max_speed = 1.f * (2 * ROAD_SEGMENT_LENGTH) / ctx->step *
+			 (30.f / (float)FPS);
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
 	ctx->breaking = ctx->max_speed * -1;
 	// ctx->decel = (ctx->max_speed / 5) * -1;
 	ctx->decel = (ctx->max_speed / 50) * -1;
-	//ctx->off_road_decel = (ctx->max_speed / 20) * -1;
+	// ctx->off_road_decel = (ctx->max_speed / 20) * -1;
 	ctx->off_road_decel = (ctx->max_speed / 30) * -1;
-	//ctx->off_road_limit = (ctx->max_speed / 3);
+	// ctx->off_road_limit = (ctx->max_speed / 3);
 	ctx->off_road_limit = (ctx->max_speed / 2);
 	ctx->centrifugal = 0.3;
 
@@ -329,11 +318,6 @@ static int main_destroy(struct game_context *ctx)
 
 	return 0;
 }
-
-
-
-
-
 
 
 /////////////////////////////////////////////////////////////////
@@ -397,7 +381,7 @@ int main()
 
 	main_ctx_init(ctx);
 
-	//main_build_track(ctx);
+	// main_build_track(ctx);
 	track_build(ctx);
 
 	ai_car_init(ctx);
