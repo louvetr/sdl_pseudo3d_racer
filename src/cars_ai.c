@@ -1,6 +1,6 @@
 #include "common.h"
 
-/*static*/ float ai_lane_to_posx(int idx_lane, int nb_lanes)
+/*static*/ float ai_lane_to_posx(size_t idx_lane, size_t nb_lanes)
 {
 	float pos_x;
 	// x position in a [0,1] range
@@ -30,7 +30,7 @@ int logic_race_ai_cars(struct game_context *ctx)
 
 		ctx->ai_cars[i].pos_z =
 			inline_increase(ctx->ai_cars[i].pos_z,
-					ctx->dt * ctx->ai_cars[i].speed,
+					(size_t)(ctx->dt * ctx->ai_cars[i].speed),
 					ctx->track_length);
 
 		/*ctx->ai_cars[i].segment =
@@ -54,7 +54,7 @@ int logic_race_ai_cars(struct game_context *ctx)
 int ai_car_init(struct game_context *ctx)
 {
 
-	for (int i = 0; i < NB_AI_CARS; i++) {
+	for (size_t i = 0; i < NB_AI_CARS; i++) {
 
 		ctx->ai_cars[i].lane = i % ctx->lanes;
 		ctx->ai_cars[i].pos_x =
@@ -70,14 +70,16 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].segment =
 			inline_get_segment_idx(ctx, ctx->ai_cars[i].pos_z);*/
 		ctx->ai_cars[i].speed_max_straight =
-			ctx->max_speed * (0.95 - i * 0.025);
+			ctx->max_speed * (0.95f - (float)i * 0.025f);
 		ctx->ai_cars[i].speed_max_curve =
-			ctx->max_speed * (0.75 - i * 0.025);
+			ctx->max_speed * (0.75f - (float)i * 0.025f);
 		ctx->ai_cars[i].speed = 0.f;
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;
 
-		/*ctx->ai_cars[i].speed_max_straight = ctx->ai_cars[i].speed_max_straight * 0.05;
-		ctx->ai_cars[i].speed_max_curve = ctx->ai_cars[i].speed_max_curve * 0.05;*/
+		/*ctx->ai_cars[i].speed_max_straight =
+		ctx->ai_cars[i].speed_max_straight * 0.05;
+		ctx->ai_cars[i].speed_max_curve =
+		ctx->ai_cars[i].speed_max_curve * 0.05;*/
 	}
 	return 0;
 }

@@ -1,6 +1,9 @@
 #include "common.h"
 
 
+static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
+
+
 static struct scene_sprite_desc *
 create_scene_sprite_desc(struct texture *t, float position, SDL_Rect *hitbox)
 {
@@ -24,6 +27,8 @@ create_scene_sprite_desc(struct texture *t, float position, SDL_Rect *hitbox)
 // TODO: use realloc at each sector addition instead counting total nb sectors
 // in advance
 
+
+#if 0
 static int main_build_track_test(struct game_context *ctx)
 {
 	int nb_segments_added = 0;
@@ -429,7 +434,7 @@ static int main_build_track_1(struct game_context *ctx)
 
 	return 0;
 }
-
+#endif
 
 int track_build_try_turns(struct game_context *ctx)
 {
@@ -515,15 +520,14 @@ int track_build(struct game_context *ctx)
 
 	///////////////////////////////////
 	// TODO: put this in a function elsewhere
-	//ctx->player_segment = ctx->nb_segments - 30;
+	// ctx->player_segment = ctx->nb_segments - 30;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 
-	int player_lane = NB_AI_CARS % ctx->lanes;
+	size_t player_lane = NB_AI_CARS % ctx->lanes;
 	// ctx->position =
 	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
 
-	ctx->player_segment =
-		ctx->nb_segments - (NB_AI_CARS / ctx->lanes) * 5;
+	ctx->player_segment = ctx->nb_segments - (NB_AI_CARS / ctx->lanes) * 5;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 	///////////////////////////////////
 

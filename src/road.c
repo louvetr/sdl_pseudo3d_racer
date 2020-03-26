@@ -11,8 +11,8 @@ static int road_add_segment(struct road_segment *segment,
 	memset(&segment->p1, 0, sizeof(segment->p1));
 	memset(&segment->p2, 0, sizeof(segment->p2));
 
-	segment->p1.world.z = idx * ROAD_SEGMENT_LENGTH;
-	segment->p2.world.z = (idx + 1) * ROAD_SEGMENT_LENGTH;
+	segment->p1.world.z = (float)(idx * ROAD_SEGMENT_LENGTH);
+	segment->p2.world.z = (float)((idx + 1) * ROAD_SEGMENT_LENGTH);
 	segment->p1.world.y = prev_y;
 	segment->p2.world.y = y;
 	segment->curve = curve;
@@ -54,9 +54,10 @@ int road_add_sector(struct road_segment *segments,
 		    int y,
 		    enum road_curve curve)
 {
-	int i, idx, nb_segment_added, sector_total_lg;
+	int i, idx, sector_total_lg;
+	int nb_segment_added = 0;
 	float start_y, end_y;
-	static int prev_y = 0;
+	static float prev_y = 0;
 	sector_total_lg = sector_enter_lg + sector_hold_lg + sector_exit_lg;
 	idx = start_idx;
 	if (idx == 0)

@@ -1,5 +1,8 @@
 #include "common.h"
 
+
+static float COLLIONSION_SCENE_SHIFT = 0.5f;
+
 /////////////////////////////////////////////////////////////////
 // static functions definition
 /////////////////////////////////////////////////////////////////
@@ -13,9 +16,9 @@
 static int logic_race_collision(struct game_context *ctx)
 {
 
-	for (int i = 0; i < 3; i++) {
+	for (size_t i = 0; i < 3; i++) {
 
-		int idx = (ctx->player_segment + i) % ctx->nb_segments;
+		size_t idx = (ctx->player_segment + i) % ctx->nb_segments;
 		struct road_segment *seg = &ctx->segments[idx];
 		struct scene_sprite_desc *sprite_left = NULL;
 		struct scene_sprite_desc *sprite_right = NULL;
@@ -53,20 +56,20 @@ static int logic_race_collision(struct game_context *ctx)
 				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
 					sprite_left_hb_x =
 						sprite_left->scaled_x +
-						(sprite_left->t->w -
+						(int)((float)(sprite_left->t->w -
 						 sprite_left->hitbox->x) *
-							sprite_left->scale;
+							sprite_left->scale);
 				else /* SDL_FLIP_NONE */
 					sprite_left_hb_x =
 						sprite_left->scaled_x +
-						(sprite_left->hitbox->x +
+						(int)((float)(sprite_left->hitbox->x +
 						 sprite_left->hitbox->w) *
-							sprite_left->scale;
+							sprite_left->scale);
 			else
 				// if (sprite_left->scaled_x < SCREEN_WIDTH)
 				sprite_left_hb_x =
 					sprite_left->scaled_x +
-					sprite_left->t->w * sprite_left->scale;
+					(int)((float)sprite_left->t->w * sprite_left->scale);
 		}
 
 		if (sprite_right->scaled_x > 0 &&
@@ -74,8 +77,8 @@ static int logic_race_collision(struct game_context *ctx)
 		    sprite_right->scale > 0) {
 			if (sprite_right->hitbox)
 				sprite_right_hb_x = sprite_right->scaled_x +
-						    sprite_right->hitbox->x *
-							    sprite_right->scale;
+						    (int)((float)sprite_right->hitbox->x *
+							    sprite_right->scale);
 			else /*if (sprite_right->scaled_x > 0 &&
 				 sprite_right->scaled_x < SCREEN_WIDTH)*/
 				sprite_right_hb_x = sprite_right->scaled_x;
@@ -126,50 +129,24 @@ static int logic_race_collision(struct game_context *ctx)
 
 static int logic_race_control(struct game_context *ctx)
 {
-
-
 	float speed_ratio = ctx->speed / ctx->max_speed;
 	float player_ratio =
 		(float)((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
 		(float)ROAD_SEGMENT_LENGTH;
 
 	ctx->ts_cur = SDL_GetTicks();
-	ctx->dt = ctx->ts_cur - ctx->ts_prev;
-
-	/*SDL_Log("[%s][position = %d] ENTER with accel = %d, dt = %d, speed =
-	   %d\n",
-		__func__,
-		ctx->position,
-		ctx->accel,
-		ctx->dt,
-		ctx->speed);*/
-
+	ctx->dt = (float)(ctx->ts_cur - ctx->ts_prev);
 	ctx->ts_prev = ctx->ts_cur;
 
 	// TODO: remove ?
+	// cap delta t
 	if (ctx->dt > 35) {
 		ctx->dt = 35;
 	}
 
-	// TODO: DEBUG
-	/*if (ctx->action != ACTION_UP)
-		return 0;*/
-
-	/*SDL_Log("[%s][position = %d] ENTER with accel = %d, dt = %d, speed =
-	   %d\n",
-		__func__,
-		ctx->position,
-		ctx->accel,
-		ctx->dt,
-		ctx->speed);*/
-
-	static float player_x_prev;
-	player_x_prev = ctx->player_x;
-	static float speed_prev;
-	speed_prev = ctx->speed;
-
-	ctx->position = inline_increase(
-		ctx->position, ctx->dt * ctx->speed, ctx->track_length);
+	ctx->position = inline_increase(ctx->position,
+					(size_t)(ctx->dt * ctx->speed),
+					ctx->track_length);
 
 	// screen crossing should take 1sec at top speed
 	float dx = (ctx->dt * 2 * (ctx->speed / ctx->max_speed)) / 3000;
@@ -184,100 +161,30 @@ static int logic_race_control(struct game_context *ctx)
 		(dx * speed_ratio * ctx->segments[ctx->player_segment].curve *
 		 ctx->centrifugal);
 
-	// if (!(cpt % 30))
-	// if (player_x_prev != ctx->player_x) {
-	/*SDL_Log("[%s]dx : %f = %f  * 2 * (%f / %f))\n",
-		__func__,
-		dx,
-		ctx->dt,
-		ctx->speed,
-		ctx->max_speed);
-	SDL_Log("[%s] ctx->player_x : %f = %f - %f\n",
-		__func__,
-		ctx->player_x,
-		player_x_prev,
-		dx);*/
-	//}
-
 	if (ctx->keys.accel) {
 		ctx->speed = inline_accelerate(ctx->speed, ctx->accel, ctx->dt);
-		/*if (ctx->speed != speed_prev)
-		SDL_Log("[accel] speed : %f = %f + %f * %f\n",
-			ctx->speed,
-			speed_prev,
-			ctx->accel,
-			ctx->dt);*/
 	} else if (ctx->keys.brake) {
 		ctx->speed =
 			inline_accelerate(ctx->speed, ctx->breaking, ctx->dt);
-		/*if (ctx->speed != speed_prev)
-			SDL_Log("[breaking] speed : %f = %f + %f * %f\n",
-				ctx->speed,
-				speed_prev,
-				ctx->accel,
-				ctx->dt);*/
 	} else {
 		ctx->speed = inline_accelerate(ctx->speed, ctx->decel, ctx->dt);
-		/*if (ctx->speed != speed_prev)
-			SDL_Log("[decel] speed : %f = %f + %f * %f\n",
-				ctx->speed,
-				speed_prev,
-				ctx->accel,
-				ctx->dt);*/
 	}
 
-
-	/*SDL_Log("[offroad] off_road_limit=%f, dt = %f, speed_prev = %f,
-	   ctx->dt = %f, ctx->off_road_decel = %f\n", ctx->off_road_limit,
-		ctx->dt,
-		speed_prev,
-		ctx->dt,
-		ctx->off_road_decel);*/
-
-
-	// SDL_Log("[offroad] player_x = %f\n", ctx->player_x);
-
-
-	speed_prev = ctx->speed;
 	if ((ctx->player_x < -1 || ctx->player_x > 1) &&
 	    ctx->speed > ctx->off_road_limit) {
 		ctx->speed = inline_accelerate(
 			ctx->speed, ctx->off_road_decel, ctx->dt);
-
-
-		/*if (ctx->speed != speed_prev)
-			SDL_Log("[offroad][off_road_limit=%f] speed : %f = %f +
-		   %f * %f\n", ctx->off_road_limit, ctx->speed, speed_prev,
-				ctx->dt,
-				ctx->off_road_decel);*/
 	}
-	// SDL_Log("[%s] MID with speed = %d\n", __func__, ctx->speed);
 
 	// don't let player go out of bounds
 	ctx->player_x = inline_limit(ctx->player_x, -2, 2);
 	// cap player speed
 	ctx->speed = inline_limit(ctx->speed, 0, ctx->max_speed);
 
-
-	/*SDL_Log("[%s] EXIT with player_x = %f, speed = %f\n",
-		__func__,
-		ctx->player_x,
-		ctx->speed);*/
-
-
-	ctx->player_y = /*ctx->segments[player_segment].p2.world.y;*/
-		inline_interpolate(
-			ctx->segments[ctx->player_segment].p1.world.y,
-			ctx->segments[ctx->player_segment].p2.world.y,
-			player_ratio);
-
-	/*if (ctx->player_y - ctx->segments[player_segment].p2.world.y != 0)
-		SDL_Log("[%s] player_y - p2.world.y = %f \n",
-			__func__,
-			ctx->player_y -
-				ctx->segments[player_segment].p2.world.y);*/
-	// SDL_Log("[%s] curve = %f \n", __func__,
-	// ctx->segments[ctx->player_segment].curve);
+	ctx->player_y = (int)inline_interpolate(
+		ctx->segments[ctx->player_segment].p1.world.y,
+		ctx->segments[ctx->player_segment].p2.world.y,
+		player_ratio);
 
 	return 0;
 }
@@ -331,8 +238,9 @@ int logic_project_coord(struct segment_point *p,
 {
 	// translate coordinates from world to camera
 	p->camera.x = p->world.x - camera_x;
-	p->camera.y = p->world.y - camera_y;
-	p->camera.z = p->world.z - camera_z + first_segments_z_offset;
+	p->camera.y = p->world.y - (float)camera_y;
+	p->camera.z =
+		p->world.z - (float)camera_z + (float)first_segments_z_offset;
 
 
 	// compute scaling factor
@@ -343,10 +251,12 @@ int logic_project_coord(struct segment_point *p,
 
 	// TODO: scaling num/den, rounding
 	// scale coordinate to screen
-	p->screen.x = (width / 2) + (p->screen.scale * p->camera.x * width / 2);
-	p->screen.y =
-		(height / 2) - (p->screen.scale * p->camera.y * height / 2);
-	p->screen.w = (p->screen.scale * road_width * width / 2);
+	p->screen.x = (width / 2) + (int)(p->screen.scale * (float)p->camera.x *
+					  (float)width / 2.f);
+	p->screen.y = ((float)height / 2.f) -
+		      (p->screen.scale * p->camera.y * (float)height / 2.f);
+	p->screen.w =
+		(int)(p->screen.scale * (float)road_width * (float)width / 2.f);
 
 	return 0;
 }

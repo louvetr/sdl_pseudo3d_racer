@@ -124,10 +124,7 @@ enum road_sector_length {
 };
 
 
-static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
-static float COLLIONSION_SCENE_SHIFT = 0.5f;
-
-static SDL_Rect hitbox_oak = { .x=262 , .y=0 , .w=240 , .h=711  };
+//static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
 /////////////////////////////////////////////////////////////////
 // structures
@@ -211,7 +208,7 @@ struct scene_sprite_desc {
 };
 
 struct scene_segment_desc {
-	int nb_sprites;
+	size_t nb_sprites;
 	struct scene_sprite_desc **sprite;
 };
 
@@ -237,7 +234,7 @@ struct keys_status {
 
 struct ai_car_info {
 	// lane on which is the car
-	int lane;
+	size_t lane;
 	// x postion
 	float pos_x;
 	// acceleration
@@ -249,10 +246,10 @@ struct ai_car_info {
 	// max speed in curves
 	float speed_max_curve;
 	// car position (distance) on the road
-	int pos_z;
+	size_t pos_z;
 	float pos_z_rest_percent;
 	// car position segment idx
-	int segment;
+	size_t segment;
 	// distance done by this car
 	int distance;
 
@@ -274,7 +271,7 @@ struct game_context {
 	// how long is each frame (in seconds)
 	int step;
     // number of road segments of the track
-    int nb_segments;
+    size_t nb_segments;
 	// array of road segments
 	struct road_segment *segments; // array of road segments
 
@@ -287,9 +284,9 @@ struct game_context {
 	// number of segments per red/white rumble strip
 	int rumble_length;
 	// z length of entire track (computed)
-	int track_length; //null;
+	size_t track_length; //null;
 	// number of lanes
-	int lanes;
+	size_t lanes;
 	// angle (degrees) for field of view
 	float field_of_view;
 	// z height of camera
@@ -314,14 +311,14 @@ struct game_context {
 	// position of player car in the world
 	int player_y;
 	// player relative z distance from camera (computed)
-	int player_z;
+	size_t player_z;
 	// position of player car sprite in pixel(top of texture)
 	int player_sprite_y;
 	// exponential fog density
 	int fog_density;
 	// current camera Z position (add playerZ to get player's absolute Z
 	// position)
-	int position;
+	size_t position;
 	// current speed
 	float speed;
 	// top speed (ensure we can't move more than 1 segment in
@@ -341,7 +338,7 @@ struct game_context {
 	// centrifugal force applying to player in curves
 	float centrifugal;
 	// index of the current player segment in segments array
-	int player_segment;
+	size_t player_segment;
 
 	int player_car_x_in_pixels;
 	
@@ -421,14 +418,14 @@ static inline float inline_limit(float value, float min, float max)
 	
 }
 
-static inline int  inline_increase ( int start, int increment, int max)
+static inline size_t inline_increase ( size_t start, size_t increment, size_t max)
 {
 	if(max == 0) {
 		SDL_Log("[%s] ERROR: max == 0", __func__);
 		return 0;
 	}
 
-	int result = start + increment;
+	size_t result = start + increment;
 
 	while(result >= max)
 		result -= max;
@@ -439,7 +436,7 @@ static inline int  inline_increase ( int start, int increment, int max)
 }
 
 
-static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
+static inline size_t inline_get_segment_idx(struct game_context *ctx, size_t z) {
 
   return ((z/ROAD_SEGMENT_LENGTH) % ctx->nb_segments);
 }
@@ -467,17 +464,17 @@ static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
 
 static inline float inline_curve_in (float a, float b, float percent)
 {
-	return a + (b-a) * powf(percent, 2.);
+	return a + (b-a) * powf(percent, 2.f);
 }
 
 static inline float inline_curve_out (float a, float b, float percent)
 {
-	return a + (b-a) * (1-powf(percent, 2.));
+	return a + (b-a) * (1.f-powf(percent, 2.f));
 }
 
 static inline float inline_curve_inout (float a, float b, float percent)
 {
-	return a + (b-a) * ( 0.5 - (cosf(percent * M_PI) / 2));
+	return a + (b-a) * ( 0.5f - (cosf(percent * (float)M_PI) / 2.f));
 }
 
 static inline float inline_interpolate (float a,float b, float percent)
@@ -509,7 +506,9 @@ int logic_project_coord(struct segment_point *p,
 			int height,
 			int road_width);
 
-/*static*/ float ai_lane_to_posx(int idx_lane, int nb_lanes); // TODO: make static (inline) ?
+// TODO: make static (inline) ?
+/*static*/ float ai_lane_to_posx(size_t idx_lane, size_t nb_lanes);
+
 int ai_car_init(struct game_context *ctx);
 int logic_race_ai_cars(struct game_context *ctx);
 
