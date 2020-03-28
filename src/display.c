@@ -574,8 +574,7 @@ static int display_render_scenery(struct game_context *ctx)
 				r->w = seg->scene->sprite[j]->t->w;
 				int clip_h = ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)(ctx->max_y -
-						      sprite_y) /
+					(int)((float)(ctx->max_y - sprite_y) /
 					      seg->scene->sprite[j]->scale);
 				if (clip_h < (int)((float)seg->scene->sprite[j]
 							   ->t->h *
@@ -634,7 +633,6 @@ static int display_render_scenery(struct game_context *ctx)
 				struct road_segment *seg = &ctx->segments[idx];
 				int sprite_x, sprite_y;
 
-
 				float car_screen_scale =
 					seg->p1.screen.scale -
 					(seg->p1.screen.scale -
@@ -647,32 +645,44 @@ static int display_render_scenery(struct game_context *ctx)
 				car_x_scale =
 					car_x_scale * (float)AI_CAR_SPRITE_ZOOM;
 
-				if (ctx->ai_cars[i].pos_x >= 0)
-					sprite_x =
-						seg->p1.screen.x +
-						(int)(car_screen_scale *
-						      ctx->ai_cars[i].pos_x *
-						      (float)ctx->road_width *
-						      (float)SCREEN_WIDTH /
-						      2.f) -
-						(int)((float)ctx->ai_cars[i]
-							      .t.w *
-						      /*AI_CAR_SPRITE_ZOOM **/
-						      car_x_scale / 2.f);
-				else
-					sprite_x =
-						seg->p1.screen.x +
-						(int)(car_screen_scale *
-						      ctx->ai_cars[i].pos_x *
-						      (float)ctx->road_width *
-						      (float)SCREEN_WIDTH /
-						      2.f) -
-						(int)((float)ctx->ai_cars[i]
-							      .t.w *
-						      /*AI_CAR_SPRITE_ZOOM **/
-						      car_x_scale / 2.f);
 
-				// TODO: filter porperly % sprite width ?
+				/* TODO: save var/constant equal to
+				 * (float)ctx->road_width * (float)SCREEN_WIDTH
+				 * / 2.f) since it is used  several times
+				 */
+				if (ctx->ai_cars[i].pos_x >= 0) {
+					sprite_x =
+						seg->p1.screen.x +
+						(int)(car_screen_scale *
+						      ctx->ai_cars[i].pos_x *
+						      (float)ctx->road_width *
+						      (float)SCREEN_WIDTH /
+						      2.f) -
+						(int)((float)ctx->ai_cars[i]
+							      .t.w *
+						      /*AI_CAR_SPRITE_ZOOM **/
+						      car_x_scale / 2.f);
+				} else {
+					sprite_x =
+						seg->p1.screen.x +
+						(int)(car_screen_scale *
+						      ctx->ai_cars[i].pos_x *
+						      (float)ctx->road_width *
+						      (float)SCREEN_WIDTH /
+						      2.f) -
+						(int)((float)ctx->ai_cars[i]
+							      .t.w *
+						      /*AI_CAR_SPRITE_ZOOM **/
+						      car_x_scale / 2.f);
+				}
+
+				// Avoid AI cars X jump by smoothering sprite_x
+				sprite_x += (int)((float)(seg->p2.screen.x -
+							  seg->p1.screen.x) *
+						  ctx->ai_cars[i]
+							  .pos_z_rest_percent);
+
+				// Skip AI cars outside screen (right side)
 				if (sprite_x > SCREEN_WIDTH)
 					continue;
 
@@ -724,8 +734,7 @@ static int display_render_scenery(struct game_context *ctx)
 					r->x = 0;
 					r->y = 0;
 					r->w = ctx->ai_cars[i].t.w;
-					int clip_h =
-						ctx->max_y_bis - sprite_y;
+					int clip_h = ctx->max_y_bis - sprite_y;
 					int clip_h_inv_scale =
 						(int)((float)(ctx->max_y_bis -
 							      sprite_y) /
@@ -742,32 +751,8 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////
 
-				/*static uint32_t ticks_now = 0;
-				static uint32_t ticks_prev = 0;
-				static uint32_t ticks_diff = 0;
-				ticks_now = SDL_GetTicks();
-				ticks_diff = ticks_now - ticks_prev;
-				ticks_prev = ticks_now;
-
-				SDL_Log("[ia_car][%u][%d][%f] x=%d, y=%d,
-				   x_scale=%f, h=%f\n", ticks_diff,
-					ctx->ai_cars[i].segment,
-					ctx->ai_cars[i].pos_z_rest_percent,
-					sprite_x,
-					sprite_y,
-					car_x_scale,
-					r ? (float)r->h * car_screen_scale *
-							(float)SCREEN_WIDTH *
-							2.f *
-							(float)AI_CAR_SPRITE_ZOOM
-					  : (float)ctx->ai_cars[i].t.h *
-							(float)car_screen_scale
-				   * (float)SCREEN_WIDTH * 2.f *
-							(float)AI_CAR_SPRITE_ZOOM);*/
-
-				// TODO : why  ai car sprit 'h' is so jumpy ?
-				// lessen this effect
-
+				/* TODO: use a var for "(float)SCREEN_WIDTH *
+				 *	2.f * AI_CAR_SPRITE_ZOOM" */
 				ret = texture_render(
 					ctx,
 					&ctx->ai_cars[i].t,

@@ -70,9 +70,9 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].segment =
 			inline_get_segment_idx(ctx, ctx->ai_cars[i].pos_z);*/
 		ctx->ai_cars[i].speed_max_straight =
-			ctx->max_speed * (0.95f - (float)i * 0.025f);
+			ctx->max_speed * (0.95f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed_max_curve =
-			ctx->max_speed * (0.75f - (float)i * 0.025f);
+			ctx->max_speed * (0.75f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed = 0.f;
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;
 
