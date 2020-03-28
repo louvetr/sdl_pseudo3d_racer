@@ -49,8 +49,8 @@
 
 #define RUMBLE_LENGTH 3
 
-#define PLAYER_CAR_SPRITE_ZOOM 0.5
-#define AI_CAR_SPRITE_ZOOM 0.22
+#define PLAYER_CAR_SPRITE_ZOOM 0.5f
+#define AI_CAR_SPRITE_ZOOM 0.22f
 
 
 #define NB_AI_CARS 17
@@ -177,10 +177,10 @@ struct game_graphics{
 };
 
 struct color_desc {
-	int r;
-	int g;
-	int b;
-	int a;
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 a;
 };
 
 struct segment_point_coord {
@@ -294,16 +294,16 @@ struct game_context {
 	// z distance camera is from screen (computed)
 	float camera_depth;
 	// number of segments to draw
-	int draw_distance;
+	size_t draw_distance;
 
 	// highest point on screen
-	int max_y;
-	int max_y_idx;
+	size_t max_y;
+	size_t max_y_idx;
 
 	// highest point on screen
-	int max_y_bis;
+	size_t max_y_bis;
 	// second highest point on screen
-	int max_y_bis_idx;
+	size_t max_y_bis_idx;
 
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)
@@ -511,6 +511,10 @@ int logic_project_coord(struct segment_point *p,
 
 int ai_car_init(struct game_context *ctx);
 int logic_race_ai_cars(struct game_context *ctx);
+
+int load_texture_from_file(struct game_context *ctx,
+			   char *path,
+			   struct texture *in);
 
 int main_display(struct game_context *ctx);
 

@@ -1,6 +1,6 @@
 #include "common.h"
 
-const int SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
+const Uint32 SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
 
 /////////////////////////////////////////////////////////////////
 // static function definitions
@@ -10,7 +10,7 @@ static int main_init(struct game_context *ctx)
 {
 	int ret;
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	// init SDL
 	ret = SDL_Init(SDL_INIT_VIDEO);
@@ -236,7 +236,7 @@ static int main_load_media(struct game_context *ctx)
 
 static int main_sleep(struct game_context *ctx)
 {
-	int frame_ticks = SDL_GetTicks() - ctx->start_ticks;
+	Uint32 frame_ticks = SDL_GetTicks() - ctx->start_ticks;
 	if (frame_ticks < SCREEN_TICKS_PER_FRAME)
 		SDL_Delay(SCREEN_TICKS_PER_FRAME - frame_ticks);
 
@@ -272,7 +272,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->fog_density = 5;
 	ctx->position = 0;
 	ctx->speed = 0;
-	ctx->max_speed = 1.f * (2 * ROAD_SEGMENT_LENGTH) / ctx->step *
+	ctx->max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) / (float)ctx->step *
 			 (30.f / (float)FPS);
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
@@ -283,7 +283,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->off_road_decel = (ctx->max_speed / 30) * -1;
 	// ctx->off_road_limit = (ctx->max_speed / 3);
 	ctx->off_road_limit = (ctx->max_speed / 2);
-	ctx->centrifugal = 0.3;
+	ctx->centrifugal = 0.3f;
 
 	ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;
@@ -393,10 +393,10 @@ int main()
 
 		// TODO: MOVE
 		float cam_depth =
-			1. / tanf((ctx->field_of_view / 2.f) * M_PI / 180.f);
+			1.f / tanf((ctx->field_of_view / 2.f) * (float)M_PI / 180.f);
 		ctx->camera_depth = (float)cam_depth;
 		ctx->player_z =
-			(int)((float)ctx->camera_height * ctx->camera_depth);
+			(size_t)((float)ctx->camera_height * ctx->camera_depth);
 		/*SDL_Log("[%s] camera_depth: double=%f, float=%f,
 		   player_z=%d\n",
 			__func__,

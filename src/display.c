@@ -191,8 +191,8 @@ static int display_render_quad(struct game_context *ctx,
 			       int y4,
 			       struct color_desc *color)
 {
-	Sint16 x[4] = {x1, x2, x3, x4};
-	Sint16 y[4] = {y1, y2, y3, y4};
+	Sint16 x[4] = {(Sint16)x1, (Sint16)x2, (Sint16)x3, (Sint16)x4};
+	Sint16 y[4] = {(Sint16)y1, (Sint16)y2, (Sint16)y3, (Sint16)y4};
 
 	filledPolygonRGBA(
 		ctx->renderer, x, y, 4, color->r, color->g, color->b, 255);
@@ -201,7 +201,7 @@ static int display_render_quad(struct game_context *ctx,
 }
 
 static int display_render_segment(struct game_context *ctx,
-				  int seg_idx,
+				  size_t seg_idx,
 				  int width,
 				  int lanes,
 				  int x1,
@@ -217,9 +217,6 @@ static int display_render_segment(struct game_context *ctx,
 	int r2 = inline_rumble_width(w2, lanes);
 	int l1 = inline_lane_marker_width(w1, lanes);
 	int l2 = inline_lane_marker_width(w2, lanes);
-
-	int last_seg_idx_lane = 0;
-	int last_seg_idx = 0;
 
 	// render grass
 	SDL_Rect r = {
@@ -384,8 +381,7 @@ static int display_load_render_text(struct game_context *ctx,
 
 static int display_render_text(struct game_context *ctx)
 {
-	int ret;
-	SDL_Rect r;
+	int ret = 0;
 	SDL_Color text_color = {0, 0, 0};
 	char speed[8];
 	sprintf(speed,
@@ -476,22 +472,18 @@ static int display_render_text(struct game_context *ctx)
 				 ctx->gfx.font_game_lap_value.w,
 				 0 /*ctx->gfx.font_game_lap_title.h*/);
 
-	return 0;
+	return ret;
 }
 
 
 static int display_render_scenery(struct game_context *ctx)
 {
 	int ret;
-	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
-	int last_idx =
-		(base_segment_idx + ctx->draw_distance) % ctx->nb_segments;
+	int base_segment_idx = (int)inline_get_segment_idx(ctx, ctx->position);
 
+	for (int i = (int)ctx->draw_distance; i >= 0; i--) {
 
-	for (int i = ctx->draw_distance; i >= 0; i--) {
-
-		int cam_position = ctx->position;
-		int idx = (base_segment_idx + i) % ctx->nb_segments;
+		int idx = (base_segment_idx + i) % (int)ctx->nb_segments;
 		struct road_segment *seg = &ctx->segments[idx];
 
 		////////////////////////////////////////////////////
@@ -499,20 +491,20 @@ static int display_render_scenery(struct game_context *ctx)
 		int tmp_max_y_idx;
 		int tmp_max_y_bis_idx;
 		if (ctx->max_y_idx > base_segment_idx) {
-			tmp_max_y_idx = ctx->max_y_idx;
+			tmp_max_y_idx = (int)ctx->max_y_idx;
 		} else {
-			tmp_max_y_idx = ctx->max_y_idx + ctx->nb_segments;
+			tmp_max_y_idx = (int)(ctx->max_y_idx + ctx->nb_segments);
 		}
 		if (ctx->max_y_bis_idx > base_segment_idx) {
-			tmp_max_y_bis_idx = ctx->max_y_bis_idx;
+			tmp_max_y_bis_idx = (int)ctx->max_y_bis_idx;
 		} else {
 			tmp_max_y_bis_idx =
-				ctx->max_y_bis_idx + ctx->nb_segments;
+				(int)(ctx->max_y_bis_idx + ctx->nb_segments);
 		}
 		if (idx > base_segment_idx) {
 			tmp_idx = idx;
 		} else {
-			tmp_idx = idx + ctx->nb_segments;
+			tmp_idx = idx + (int)ctx->nb_segments;
 		}
 		////////////////////////////////////////////////////
 
@@ -530,6 +522,15 @@ static int display_render_scenery(struct game_context *ctx)
 
 			seg->scene->sprite[j]->scale = x_scale;
 
+			/* TODO: factorize / make the code cleaner
+			 * compute seg->scene->sprite[j]->scaled_x then
+			 *substract
+			 * - (int)((float)seg->scene->sprite[j]->t->w *
+			 *			seg->scene->sprite[j]->scale
+			 * if seg->scene->sprite[j]->position < 0
+			 * => repeat for all pattern overthere
+			 */
+
 			if (seg->scene->sprite[j]->position >= 0)
 				seg->scene->sprite[j]->scaled_x =
 					seg->p1.screen.x +
@@ -544,16 +545,18 @@ static int display_render_scenery(struct game_context *ctx)
 					      seg->scene->sprite[j]->position *
 					      (float)ctx->road_width *
 					      (float)SCREEN_WIDTH / 2.f) -
-					seg->scene->sprite[j]->t->w *
-						seg->scene->sprite[j]->scale;
+					(int)((float)seg->scene->sprite[j]
+						      ->t->w *
+					      seg->scene->sprite[j]->scale);
 
 			// TODO: filter porperly % sprite width ?
 			if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
 				continue;
 
-			int sprite_y = (float)seg->p1.screen.y -
-				       (float)seg->scene->sprite[j]->t->h *
-					       seg->scene->sprite[j]->scale;
+			int sprite_y =
+				(int)((float)seg->p1.screen.y -
+				      (float)seg->scene->sprite[j]->t->h *
+					      seg->scene->sprite[j]->scale);
 
 			SDL_Rect *r = NULL;
 
@@ -568,14 +571,16 @@ static int display_render_scenery(struct game_context *ctx)
 				r = calloc(1, sizeof(SDL_Rect));
 				r->x = 0;
 				r->y = 0;
-				r->w = (float)seg->scene->sprite[j]->t->w;
-				int clip_h = ctx->max_y - sprite_y;
+				r->w = seg->scene->sprite[j]->t->w;
+				int clip_h = (int)ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
-					(float)(ctx->max_y - sprite_y) /
-					seg->scene->sprite[j]->scale;
-				if (clip_h < seg->scene->sprite[j]->t->h *
-						     seg->scene->sprite[j]
-							     ->scale &&
+					(int)((float)((int)ctx->max_y -
+						      sprite_y) /
+					      seg->scene->sprite[j]->scale);
+				if (clip_h < (int)((float)seg->scene->sprite[j]
+							   ->t->h *
+						   seg->scene->sprite[j]
+							   ->scale) &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
 				} else {
@@ -590,14 +595,16 @@ static int display_render_scenery(struct game_context *ctx)
 				r = calloc(1, sizeof(SDL_Rect));
 				r->x = 0;
 				r->y = 0;
-				r->w = (float)seg->scene->sprite[j]->t->w;
-				int clip_h = ctx->max_y_bis - sprite_y;
+				r->w = seg->scene->sprite[j]->t->w;
+				int clip_h = (int)ctx->max_y_bis - sprite_y;
 				int clip_h_inv_scale =
-					(float)(ctx->max_y_bis - sprite_y) /
-					seg->scene->sprite[j]->scale;
-				if (clip_h < seg->scene->sprite[j]->t->h *
-						     seg->scene->sprite[j]
-							     ->scale &&
+					(int)((float)((int)ctx->max_y_bis -
+						      sprite_y) /
+					      seg->scene->sprite[j]->scale);
+				if (clip_h < (int)((float)seg->scene->sprite[j]
+							   ->t->h *
+						   seg->scene->sprite[j]
+							   ->scale) &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
 				} else {
@@ -648,9 +655,10 @@ static int display_render_scenery(struct game_context *ctx)
 						      (float)ctx->road_width *
 						      (float)SCREEN_WIDTH /
 						      2.f) -
-						(float)ctx->ai_cars[i].t.w *
-							/*AI_CAR_SPRITE_ZOOM **/
-							car_x_scale / 2.f;
+						(int)((float)ctx->ai_cars[i]
+							      .t.w *
+						      /*AI_CAR_SPRITE_ZOOM **/
+						      car_x_scale / 2.f);
 				else
 					sprite_x =
 						seg->p1.screen.x +
@@ -659,21 +667,23 @@ static int display_render_scenery(struct game_context *ctx)
 						      (float)ctx->road_width *
 						      (float)SCREEN_WIDTH /
 						      2.f) -
-						(float)ctx->ai_cars[i].t.w *
-							/*AI_CAR_SPRITE_ZOOM **/
-							car_x_scale / 2.f;
+						(int)((float)ctx->ai_cars[i]
+							      .t.w *
+						      /*AI_CAR_SPRITE_ZOOM **/
+						      car_x_scale / 2.f);
 
 				// TODO: filter porperly % sprite width ?
 				if (sprite_x > SCREEN_WIDTH)
 					continue;
 
 				sprite_y =
-					seg->p1.screen.y -
-					(seg->p1.screen.y - seg->p2.screen.y) *
-						ctx->ai_cars[i]
-							.pos_z_rest_percent -
-					(float)ctx->ai_cars[i].t.h *
-						car_x_scale;
+					(int)(seg->p1.screen.y -
+					      (seg->p1.screen.y -
+					       seg->p2.screen.y) *
+						      ctx->ai_cars[i]
+							      .pos_z_rest_percent -
+					      (float)ctx->ai_cars[i].t.h *
+						      car_x_scale);
 
 				//////////////////////////////////////////////////////////////////////////////////////////
 				SDL_Rect *r = NULL;
@@ -681,20 +691,23 @@ static int display_render_scenery(struct game_context *ctx)
 				// if sprite is behind a hill, set a clip to
 				// crop its lower part
 				if (tmp_idx > tmp_max_y_idx) {
-					if (sprite_y >= ctx->max_y) {
+					if (sprite_y >= (int)ctx->max_y) {
 						continue;
 					}
 
 					r = calloc(1, sizeof(SDL_Rect));
 					r->x = 0;
 					r->y = 0;
-					r->w = (float)ctx->ai_cars[i].t.w;
-					int clip_h = ctx->max_y - sprite_y;
+					r->w = ctx->ai_cars[i].t.w;
+					int clip_h = (int)ctx->max_y - sprite_y;
 					int clip_h_inv_scale =
-						(float)(ctx->max_y - sprite_y) /
-						car_x_scale;
-					if (clip_h < ctx->ai_cars[i].t.h *
-							     car_x_scale &&
+						(int)((float)((int)ctx->max_y -
+							      sprite_y) /
+						      car_x_scale);
+					if (clip_h <
+						    (int)((float)ctx->ai_cars[i]
+								  .t.h *
+							  car_x_scale) &&
 					    clip_h > 0) {
 						r->h = clip_h_inv_scale;
 					} else {
@@ -710,14 +723,17 @@ static int display_render_scenery(struct game_context *ctx)
 					r = calloc(1, sizeof(SDL_Rect));
 					r->x = 0;
 					r->y = 0;
-					r->w = (float)ctx->ai_cars[i].t.w;
-					int clip_h = ctx->max_y_bis - sprite_y;
+					r->w = ctx->ai_cars[i].t.w;
+					int clip_h =
+						(int)ctx->max_y_bis - sprite_y;
 					int clip_h_inv_scale =
-						(float)(ctx->max_y_bis -
-							sprite_y) /
-						car_x_scale;
-					if (clip_h < ctx->ai_cars[i].t.h *
-							     car_x_scale &&
+						(int)((float)((int)ctx->max_y_bis -
+							      sprite_y) /
+						      car_x_scale);
+					if (clip_h <
+						    (int)((float)ctx->ai_cars[i]
+								  .t.h *
+							  car_x_scale) &&
 					    clip_h > 0) {
 						r->h = clip_h_inv_scale;
 					} else {
@@ -726,15 +742,15 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////
 
-				static uint32_t ticks_now = 0;
+				/*static uint32_t ticks_now = 0;
 				static uint32_t ticks_prev = 0;
 				static uint32_t ticks_diff = 0;
 				ticks_now = SDL_GetTicks();
 				ticks_diff = ticks_now - ticks_prev;
 				ticks_prev = ticks_now;
 
-				/*SDL_Log("[ia_car][%u][%d][%f] x=%d, y=%d, x_scale=%f, h=%f\n",
-					ticks_diff,
+				SDL_Log("[ia_car][%u][%d][%f] x=%d, y=%d,
+				   x_scale=%f, h=%f\n", ticks_diff,
 					ctx->ai_cars[i].segment,
 					ctx->ai_cars[i].pos_z_rest_percent,
 					sprite_x,
@@ -745,23 +761,22 @@ static int display_render_scenery(struct game_context *ctx)
 							2.f *
 							(float)AI_CAR_SPRITE_ZOOM
 					  : (float)ctx->ai_cars[i].t.h *
-							(float)car_screen_scale *
-							(float)SCREEN_WIDTH *
-							2.f *
+							(float)car_screen_scale
+				   * (float)SCREEN_WIDTH * 2.f *
 							(float)AI_CAR_SPRITE_ZOOM);*/
 
 				// TODO : why  ai car sprit 'h' is so jumpy ?
 				// lessen this effect
 
-				ret = texture_render(ctx,
-						     &ctx->ai_cars[i].t,
-						     sprite_x,
-						     sprite_y,
-						     r,
-						     car_screen_scale *
-							     SCREEN_WIDTH * 2 *
-							     AI_CAR_SPRITE_ZOOM,
-						     SDL_FLIP_NONE);
+				ret = texture_render(
+					ctx,
+					&ctx->ai_cars[i].t,
+					sprite_x,
+					sprite_y,
+					r,
+					car_screen_scale * (float)SCREEN_WIDTH *
+						2.f * AI_CAR_SPRITE_ZOOM,
+					SDL_FLIP_NONE);
 
 				if (r)
 					free(r);
@@ -769,7 +784,7 @@ static int display_render_scenery(struct game_context *ctx)
 		}
 	}
 
-	return 0;
+	return ret;
 }
 
 
@@ -847,41 +862,28 @@ static int display_render_ai_cars(struct game_context *ctx)
 static int display_render_road(struct game_context *ctx)
 {
 
-	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
-	float ratio_modulus =
+	size_t base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
+	size_t ratio_modulus =
 		(ctx->position % ROAD_SEGMENT_LENGTH) / ROAD_SEGMENT_LENGTH;
-	float dx = -(ctx->segments[base_segment_idx].curve * ratio_modulus);
+	float dx =
+		-(ctx->segments[base_segment_idx].curve * (float)ratio_modulus);
 	float x = 0;
-	int i, idx;
+	size_t i, idx;
 
 	ctx->max_y = SCREEN_HEIGHT;
 	ctx->max_y_idx = 0;
 	ctx->max_y_bis = SCREEN_HEIGHT;
 	ctx->max_y_bis_idx = 0;
 
-	static int dbgcpt = 0;
-
 	float highest_world_y = 0;
-
-	/*SDL_Log("[%s] ENTER, base_segment_idx = %d\n",
-		__func__,
-		base_segment_idx);*/
-
-	int last_seg_idx_lane = 0;
-	int last_seg_idx = 0;
 
 	for (i = 0; i < ctx->draw_distance; i++) {
 
 		int add_z_offset_to_first_segments = 0;
-		int cam_position = ctx->position;
 		idx = (base_segment_idx + i) % ctx->nb_segments;
 
 		// fix transition from high to low idx segments.
 		if (idx < base_segment_idx) {
-			// continue;
-			/*cam_position =
-				ctx->position + ctx->player_z -
-				ctx->segments[base_segment_idx].p1.world.z;*/
 			add_z_offset_to_first_segments = 1;
 		}
 
@@ -889,14 +891,12 @@ static int display_render_road(struct game_context *ctx)
 		logic_project_coord(
 			&ctx->segments[idx].p1,
 			add_z_offset_to_first_segments
-				? ctx->segments[ctx->nb_segments - 1]
-					  .p1.world
-					  .z /* + ctx->segment_length */
+				? (int)ctx->segments[ctx->nb_segments - 1]
+					  .p1.world.z
 				: 0,
-			(ctx->player_x * ctx->road_width) - x,
+			(int)((ctx->player_x * (float)ctx->road_width) - x),
 			ctx->player_y + ctx->camera_height,
-			// cam_position,
-			ctx->position,
+			(int)ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
@@ -905,12 +905,13 @@ static int display_render_road(struct game_context *ctx)
 		logic_project_coord(
 			&ctx->segments[idx].p2,
 			add_z_offset_to_first_segments
-				? ctx->segments[ctx->nb_segments - 1].p2.world.z
+				? (int)ctx->segments[ctx->nb_segments - 1]
+					  .p2.world.z
 				: 0,
-			(ctx->player_x * ctx->road_width) - x - dx,
+			(int)((ctx->player_x * (float)ctx->road_width) - x -
+			      dx),
 			ctx->player_y + ctx->camera_height,
-			// cam_position,
-			ctx->position,
+			(int)ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
@@ -919,65 +920,10 @@ static int display_render_road(struct game_context *ctx)
 		x += dx;
 		dx += ctx->segments[idx].curve;
 
-		// if (idx == 499 || idx == 0 || idx == 1)
-		/*SDL_Log("[%s][idx=%d] cam_pos=%d, p1.w.z=%f, p1.scr.z=%f",
-			__func__,
-			idx,
-			cam_position,
-			ctx->segments[idx].p1.world.z,
-			ctx->segments[idx].p1.screen.z);*/
-
-		int static cpt = 0;
-
-		// if (/*!(cpt % 30) && */ idx < 11) {
-		/*if (!(cpt % 30) &&
-		    idx == inline_get_segment_idx(
-				   ctx, ctx->position + ctx->player_z)) {
-			SDL_Log("[%s][idx=%d] p1: world(%d, %f, %f), "
-				"cam(%d, %f, %f), "
-				"screen(% d, %f, %f)\n ",
-				__func__,
-				idx,
-				ctx->segments[idx].p1.world.x,
-				ctx->segments[idx].p1.world.y,
-				ctx->segments[idx].p1.world.z,
-				ctx->segments[idx].p1.camera.x,
-				ctx->segments[idx].p1.camera.y,
-				ctx->segments[idx].p1.camera.z,
-				ctx->segments[idx].p1.screen.x,
-				ctx->segments[idx].p1.screen.y,
-				ctx->segments[idx].p1.screen.z);
-			SDL_Log("[%s][idx=%d] p2: world(%d, %f, %f), "
-				"cam(%d, %f, %f), "
-				"screen(%d, %f, %f)\n ",
-				__func__,
-				idx,
-				ctx->segments[idx].p2.world.x,
-				ctx->segments[idx].p2.world.y,
-				ctx->segments[idx].p2.world.z,
-				ctx->segments[idx].p2.camera.x,
-				ctx->segments[idx].p2.camera.y,
-				ctx->segments[idx].p2.camera.z,
-				ctx->segments[idx].p2.screen.x,
-				ctx->segments[idx].p2.screen.y,
-				ctx->segments[idx].p2.screen.z);
-		}*/
-
-		if (idx ==
-		    inline_get_segment_idx(ctx, ctx->position + ctx->player_z))
-			cpt++;
-
-
 		// skip segment behind hills
 		if (ctx->segments[idx].p2.screen.y >=
 			    ctx->segments[idx].p1.screen.y ||
 		    ctx->segments[idx].p2.screen.y >= ctx->max_y) {
-
-			/*if (ctx->segments[idx].p1.screen.y < ctx->max_y_bis &&
-			    ctx->segments[idx].p1.screen.y > ctx->max_y)*/
-			/*if (!ctx->max_y_bis_idx &&
-			    ctx->segments[idx].p1.screen.y > 0 &&
-			    ctx->segments[idx].p1.screen.y < ctx->max_y)*/
 			if (!ctx->max_y_bis_idx && ctx->max_y_idx) {
 				ctx->max_y_bis = ctx->max_y;
 				ctx->max_y_bis_idx = idx;
@@ -995,45 +941,19 @@ static int display_render_road(struct game_context *ctx)
 		display_render_segment(ctx,
 				       idx,
 				       SCREEN_WIDTH,
-				       ctx->lanes,
+				       (int)ctx->lanes,
 				       ctx->segments[idx].p1.screen.x,
-				       ctx->segments[idx].p1.screen.y,
+				       (int)ctx->segments[idx].p1.screen.y,
 				       ctx->segments[idx].p1.screen.w,
 				       ctx->segments[idx].p2.screen.x,
-				       ctx->segments[idx].p2.screen.y,
+				       (int)ctx->segments[idx].p2.screen.y,
 				       ctx->segments[idx].p2.screen.w,
 				       0, // TODO: fog
 				       ctx->segments[idx].color);
 
-		if (ctx->segments[idx].color == COLOR_DARK && ctx->lanes)
-			last_seg_idx_lane = idx;
-
-		last_seg_idx = idx;
-
-		// if(ctx->segments[idx].p2.screen.y > ctx->max_y) {
-		ctx->max_y = ctx->segments[idx].p1.screen.y;
+		ctx->max_y = (size_t)ctx->segments[idx].p1.screen.y;
 		ctx->max_y_idx = idx;
-		// if (base_segment_idx + i < ctx->nb_segments) {
-		/*ctx->max_y =
-			ctx->segments[base_segment_idx + i].p1.screen.y;
-		ctx->max_y_idx = base_segment_idx + i;*/
-		/*} else if (ctx->max_y_idx < ctx->nb_segments - 1) {
-			// ctx->max_y_idx++;
-			ctx->max_y_idx++;
-			ctx->max_y = ctx->segments[ctx->max_y_idx].p1.screen.y;
-		}*/ /*else {
-			ctx->max_y = ctx->segments[idx].p1.screen.y;
-			ctx->max_y_idx = idx;
-		}*/
-		//}
 	}
-
-	/*SDL_Log("[%s] last_seg_idx_lane = %d, last_seg_idx = %d,
-	   highest_world_y = %f\n",
-		__func__,
-		last_seg_idx_lane,
-		last_seg_idx,
-		highest_world_y);*/
 
 	return 0;
 }
@@ -1062,15 +982,9 @@ static int display_render_background_layer(struct game_context *ctx,
 
 	// TODO : BG rotation % speed, no rotation if speed == 0
 	// TODO : do some modulus to avoid going too far
-	*texture_x_offset += ctx->segments[ctx->player_segment].curve *
-			     bg_layer * ctx->speed / ctx->max_speed;
-
-	/*SDL_Log("speed = %f, texture_x_offset = %d, delta_x = %d\n",
-		ctx->speed,
-		*texture_x_offset,
-		(int) (ctx->segments[ctx->player_segment].curve * bg_layer *
-			ctx->speed / ctx->max_speed));*/
-
+	*texture_x_offset +=
+		(int)(ctx->segments[ctx->player_segment].curve *
+		      (float)bg_layer * ctx->speed / ctx->max_speed);
 
 	if (*texture_x_offset > bg_texture->w)
 		*texture_x_offset -= bg_texture->w;
@@ -1102,14 +1016,8 @@ static int display_render_background_layer(struct game_context *ctx,
 			     SCREEN_HEIGHT * bg_y_offset_num / 100 -
 				     bg_texture->h,
 			     &bg_clip_rect,
-			     // 1,
 			     1,
 			     SDL_FLIP_NONE);
-
-	/*SDL_Log("[Rect_1] x = %d, clip { x = %d, w = %d }\n",
-		bg_x1,
-		bg_clip_rect.x,
-		bg_clip_rect.w);*/
 
 	if (another_bg == ANOTHER_BG_RIGHT) {
 		bg_x2 = bg_clip_rect.w;
@@ -1128,17 +1036,11 @@ static int display_render_background_layer(struct game_context *ctx,
 				     SCREEN_HEIGHT * bg_y_offset_num / 100 -
 					     bg_texture->h,
 				     &bg_clip_rect,
-				     // 1,
 				     1,
 				     SDL_FLIP_NONE);
-
-		/*SDL_Log("[Rect_2] x = %d, clip { x = %d, w = %d }\n",
-			bg_x2,
-			bg_clip_rect.x,
-			bg_clip_rect.w);*/
 	}
 
-	return 0;
+	return ret;
 }
 
 
@@ -1157,28 +1059,18 @@ static int display_render_backgrounds(struct game_context *ctx)
 		&ctx->layers_x_offset.landscape_far,
 		&ctx->gfx.bg_mountains);
 
-	/*
-	ret = display_render_background_layer(
-		ctx,
-		BG_LAYER_LANDSCAPE_NEAR,
-		&ctx->layers_x_offset.landscape_near,
-		&ctx->gfx.bg_?);*/
-
 	ret = display_render_background_layer(ctx,
 					      BG_LAYER_SKY_NEAR,
 					      &ctx->layers_x_offset.sky_near,
 					      &ctx->gfx.bg_sky_near);
 
-	return 0;
+	return ret;
 }
 
 
 static int display_screen_race(struct game_context *ctx)
 {
 	int ret = 0;
-	// int player_car_x_in_pixels;
-
-	// SDL_Log("[%s] ENTER\n", __func__);
 
 	// clear screen
 	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
@@ -1193,9 +1085,6 @@ static int display_screen_race(struct game_context *ctx)
 	// render scenery sprites
 	ret = display_render_scenery(ctx);
 
-	// render ai cars sprites
-	// ret = display_render_ai_cars(ctx);
-
 	// just draw the player in middle of the screen. It doesn't move, that's
 	// the world around it which moves.
 	ctx->player_car_x_in_pixels =
@@ -1208,19 +1097,6 @@ static int display_screen_race(struct game_context *ctx)
 	if (!ctx->player_sprite_y)
 		ctx->player_sprite_y =
 			SCREEN_HEIGHT - (ctx->gfx.car_player.h * 1 / 2) - 30;
-
-	/*SDL_Log("[%s] car_player y = %d => %d\n",
-		__func__,
-		ctx->player_y,
-		ctx->player_sprite_y);*/
-
-
-	// TODO : "zoom" car sprite on HIGH downhill
-	int player_segment =
-		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
-
-	/*float delta_y = ctx->player_y -
-	ctx->segments[player_segment].p2.world.y; if (fabsf(delta_y) < 20 ) {*/
 
 	ret = texture_render(ctx,
 			     &ctx->gfx.car_player,
