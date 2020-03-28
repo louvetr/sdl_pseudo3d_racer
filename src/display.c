@@ -733,7 +733,6 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 						     tmp_idx,
 						     tmp_max_y_idx,
 						     tmp_max_y_bis_idx);
-
 	}
 
 	return ret;
@@ -1037,26 +1036,33 @@ static int display_screen_race(struct game_context *ctx)
 	// render scenery sprites and AI cars
 	ret = display_render_scaled_sprites(ctx);
 
+
+	// TODO: separate player car display in a function
+
+
 	// just draw the player in middle of the screen. It doesn't move, that's
 	// the world around it which moves.
 	ctx->player_car_x_in_pixels =
 		(SCREEN_WIDTH / 2) -
-		(ctx->gfx.car_player.w * 1 /
-		 (2 * 2)); // reduce texture by 2 then remove it half width
+		(int)((float)ctx->car_player_texture->w *
+		      PLAYER_CAR_SPRITE_ZOOM /
+		      2.f); // reduce texture by 2 then remove it half width
 
 	//////////////// render player car
 	// TODO put somewhere else
 	if (!ctx->player_sprite_y)
-		ctx->player_sprite_y =
-			SCREEN_HEIGHT - (ctx->gfx.car_player.h * 1 / 2) - 30;
+		ctx->player_sprite_y = SCREEN_HEIGHT -
+				       (int)((float)ctx->car_player_texture->h *
+					     PLAYER_CAR_SPRITE_ZOOM) -
+				       30; // TODO: Why 30 ??????
 
 	ret = texture_render(ctx,
-			     &ctx->gfx.car_player,
+			     ctx->car_player_texture,
 			     ctx->player_car_x_in_pixels,
 			     ctx->player_sprite_y,
 			     NULL,
 			     PLAYER_CAR_SPRITE_ZOOM,
-			     SDL_FLIP_NONE);
+			     ctx->car_player_flip);
 
 	// render scenery text message
 	ret = display_render_text(ctx);

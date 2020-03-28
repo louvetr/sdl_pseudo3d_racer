@@ -62,7 +62,8 @@ int ai_car_init(struct game_context *ctx)
 
 
 		ctx->ai_cars[i].segment =
-			ctx->nb_segments - (i / ctx->lanes) * 5;
+			ctx->nb_segments - 1 - (i / ctx->lanes) * 5;
+
 		ctx->ai_cars[i].pos_z =
 			ctx->ai_cars[i].segment * ROAD_SEGMENT_LENGTH;
 
@@ -83,7 +84,6 @@ int ai_car_init(struct game_context *ctx)
 
 
 		// TODO: change the idx of each car randomly
-
 	}
 	return 0;
 }

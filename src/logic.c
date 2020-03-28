@@ -12,6 +12,33 @@ static float COLLIONSION_SCENE_SHIFT = 0.5f;
 // public functions definition
 /////////////////////////////////////////////////////////////////
 
+static int logic_set_player_sprite(struct game_context *ctx)
+{
+	switch (ctx->car_orientation_cur) {
+	case PLAYER_SPRITE_HARD_LEFT:
+		ctx->car_player_texture = &ctx->gfx.car_player_right2;
+		ctx->car_player_flip = SDL_FLIP_HORIZONTAL;
+		break;
+	case PLAYER_SPRITE_LIGHT_LEFT:
+		ctx->car_player_texture = &ctx->gfx.car_player_right1;
+		ctx->car_player_flip = SDL_FLIP_HORIZONTAL;
+		break;
+	case PLAYER_SPRITE_STRAIGHT:
+		ctx->car_player_texture = &ctx->gfx.car_player_rear;
+		ctx->car_player_flip = SDL_FLIP_NONE;
+		break;
+	case PLAYER_SPRITE_LIGHT_RIGHT:
+		ctx->car_player_texture = &ctx->gfx.car_player_right1;
+		ctx->car_player_flip = SDL_FLIP_NONE;
+		break;
+	case PLAYER_SPRITE_HARD_RIGHT:
+		ctx->car_player_texture = &ctx->gfx.car_player_right2;
+		ctx->car_player_flip = SDL_FLIP_NONE;
+		break;
+	}
+
+	return 0;
+}
 
 static int logic_race_collision(struct game_context *ctx)
 {
@@ -56,29 +83,38 @@ static int logic_race_collision(struct game_context *ctx)
 				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
 					sprite_left_hb_x =
 						sprite_left->scaled_x +
-						(int)((float)(sprite_left->t->w -
-						 sprite_left->hitbox->x) *
-							sprite_left->scale);
+						(int)((float)(sprite_left->t
+								      ->w -
+							      sprite_left
+								      ->hitbox
+								      ->x) *
+						      sprite_left->scale);
 				else /* SDL_FLIP_NONE */
 					sprite_left_hb_x =
 						sprite_left->scaled_x +
-						(int)((float)(sprite_left->hitbox->x +
-						 sprite_left->hitbox->w) *
-							sprite_left->scale);
+						(int)((float)(sprite_left
+								      ->hitbox
+								      ->x +
+							      sprite_left
+								      ->hitbox
+								      ->w) *
+						      sprite_left->scale);
 			else
 				// if (sprite_left->scaled_x < SCREEN_WIDTH)
 				sprite_left_hb_x =
 					sprite_left->scaled_x +
-					(int)((float)sprite_left->t->w * sprite_left->scale);
+					(int)((float)sprite_left->t->w *
+					      sprite_left->scale);
 		}
 
 		if (sprite_right->scaled_x > 0 &&
 		    sprite_right->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_right->hitbox)
-				sprite_right_hb_x = sprite_right->scaled_x +
-						    (int)((float)sprite_right->hitbox->x *
-							    sprite_right->scale);
+				sprite_right_hb_x =
+					sprite_right->scaled_x +
+					(int)((float)sprite_right->hitbox->x *
+					      sprite_right->scale);
 			else /*if (sprite_right->scaled_x > 0 &&
 				 sprite_right->scaled_x < SCREEN_WIDTH)*/
 				sprite_right_hb_x = sprite_right->scaled_x;
@@ -100,7 +136,7 @@ static int logic_race_collision(struct game_context *ctx)
 			break;
 
 		} else if (ctx->player_car_x_in_pixels +
-				   ctx->gfx.car_player.w /
+				   ctx->car_player_texture->w /
 					   2 /* TODO: use player car zoom define
 					      */
 			   > sprite_right_hb_x) {
@@ -144,17 +180,50 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->dt = 35;
 	}
 
-	ctx->position = inline_increase(ctx->position,
-					(int)(ctx->dt * ctx->speed),
-					ctx->track_length);
+	ctx->position = inline_increase(
+		ctx->position, (int)(ctx->dt * ctx->speed), ctx->track_length);
 
 	// screen crossing should take 1sec at top speed
 	float dx = (ctx->dt * 2 * (ctx->speed / ctx->max_speed)) / 3000;
 
-	if (ctx->keys.left)
+	if (ctx->keys.left) {
 		ctx->player_x = ctx->player_x - dx;
-	else if (ctx->keys.right)
+		if (ctx->car_orientation_cur == PLAYER_SPRITE_STRAIGHT ||
+		    ctx->car_orientation_cur == PLAYER_SPRITE_LIGHT_RIGHT ||
+		    ctx->car_orientation_cur == PLAYER_SPRITE_HARD_RIGHT) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_LEFT;
+			ctx->same_car_orientation_in_frame = 0;
+		} else if (ctx->car_orientation_cur ==
+				   PLAYER_SPRITE_LIGHT_LEFT &&
+			   ctx->same_car_orientation_in_frame > 5) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_HARD_LEFT;
+		}
+	} else if (ctx->keys.right) {
 		ctx->player_x = ctx->player_x + dx;
+		if (ctx->car_orientation_cur == PLAYER_SPRITE_STRAIGHT ||
+		    ctx->car_orientation_cur == PLAYER_SPRITE_LIGHT_LEFT ||
+		    ctx->car_orientation_cur == PLAYER_SPRITE_HARD_LEFT) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_RIGHT;
+			ctx->same_car_orientation_in_frame = 0;
+		} else if (ctx->car_orientation_cur ==
+				   PLAYER_SPRITE_LIGHT_RIGHT &&
+			   ctx->same_car_orientation_in_frame > 5) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_HARD_RIGHT;
+		}
+	}
+	// no dir key pressed
+	else {
+		ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
+		ctx->same_car_orientation_in_frame = 0;
+	}
+
+	if (ctx->car_orientation_cur != ctx->car_orientation_prev) {
+		ctx->car_orientation_prev = ctx->car_orientation_cur;
+		logic_set_player_sprite(ctx);
+	} else {
+		ctx->same_car_orientation_in_frame++;
+	}
+
 
 	ctx->player_x =
 		ctx->player_x -

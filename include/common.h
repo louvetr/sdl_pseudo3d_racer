@@ -26,7 +26,10 @@
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 //#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
 
-#define PNG_CAR_PLAYER "./media/car_rear_01.png"
+//#define PNG_CAR_PLAYER "./media/car_rear_01.png"
+#define PNG_CAR_PLAYER_REAR "./media/imprezia_rear.png"
+#define PNG_CAR_PLAYER_RIGHT1 "./media/imprezia_right_1.png"
+#define PNG_CAR_PLAYER_RIGHT2 "./media/imprezia_right_2.png"
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/bg_clouds_far.png"
@@ -49,7 +52,9 @@
 
 #define RUMBLE_LENGTH 3
 
-#define PLAYER_CAR_SPRITE_ZOOM 0.5f
+//#define PLAYER_CAR_SPRITE_ZOOM 0.5f
+#define PLAYER_CAR_SPRITE_ZOOM 0.33f
+
 #define AI_CAR_SPRITE_ZOOM 0.22f
 
 
@@ -124,6 +129,13 @@ enum road_sector_length {
  	SECTOR_LENGTH_LONG = 100
 };
 
+enum player_sprite_orientation {
+ 	PLAYER_SPRITE_HARD_LEFT,
+ 	PLAYER_SPRITE_LIGHT_LEFT,
+ 	PLAYER_SPRITE_STRAIGHT,
+ 	PLAYER_SPRITE_LIGHT_RIGHT,
+ 	PLAYER_SPRITE_HARD_RIGHT
+};
 
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
@@ -148,7 +160,9 @@ struct texture {
 // grapĥics of the game
 struct game_graphics{
     // image textures
-	struct texture car_player;
+	struct texture car_player_rear;
+	struct texture car_player_right1;
+	struct texture car_player_right2;
 	struct texture bg_mountains;
 	struct texture bg_sky_near;
 	struct texture bg_sky_far;
@@ -362,6 +376,12 @@ struct game_context {
     enum game_status status_cur;
     // previous status in state machine
     enum game_status status_prev;
+	
+	enum player_sprite_orientation car_orientation_cur;
+	enum player_sprite_orientation car_orientation_prev;
+	int same_car_orientation_in_frame;
+	struct texture *car_player_texture;
+	SDL_RendererFlip car_player_flip;
 
     // font to display text
     TTF_Font *sc_font_big;

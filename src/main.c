@@ -90,12 +90,24 @@ static int main_load_media(struct game_context *ctx)
 
 	int ret;
 	// load png
-	ret = load_texture_from_file(ctx, PNG_CAR_PLAYER, &ctx->gfx.car_player);
+	ret = load_texture_from_file(
+		ctx, PNG_CAR_PLAYER_REAR, &ctx->gfx.car_player_rear);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
-
+	ret = load_texture_from_file(
+		ctx, PNG_CAR_PLAYER_RIGHT1, &ctx->gfx.car_player_right1);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, PNG_CAR_PLAYER_RIGHT2, &ctx->gfx.car_player_right2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
 
 	ret = load_texture_from_file(
 		ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
@@ -285,6 +297,12 @@ static int main_ctx_init(struct game_context *ctx)
 	// ctx->off_road_limit = (ctx->max_speed / 3);
 	ctx->off_road_limit = (ctx->max_speed / 2);
 	ctx->centrifugal = 0.3f;
+
+	ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
+	ctx->car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
+	ctx->same_car_orientation_in_frame = 0;
+	ctx->car_player_texture = &ctx->gfx.car_player_rear;
+	ctx->car_player_flip = SDL_FLIP_NONE;
 
 	ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;
