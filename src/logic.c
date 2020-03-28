@@ -16,9 +16,9 @@ static float COLLIONSION_SCENE_SHIFT = 0.5f;
 static int logic_race_collision(struct game_context *ctx)
 {
 
-	for (size_t i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 
-		size_t idx = (ctx->player_segment + i) % ctx->nb_segments;
+		int idx = (ctx->player_segment + i) % ctx->nb_segments;
 		struct road_segment *seg = &ctx->segments[idx];
 		struct scene_sprite_desc *sprite_left = NULL;
 		struct scene_sprite_desc *sprite_right = NULL;
@@ -145,7 +145,7 @@ static int logic_race_control(struct game_context *ctx)
 	}
 
 	ctx->position = inline_increase(ctx->position,
-					(size_t)(ctx->dt * ctx->speed),
+					(int)(ctx->dt * ctx->speed),
 					ctx->track_length);
 
 	// screen crossing should take 1sec at top speed

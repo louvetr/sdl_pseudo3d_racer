@@ -201,7 +201,7 @@ static int display_render_quad(struct game_context *ctx,
 }
 
 static int display_render_segment(struct game_context *ctx,
-				  size_t seg_idx,
+				  int seg_idx,
 				  int width,
 				  int lanes,
 				  int x1,
@@ -479,11 +479,11 @@ static int display_render_text(struct game_context *ctx)
 static int display_render_scenery(struct game_context *ctx)
 {
 	int ret;
-	int base_segment_idx = (int)inline_get_segment_idx(ctx, ctx->position);
+	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
 
-	for (int i = (int)ctx->draw_distance; i >= 0; i--) {
+	for (int i = ctx->draw_distance; i >= 0; i--) {
 
-		int idx = (base_segment_idx + i) % (int)ctx->nb_segments;
+		int idx = (base_segment_idx + i) % ctx->nb_segments;
 		struct road_segment *seg = &ctx->segments[idx];
 
 		////////////////////////////////////////////////////
@@ -491,20 +491,20 @@ static int display_render_scenery(struct game_context *ctx)
 		int tmp_max_y_idx;
 		int tmp_max_y_bis_idx;
 		if (ctx->max_y_idx > base_segment_idx) {
-			tmp_max_y_idx = (int)ctx->max_y_idx;
+			tmp_max_y_idx = ctx->max_y_idx;
 		} else {
-			tmp_max_y_idx = (int)(ctx->max_y_idx + ctx->nb_segments);
+			tmp_max_y_idx = (ctx->max_y_idx + ctx->nb_segments);
 		}
 		if (ctx->max_y_bis_idx > base_segment_idx) {
-			tmp_max_y_bis_idx = (int)ctx->max_y_bis_idx;
+			tmp_max_y_bis_idx = ctx->max_y_bis_idx;
 		} else {
 			tmp_max_y_bis_idx =
-				(int)(ctx->max_y_bis_idx + ctx->nb_segments);
+				(ctx->max_y_bis_idx + ctx->nb_segments);
 		}
 		if (idx > base_segment_idx) {
 			tmp_idx = idx;
 		} else {
-			tmp_idx = idx + (int)ctx->nb_segments;
+			tmp_idx = idx + ctx->nb_segments;
 		}
 		////////////////////////////////////////////////////
 
@@ -572,9 +572,9 @@ static int display_render_scenery(struct game_context *ctx)
 				r->x = 0;
 				r->y = 0;
 				r->w = seg->scene->sprite[j]->t->w;
-				int clip_h = (int)ctx->max_y - sprite_y;
+				int clip_h = ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)((int)ctx->max_y -
+					(int)((float)(ctx->max_y -
 						      sprite_y) /
 					      seg->scene->sprite[j]->scale);
 				if (clip_h < (int)((float)seg->scene->sprite[j]
@@ -596,9 +596,9 @@ static int display_render_scenery(struct game_context *ctx)
 				r->x = 0;
 				r->y = 0;
 				r->w = seg->scene->sprite[j]->t->w;
-				int clip_h = (int)ctx->max_y_bis - sprite_y;
+				int clip_h = ctx->max_y_bis - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)((int)ctx->max_y_bis -
+					(int)((float)(ctx->max_y_bis -
 						      sprite_y) /
 					      seg->scene->sprite[j]->scale);
 				if (clip_h < (int)((float)seg->scene->sprite[j]
@@ -691,7 +691,7 @@ static int display_render_scenery(struct game_context *ctx)
 				// if sprite is behind a hill, set a clip to
 				// crop its lower part
 				if (tmp_idx > tmp_max_y_idx) {
-					if (sprite_y >= (int)ctx->max_y) {
+					if (sprite_y >= ctx->max_y) {
 						continue;
 					}
 
@@ -699,9 +699,9 @@ static int display_render_scenery(struct game_context *ctx)
 					r->x = 0;
 					r->y = 0;
 					r->w = ctx->ai_cars[i].t.w;
-					int clip_h = (int)ctx->max_y - sprite_y;
+					int clip_h = ctx->max_y - sprite_y;
 					int clip_h_inv_scale =
-						(int)((float)((int)ctx->max_y -
+						(int)((float)(ctx->max_y -
 							      sprite_y) /
 						      car_x_scale);
 					if (clip_h <
@@ -725,9 +725,9 @@ static int display_render_scenery(struct game_context *ctx)
 					r->y = 0;
 					r->w = ctx->ai_cars[i].t.w;
 					int clip_h =
-						(int)ctx->max_y_bis - sprite_y;
+						ctx->max_y_bis - sprite_y;
 					int clip_h_inv_scale =
-						(int)((float)((int)ctx->max_y_bis -
+						(int)((float)(ctx->max_y_bis -
 							      sprite_y) /
 						      car_x_scale);
 					if (clip_h <
@@ -862,13 +862,13 @@ static int display_render_ai_cars(struct game_context *ctx)
 static int display_render_road(struct game_context *ctx)
 {
 
-	size_t base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
-	size_t ratio_modulus =
+	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
+	int ratio_modulus =
 		(ctx->position % ROAD_SEGMENT_LENGTH) / ROAD_SEGMENT_LENGTH;
 	float dx =
 		-(ctx->segments[base_segment_idx].curve * (float)ratio_modulus);
 	float x = 0;
-	size_t i, idx;
+	int i, idx;
 
 	ctx->max_y = SCREEN_HEIGHT;
 	ctx->max_y_idx = 0;
@@ -896,7 +896,7 @@ static int display_render_road(struct game_context *ctx)
 				: 0,
 			(int)((ctx->player_x * (float)ctx->road_width) - x),
 			ctx->player_y + ctx->camera_height,
-			(int)ctx->position,
+			ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
@@ -911,7 +911,7 @@ static int display_render_road(struct game_context *ctx)
 			(int)((ctx->player_x * (float)ctx->road_width) - x -
 			      dx),
 			ctx->player_y + ctx->camera_height,
-			(int)ctx->position,
+			ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
@@ -941,7 +941,7 @@ static int display_render_road(struct game_context *ctx)
 		display_render_segment(ctx,
 				       idx,
 				       SCREEN_WIDTH,
-				       (int)ctx->lanes,
+				       ctx->lanes,
 				       ctx->segments[idx].p1.screen.x,
 				       (int)ctx->segments[idx].p1.screen.y,
 				       ctx->segments[idx].p1.screen.w,
@@ -951,7 +951,7 @@ static int display_render_road(struct game_context *ctx)
 				       0, // TODO: fog
 				       ctx->segments[idx].color);
 
-		ctx->max_y = (size_t)ctx->segments[idx].p1.screen.y;
+		ctx->max_y = (int)ctx->segments[idx].p1.screen.y;
 		ctx->max_y_idx = idx;
 	}
 
@@ -1088,7 +1088,7 @@ static int display_screen_race(struct game_context *ctx)
 	// just draw the player in middle of the screen. It doesn't move, that's
 	// the world around it which moves.
 	ctx->player_car_x_in_pixels =
-		(int)(SCREEN_WIDTH / 2) -
+		(SCREEN_WIDTH / 2) -
 		(ctx->gfx.car_player.w * 1 /
 		 (2 * 2)); // reduce texture by 2 then remove it half width
 

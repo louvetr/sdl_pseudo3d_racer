@@ -1,6 +1,6 @@
 #include "common.h"
 
-/*static*/ float ai_lane_to_posx(size_t idx_lane, size_t nb_lanes)
+/*static*/ float ai_lane_to_posx(int idx_lane, int nb_lanes)
 {
 	float pos_x;
 	// x position in a [0,1] range
@@ -30,7 +30,7 @@ int logic_race_ai_cars(struct game_context *ctx)
 
 		ctx->ai_cars[i].pos_z =
 			inline_increase(ctx->ai_cars[i].pos_z,
-					(size_t)(ctx->dt * ctx->ai_cars[i].speed),
+					(int)(ctx->dt * ctx->ai_cars[i].speed),
 					ctx->track_length);
 
 		/*ctx->ai_cars[i].segment =
@@ -54,7 +54,7 @@ int logic_race_ai_cars(struct game_context *ctx)
 int ai_car_init(struct game_context *ctx)
 {
 
-	for (size_t i = 0; i < NB_AI_CARS; i++) {
+	for (int i = 0; i < NB_AI_CARS; i++) {
 
 		ctx->ai_cars[i].lane = i % ctx->lanes;
 		ctx->ai_cars[i].pos_x =

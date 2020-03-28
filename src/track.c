@@ -442,8 +442,8 @@ int track_build_try_turns(struct game_context *ctx)
 
 	ctx->nb_segments = 575;
 
-
-	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
+	ctx->segments =
+		calloc((size_t)ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
 		SDL_Log("[%s] ERROR: calloc failed\n", __func__);
 		return -ENOMEM;
@@ -517,13 +517,12 @@ int track_build(struct game_context *ctx)
 	// ctx->nb_segments = 2750;
 	ctx->nb_segments = 2450;
 
-
 	///////////////////////////////////
 	// TODO: put this in a function elsewhere
 	// ctx->player_segment = ctx->nb_segments - 30;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 
-	size_t player_lane = NB_AI_CARS % ctx->lanes;
+	int player_lane = NB_AI_CARS % ctx->lanes;
 	// ctx->position =
 	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
 
@@ -531,7 +530,8 @@ int track_build(struct game_context *ctx)
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 	///////////////////////////////////
 
-	ctx->segments = calloc(ctx->nb_segments, sizeof(*ctx->segments));
+	ctx->segments =
+		calloc((size_t)ctx->nb_segments, sizeof(*ctx->segments));
 	if (!ctx->segments) {
 		SDL_Log("[%s] ERROR: calloc failed\n", __func__);
 		return -ENOMEM;
@@ -719,8 +719,9 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_oaks_forest_1->nb_sprites = 8;
-	seg_oaks_forest_1->sprite = calloc(seg_oaks_forest_1->nb_sprites,
-					   sizeof(struct scene_sprite_desc *));
+	seg_oaks_forest_1->sprite =
+		calloc((size_t)seg_oaks_forest_1->nb_sprites,
+		       sizeof(struct scene_sprite_desc *));
 
 	seg_oaks_forest_1->sprite[0] = oak_desc_p1;
 	seg_oaks_forest_1->sprite[1] = oak_desc_p3;
@@ -737,8 +738,9 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_oaks_forest_2->nb_sprites = 6;
-	seg_oaks_forest_2->sprite = calloc(seg_oaks_forest_2->nb_sprites,
-					   sizeof(struct scene_sprite_desc *));
+	seg_oaks_forest_2->sprite =
+		calloc((size_t)seg_oaks_forest_2->nb_sprites,
+		       sizeof(struct scene_sprite_desc *));
 
 	seg_oaks_forest_2->sprite[0] = oak_desc_m2;
 	seg_oaks_forest_2->sprite[1] = oak_desc_m4;
@@ -754,7 +756,7 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_grass->nb_sprites = 6;
-	seg_grass->sprite = calloc(seg_grass->nb_sprites,
+	seg_grass->sprite = calloc((size_t)seg_grass->nb_sprites,
 				   sizeof(struct scene_sprite_desc *));
 
 	seg_grass->sprite[0] = grass_desc_p1;
@@ -771,7 +773,7 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_fence->nb_sprites = 2;
-	seg_fence->sprite = calloc(seg_fence->nb_sprites,
+	seg_fence->sprite = calloc((size_t)seg_fence->nb_sprites,
 				   sizeof(struct scene_sprite_desc *));
 
 	seg_fence->sprite[0] = fence_desc_p1;
@@ -784,7 +786,7 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_bush_mill->nb_sprites = 2;
-	seg_bush_mill->sprite = calloc(seg_bush_mill->nb_sprites,
+	seg_bush_mill->sprite = calloc((size_t)seg_bush_mill->nb_sprites,
 				       sizeof(struct scene_sprite_desc *));
 
 	seg_bush_mill->sprite[0] = windmill_desc_p1;
@@ -797,7 +799,7 @@ int track_build(struct game_context *ctx)
 		SDL_Log("[%s:%d] calloc\n", __func__, __LINE__);
 
 	seg_cabin->nb_sprites = 1;
-	seg_cabin->sprite = calloc(seg_cabin->nb_sprites,
+	seg_cabin->sprite = calloc((size_t)seg_cabin->nb_sprites,
 				   sizeof(struct scene_sprite_desc *));
 
 	seg_cabin->sprite[0] = cabin_desc_p1;

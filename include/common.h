@@ -208,7 +208,7 @@ struct scene_sprite_desc {
 };
 
 struct scene_segment_desc {
-	size_t nb_sprites;
+	int nb_sprites;
 	struct scene_sprite_desc **sprite;
 };
 
@@ -234,7 +234,7 @@ struct keys_status {
 
 struct ai_car_info {
 	// lane on which is the car
-	size_t lane;
+	int lane;
 	// x postion
 	float pos_x;
 	// acceleration
@@ -246,10 +246,10 @@ struct ai_car_info {
 	// max speed in curves
 	float speed_max_curve;
 	// car position (distance) on the road
-	size_t pos_z;
+	int pos_z;
 	float pos_z_rest_percent;
 	// car position segment idx
-	size_t segment;
+	int segment;
 	// distance done by this car
 	int distance;
 
@@ -271,7 +271,7 @@ struct game_context {
 	// how long is each frame (in seconds)
 	int step;
     // number of road segments of the track
-    size_t nb_segments;
+    int nb_segments;
 	// array of road segments
 	struct road_segment *segments; // array of road segments
 
@@ -284,9 +284,9 @@ struct game_context {
 	// number of segments per red/white rumble strip
 	int rumble_length;
 	// z length of entire track (computed)
-	size_t track_length; //null;
+	int track_length; //null;
 	// number of lanes
-	size_t lanes;
+	int lanes;
 	// angle (degrees) for field of view
 	float field_of_view;
 	// z height of camera
@@ -294,16 +294,16 @@ struct game_context {
 	// z distance camera is from screen (computed)
 	float camera_depth;
 	// number of segments to draw
-	size_t draw_distance;
+	int draw_distance;
 
 	// highest point on screen
-	size_t max_y;
-	size_t max_y_idx;
+	int max_y;
+	int max_y_idx;
 
 	// highest point on screen
-	size_t max_y_bis;
+	int max_y_bis;
 	// second highest point on screen
-	size_t max_y_bis_idx;
+	int max_y_bis_idx;
 
 	// player x offset from center of road (-1 to 1 to
 	// stay independent of roadWidth)
@@ -311,14 +311,14 @@ struct game_context {
 	// position of player car in the world
 	int player_y;
 	// player relative z distance from camera (computed)
-	size_t player_z;
+	int player_z;
 	// position of player car sprite in pixel(top of texture)
 	int player_sprite_y;
 	// exponential fog density
 	int fog_density;
 	// current camera Z position (add playerZ to get player's absolute Z
 	// position)
-	size_t position;
+	int position;
 	// current speed
 	float speed;
 	// top speed (ensure we can't move more than 1 segment in
@@ -338,7 +338,7 @@ struct game_context {
 	// centrifugal force applying to player in curves
 	float centrifugal;
 	// index of the current player segment in segments array
-	size_t player_segment;
+	int player_segment;
 
 	int player_car_x_in_pixels;
 	
@@ -418,14 +418,14 @@ static inline float inline_limit(float value, float min, float max)
 	
 }
 
-static inline size_t inline_increase ( size_t start, size_t increment, size_t max)
+static inline int inline_increase ( int start, int increment, int max)
 {
 	if(max == 0) {
 		SDL_Log("[%s] ERROR: max == 0", __func__);
 		return 0;
 	}
 
-	size_t result = start + increment;
+	int result = start + increment;
 
 	while(result >= max)
 		result -= max;
@@ -436,7 +436,7 @@ static inline size_t inline_increase ( size_t start, size_t increment, size_t ma
 }
 
 
-static inline size_t inline_get_segment_idx(struct game_context *ctx, size_t z) {
+static inline int inline_get_segment_idx(struct game_context *ctx, int z) {
 
   return ((z/ROAD_SEGMENT_LENGTH) % ctx->nb_segments);
 }
@@ -507,7 +507,7 @@ int logic_project_coord(struct segment_point *p,
 			int road_width);
 
 // TODO: make static (inline) ?
-/*static*/ float ai_lane_to_posx(size_t idx_lane, size_t nb_lanes);
+/*static*/ float ai_lane_to_posx(int idx_lane, int nb_lanes);
 
 int ai_car_init(struct game_context *ctx);
 int logic_race_ai_cars(struct game_context *ctx);

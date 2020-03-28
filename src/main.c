@@ -251,7 +251,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->step = 1000 / FPS;
 	ctx->nb_segments = 0; // to be set later
 
-	ctx->segments = calloc(ctx->nb_segments, sizeof(struct road_segment));
+	ctx->segments =
+		calloc((size_t)ctx->nb_segments, sizeof(struct road_segment));
 	if (!ctx->segments) {
 		SDL_Log("[%s:%d] calloc failed\n", __func__, __LINE__);
 		return -ENOMEM;
@@ -272,8 +273,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->fog_density = 5;
 	ctx->position = 0;
 	ctx->speed = 0;
-	ctx->max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) / (float)ctx->step *
-			 (30.f / (float)FPS);
+	ctx->max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) /
+			 (float)ctx->step * (30.f / (float)FPS);
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
 	ctx->breaking = ctx->max_speed * -1;
@@ -392,11 +393,11 @@ int main()
 		// main_build_track(ctx); // TODO: move out of loop !!!!!
 
 		// TODO: MOVE
-		float cam_depth =
-			1.f / tanf((ctx->field_of_view / 2.f) * (float)M_PI / 180.f);
+		float cam_depth = 1.f / tanf((ctx->field_of_view / 2.f) *
+					     (float)M_PI / 180.f);
 		ctx->camera_depth = (float)cam_depth;
 		ctx->player_z =
-			(size_t)((float)ctx->camera_height * ctx->camera_depth);
+			(int)((float)ctx->camera_height * ctx->camera_depth);
 		/*SDL_Log("[%s] camera_depth: double=%f, float=%f,
 		   player_z=%d\n",
 			__func__,
