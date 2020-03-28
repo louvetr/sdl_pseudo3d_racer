@@ -522,34 +522,17 @@ static int display_render_scenery(struct game_context *ctx)
 
 			seg->scene->sprite[j]->scale = x_scale;
 
-			/* TODO: factorize / make the code cleaner
-			 * compute seg->scene->sprite[j]->scaled_x then
-			 *substract
-			 * - (int)((float)seg->scene->sprite[j]->t->w *
-			 *			seg->scene->sprite[j]->scale
-			 * if seg->scene->sprite[j]->position < 0
-			 * => repeat for all pattern overthere
-			 */
-
-			if (seg->scene->sprite[j]->position >= 0)
-				seg->scene->sprite[j]->scaled_x =
-					seg->p1.screen.x +
-					(int)(screen_scale *
-					      seg->scene->sprite[j]->position *
-					      (float)ctx->road_width *
-					      (float)SCREEN_WIDTH / 2.f);
-			else
-				seg->scene->sprite[j]->scaled_x =
-					seg->p1.screen.x +
-					(int)(screen_scale *
-					      seg->scene->sprite[j]->position *
-					      (float)ctx->road_width *
-					      (float)SCREEN_WIDTH / 2.f) -
+			seg->scene->sprite[j]->scaled_x =
+				seg->p1.screen.x +
+				(int)(screen_scale *
+				      seg->scene->sprite[j]->position *
+				      ctx->constants.scene_sprite_coef);
+			if (seg->scene->sprite[j]->position < 0)
+				seg->scene->sprite[j]->scaled_x -=
 					(int)((float)seg->scene->sprite[j]
 						      ->t->w *
 					      seg->scene->sprite[j]->scale);
 
-			// TODO: filter porperly % sprite width ?
 			if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
 				continue;
 
@@ -569,8 +552,6 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 
 				r = calloc(1, sizeof(SDL_Rect));
-				r->x = 0;
-				r->y = 0;
 				r->w = seg->scene->sprite[j]->t->w;
 				int clip_h = ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
@@ -592,8 +573,6 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 
 				r = calloc(1, sizeof(SDL_Rect));
-				r->x = 0;
-				r->y = 0;
 				r->w = seg->scene->sprite[j]->t->w;
 				int clip_h = ctx->max_y_bis - sprite_y;
 				int clip_h_inv_scale =
@@ -625,8 +604,6 @@ static int display_render_scenery(struct game_context *ctx)
 
 	// TODO: separate in a function
 	display_ai_cars:
-		// TODO: display ai cars here
-		// TODO: add a ref to the ai car in the segment info struct
 		for (int i = 0; i < NB_AI_CARS; i++) {
 			if (idx == ctx->ai_cars[i].segment) {
 
@@ -641,40 +618,21 @@ static int display_render_scenery(struct game_context *ctx)
 							.pos_z_rest_percent;
 
 				float car_x_scale =
-					car_screen_scale * SCREEN_WIDTH * 2;
-				car_x_scale =
-					car_x_scale * (float)AI_CAR_SPRITE_ZOOM;
+					car_screen_scale *
+					ctx->constants.car_x_scale_coef;
 
+				sprite_x = seg->p1.screen.x +
+					   (int)(car_screen_scale *
+						 ctx->ai_cars[i].pos_x *
+						 (float)ctx->road_width *
+						 (float)SCREEN_WIDTH / 2.f) -
+					   (int)((float)ctx->ai_cars[i].t.w *
+						 car_x_scale / 2.f);
 
-				/* TODO: save var/constant equal to
-				 * (float)ctx->road_width * (float)SCREEN_WIDTH
-				 * / 2.f) since it is used  several times
-				 */
-				if (ctx->ai_cars[i].pos_x >= 0) {
-					sprite_x =
-						seg->p1.screen.x +
-						(int)(car_screen_scale *
-						      ctx->ai_cars[i].pos_x *
-						      (float)ctx->road_width *
-						      (float)SCREEN_WIDTH /
-						      2.f) -
-						(int)((float)ctx->ai_cars[i]
-							      .t.w *
-						      /*AI_CAR_SPRITE_ZOOM **/
-						      car_x_scale / 2.f);
-				} else {
-					sprite_x =
-						seg->p1.screen.x +
-						(int)(car_screen_scale *
-						      ctx->ai_cars[i].pos_x *
-						      (float)ctx->road_width *
-						      (float)SCREEN_WIDTH /
-						      2.f) -
-						(int)((float)ctx->ai_cars[i]
-							      .t.w *
-						      /*AI_CAR_SPRITE_ZOOM **/
-						      car_x_scale / 2.f);
-				}
+				if (ctx->ai_cars[i].pos_x < 0)
+					sprite_x -= (int)((float)ctx->ai_cars[i]
+								  .t.w *
+							  car_x_scale / 2.f);
 
 				// Avoid AI cars X jump by smoothering sprite_x
 				sprite_x += (int)((float)(seg->p2.screen.x -
@@ -706,8 +664,6 @@ static int display_render_scenery(struct game_context *ctx)
 					}
 
 					r = calloc(1, sizeof(SDL_Rect));
-					r->x = 0;
-					r->y = 0;
 					r->w = ctx->ai_cars[i].t.w;
 					int clip_h = ctx->max_y - sprite_y;
 					int clip_h_inv_scale =
@@ -731,8 +687,6 @@ static int display_render_scenery(struct game_context *ctx)
 					}
 
 					r = calloc(1, sizeof(SDL_Rect));
-					r->x = 0;
-					r->y = 0;
 					r->w = ctx->ai_cars[i].t.w;
 					int clip_h = ctx->max_y_bis - sprite_y;
 					int clip_h_inv_scale =
@@ -751,16 +705,15 @@ static int display_render_scenery(struct game_context *ctx)
 				}
 				//////////////////////////////////////////////////////////////////////////////////////////
 
-				/* TODO: use a var for "(float)SCREEN_WIDTH *
-				 *	2.f * AI_CAR_SPRITE_ZOOM" */
 				ret = texture_render(
 					ctx,
 					&ctx->ai_cars[i].t,
 					sprite_x,
 					sprite_y,
 					r,
-					car_screen_scale * (float)SCREEN_WIDTH *
-						2.f * AI_CAR_SPRITE_ZOOM,
+					car_screen_scale *
+						ctx->constants
+							.ai_car_scale_coef,
 					SDL_FLIP_NONE);
 
 				if (r)

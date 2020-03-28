@@ -289,6 +289,13 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;
 
+	ctx->constants.scene_sprite_coef =
+		(float)ctx->road_width * (float)SCREEN_WIDTH / 2.f;
+	ctx->constants.car_x_scale_coef =
+		SCREEN_WIDTH * 2 * (float)AI_CAR_SPRITE_ZOOM;
+	ctx->constants.ai_car_scale_coef =
+		(float)SCREEN_WIDTH * 2.f * AI_CAR_SPRITE_ZOOM;
+
 	return 0;
 };
 

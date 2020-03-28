@@ -53,7 +53,7 @@
 #define AI_CAR_SPRITE_ZOOM 0.22f
 
 
-#define NB_AI_CARS 17
+#define NB_AI_CARS 19
 //#define NB_AI_CARS 1
 
 /////////////////////////////////////////////////////////////////
@@ -262,6 +262,13 @@ struct ai_car_info {
 
 };
 
+// Various constants computed once for all to avoid to recompute them at each frame
+struct various_constants {
+	float scene_sprite_coef;
+	float car_x_scale_coef;
+	float ai_car_scale_coef;
+};
+
 // game context, contains all information of the game
 struct game_context {
 
@@ -395,6 +402,8 @@ struct game_context {
 
     // quit game when set to 1
     int exit;
+
+	struct various_constants constants;
 };
 
 

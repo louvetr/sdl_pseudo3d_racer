@@ -80,6 +80,10 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].speed_max_straight * 0.05;
 		ctx->ai_cars[i].speed_max_curve =
 		ctx->ai_cars[i].speed_max_curve * 0.05;*/
+
+
+		// TODO: change the idx of each car randomly
+
 	}
 	return 0;
 }
