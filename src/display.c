@@ -476,7 +476,217 @@ static int display_render_text(struct game_context *ctx)
 }
 
 
-static int display_render_scenery(struct game_context *ctx)
+static int display_render_ai_cars_sprites(struct game_context *ctx,
+					  struct road_segment *seg,
+					  float screen_scale,
+					  float x_scale,
+					  int idx,
+					  int tmp_idx,
+					  int tmp_max_y_idx,
+					  int tmp_max_y_bis_idx)
+{
+	int ret = 0;
+
+	for (int i = 0; i < NB_AI_CARS; i++) {
+		if (idx == ctx->ai_cars[i].segment) {
+
+			struct road_segment *seg = &ctx->segments[idx];
+			int sprite_x, sprite_y;
+
+			float car_screen_scale =
+				seg->p1.screen.scale -
+				(seg->p1.screen.scale - seg->p2.screen.scale) *
+					ctx->ai_cars[i].pos_z_rest_percent;
+
+			float car_x_scale = car_screen_scale *
+					    ctx->constants.car_x_scale_coef;
+
+			sprite_x =
+				seg->p1.screen.x +
+				(int)(car_screen_scale * ctx->ai_cars[i].pos_x *
+				      (float)ctx->road_width *
+				      (float)SCREEN_WIDTH / 2.f) -
+				(int)((float)ctx->ai_cars[i].t.w * car_x_scale /
+				      2.f);
+
+			if (ctx->ai_cars[i].pos_x < 0)
+				sprite_x -= (int)((float)ctx->ai_cars[i].t.w *
+						  car_x_scale / 2.f);
+
+			// Avoid AI cars X jump by smoothering sprite_x
+			sprite_x += (int)((float)(seg->p2.screen.x -
+						  seg->p1.screen.x) *
+					  ctx->ai_cars[i].pos_z_rest_percent);
+
+			// Skip AI cars outside screen (right side)
+			if (sprite_x > SCREEN_WIDTH)
+				continue;
+
+			sprite_y =
+				(int)(seg->p1.screen.y -
+				      (seg->p1.screen.y - seg->p2.screen.y) *
+					      ctx->ai_cars[i]
+						      .pos_z_rest_percent -
+				      (float)ctx->ai_cars[i].t.h * car_x_scale);
+
+			SDL_Rect *r = NULL;
+
+			// if sprite is behind a hill, set a clip to
+			// crop its lower part
+			if (tmp_idx > tmp_max_y_idx) {
+				if (sprite_y >= ctx->max_y) {
+					continue;
+				}
+
+				r = calloc(1, sizeof(SDL_Rect));
+				r->w = ctx->ai_cars[i].t.w;
+				int clip_h = ctx->max_y - sprite_y;
+				int clip_h_inv_scale =
+					(int)((float)(ctx->max_y - sprite_y) /
+					      car_x_scale);
+				if (clip_h < (int)((float)ctx->ai_cars[i].t.h *
+						   car_x_scale) &&
+				    clip_h > 0) {
+					r->h = clip_h_inv_scale;
+				} else {
+					r->h = ctx->ai_cars[i].t.h;
+				}
+				// sprite is behind a hill, crop it
+				// accodingly
+			} else if (tmp_idx > tmp_max_y_bis_idx) {
+				if (sprite_y >= ctx->max_y_bis) {
+					continue;
+				}
+
+				r = calloc(1, sizeof(SDL_Rect));
+				r->w = ctx->ai_cars[i].t.w;
+				int clip_h = ctx->max_y_bis - sprite_y;
+				int clip_h_inv_scale =
+					(int)((float)(ctx->max_y_bis -
+						      sprite_y) /
+					      car_x_scale);
+				if (clip_h < (int)((float)ctx->ai_cars[i].t.h *
+						   car_x_scale) &&
+				    clip_h > 0) {
+					r->h = clip_h_inv_scale;
+				} else {
+					r->h = ctx->ai_cars[i].t.h;
+				}
+			}
+
+			ret = texture_render(
+				ctx,
+				&ctx->ai_cars[i].t,
+				sprite_x,
+				sprite_y,
+				r,
+				car_screen_scale *
+					ctx->constants.ai_car_scale_coef,
+				SDL_FLIP_NONE);
+
+			if (r)
+				free(r);
+		}
+	}
+
+	return ret;
+}
+
+static int display_render_scene_sprites(struct game_context *ctx,
+					struct road_segment *seg,
+					float screen_scale,
+					float x_scale,
+					int tmp_idx,
+					int tmp_max_y_idx,
+					int tmp_max_y_bis_idx)
+{
+	int ret = 0;
+
+	for (int j = 0; j < seg->scene->nb_sprites; j++) {
+
+		// ignore segments without sprite
+		if (!seg->scene->sprite[j]->t)
+			continue;
+
+		seg->scene->sprite[j]->scale = x_scale;
+
+		seg->scene->sprite[j]->scaled_x =
+			seg->p1.screen.x +
+			(int)(screen_scale * seg->scene->sprite[j]->position *
+			      ctx->constants.scene_sprite_coef);
+		if (seg->scene->sprite[j]->position < 0)
+			seg->scene->sprite[j]->scaled_x -=
+				(int)((float)seg->scene->sprite[j]->t->w *
+				      seg->scene->sprite[j]->scale);
+
+		if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
+			continue;
+
+		int sprite_y = (int)((float)seg->p1.screen.y -
+				     (float)seg->scene->sprite[j]->t->h *
+					     seg->scene->sprite[j]->scale);
+
+		SDL_Rect *r = NULL;
+
+		// if sprite is behind a hill, set a clip to crop its
+		// lower part
+		if (tmp_idx > tmp_max_y_idx) {
+
+			if (sprite_y >= ctx->max_y) {
+				continue;
+			}
+
+			r = calloc(1, sizeof(SDL_Rect));
+			r->w = seg->scene->sprite[j]->t->w;
+			int clip_h = ctx->max_y - sprite_y;
+			int clip_h_inv_scale =
+				(int)((float)(ctx->max_y - sprite_y) /
+				      seg->scene->sprite[j]->scale);
+			if (clip_h < (int)((float)seg->scene->sprite[j]->t->h *
+					   seg->scene->sprite[j]->scale) &&
+			    clip_h > 0) {
+				r->h = clip_h_inv_scale;
+			} else {
+				r->h = seg->scene->sprite[j]->t->h;
+			}
+			// sprite is behind a hill, crop it accodingly
+		} else if (tmp_idx > tmp_max_y_bis_idx) {
+			if (sprite_y >= ctx->max_y_bis) {
+				continue;
+			}
+
+			r = calloc(1, sizeof(SDL_Rect));
+			r->w = seg->scene->sprite[j]->t->w;
+			int clip_h = ctx->max_y_bis - sprite_y;
+			int clip_h_inv_scale =
+				(int)((float)(ctx->max_y_bis - sprite_y) /
+				      seg->scene->sprite[j]->scale);
+			if (clip_h < (int)((float)seg->scene->sprite[j]->t->h *
+					   seg->scene->sprite[j]->scale) &&
+			    clip_h > 0) {
+				r->h = clip_h_inv_scale;
+			} else {
+				r->h = seg->scene->sprite[j]->t->h;
+			}
+		}
+
+		ret = texture_render(ctx,
+				     seg->scene->sprite[j]->t,
+				     seg->scene->sprite[j]->scaled_x,
+				     sprite_y,
+				     r,
+				     seg->scene->sprite[j]->scale,
+				     seg->scene->sprite[j]->flip);
+
+		if (r)
+			free(r);
+	}
+
+	return ret;
+}
+
+
+static int display_render_scaled_sprites(struct game_context *ctx)
 {
 	int ret;
 	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
@@ -486,240 +696,44 @@ static int display_render_scenery(struct game_context *ctx)
 		int idx = (base_segment_idx + i) % ctx->nb_segments;
 		struct road_segment *seg = &ctx->segments[idx];
 
-		////////////////////////////////////////////////////
-		int tmp_idx;
-		int tmp_max_y_idx;
-		int tmp_max_y_bis_idx;
-		if (ctx->max_y_idx > base_segment_idx) {
+		/* All this tmp_idx stuff is to detemine the index value of the
+		 * 2 highest segments dsiplayes on screen */
+		int tmp_idx, tmp_max_y_idx, tmp_max_y_bis_idx;
+		if (ctx->max_y_idx > base_segment_idx)
 			tmp_max_y_idx = ctx->max_y_idx;
-		} else {
+		else
 			tmp_max_y_idx = (ctx->max_y_idx + ctx->nb_segments);
-		}
-		if (ctx->max_y_bis_idx > base_segment_idx) {
+		if (ctx->max_y_bis_idx > base_segment_idx)
 			tmp_max_y_bis_idx = ctx->max_y_bis_idx;
-		} else {
+		else
 			tmp_max_y_bis_idx =
 				(ctx->max_y_bis_idx + ctx->nb_segments);
-		}
-		if (idx > base_segment_idx) {
+		if (idx > base_segment_idx)
 			tmp_idx = idx;
-		} else {
+		else
 			tmp_idx = idx + ctx->nb_segments;
-		}
-		////////////////////////////////////////////////////
 
 		float screen_scale = seg->p1.screen.scale;
 		float x_scale = screen_scale * SCREEN_WIDTH * 2;
 
-		if (!seg->scene)
-			goto display_ai_cars;
+		if (seg->scene)
+			ret = display_render_scene_sprites(ctx,
+							   seg,
+							   screen_scale,
+							   x_scale,
+							   tmp_idx,
+							   tmp_max_y_idx,
+							   tmp_max_y_bis_idx);
 
-		for (int j = 0; j < seg->scene->nb_sprites; j++) {
+		ret = display_render_ai_cars_sprites(ctx,
+						     seg,
+						     screen_scale,
+						     x_scale,
+						     idx,
+						     tmp_idx,
+						     tmp_max_y_idx,
+						     tmp_max_y_bis_idx);
 
-			// ignore segments without sprite
-			if (!seg->scene->sprite[j]->t)
-				continue;
-
-			seg->scene->sprite[j]->scale = x_scale;
-
-			seg->scene->sprite[j]->scaled_x =
-				seg->p1.screen.x +
-				(int)(screen_scale *
-				      seg->scene->sprite[j]->position *
-				      ctx->constants.scene_sprite_coef);
-			if (seg->scene->sprite[j]->position < 0)
-				seg->scene->sprite[j]->scaled_x -=
-					(int)((float)seg->scene->sprite[j]
-						      ->t->w *
-					      seg->scene->sprite[j]->scale);
-
-			if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
-				continue;
-
-			int sprite_y =
-				(int)((float)seg->p1.screen.y -
-				      (float)seg->scene->sprite[j]->t->h *
-					      seg->scene->sprite[j]->scale);
-
-			SDL_Rect *r = NULL;
-
-			// if sprite is behind a hill, set a clip to crop its
-			// lower part
-			if (tmp_idx > tmp_max_y_idx) {
-
-				if (sprite_y >= ctx->max_y) {
-					continue;
-				}
-
-				r = calloc(1, sizeof(SDL_Rect));
-				r->w = seg->scene->sprite[j]->t->w;
-				int clip_h = ctx->max_y - sprite_y;
-				int clip_h_inv_scale =
-					(int)((float)(ctx->max_y - sprite_y) /
-					      seg->scene->sprite[j]->scale);
-				if (clip_h < (int)((float)seg->scene->sprite[j]
-							   ->t->h *
-						   seg->scene->sprite[j]
-							   ->scale) &&
-				    clip_h > 0) {
-					r->h = clip_h_inv_scale;
-				} else {
-					r->h = seg->scene->sprite[j]->t->h;
-				}
-				// sprite is behind a hill, crop it accodingly
-			} else if (tmp_idx > tmp_max_y_bis_idx) {
-				if (sprite_y >= ctx->max_y_bis) {
-					continue;
-				}
-
-				r = calloc(1, sizeof(SDL_Rect));
-				r->w = seg->scene->sprite[j]->t->w;
-				int clip_h = ctx->max_y_bis - sprite_y;
-				int clip_h_inv_scale =
-					(int)((float)(ctx->max_y_bis -
-						      sprite_y) /
-					      seg->scene->sprite[j]->scale);
-				if (clip_h < (int)((float)seg->scene->sprite[j]
-							   ->t->h *
-						   seg->scene->sprite[j]
-							   ->scale) &&
-				    clip_h > 0) {
-					r->h = clip_h_inv_scale;
-				} else {
-					r->h = seg->scene->sprite[j]->t->h;
-				}
-			}
-
-			ret = texture_render(ctx,
-					     seg->scene->sprite[j]->t,
-					     seg->scene->sprite[j]->scaled_x,
-					     sprite_y,
-					     r,
-					     seg->scene->sprite[j]->scale,
-					     seg->scene->sprite[j]->flip);
-
-			if (r)
-				free(r);
-		}
-
-	// TODO: separate in a function
-	display_ai_cars:
-		for (int i = 0; i < NB_AI_CARS; i++) {
-			if (idx == ctx->ai_cars[i].segment) {
-
-				struct road_segment *seg = &ctx->segments[idx];
-				int sprite_x, sprite_y;
-
-				float car_screen_scale =
-					seg->p1.screen.scale -
-					(seg->p1.screen.scale -
-					 seg->p2.screen.scale) *
-						ctx->ai_cars[i]
-							.pos_z_rest_percent;
-
-				float car_x_scale =
-					car_screen_scale *
-					ctx->constants.car_x_scale_coef;
-
-				sprite_x = seg->p1.screen.x +
-					   (int)(car_screen_scale *
-						 ctx->ai_cars[i].pos_x *
-						 (float)ctx->road_width *
-						 (float)SCREEN_WIDTH / 2.f) -
-					   (int)((float)ctx->ai_cars[i].t.w *
-						 car_x_scale / 2.f);
-
-				if (ctx->ai_cars[i].pos_x < 0)
-					sprite_x -= (int)((float)ctx->ai_cars[i]
-								  .t.w *
-							  car_x_scale / 2.f);
-
-				// Avoid AI cars X jump by smoothering sprite_x
-				sprite_x += (int)((float)(seg->p2.screen.x -
-							  seg->p1.screen.x) *
-						  ctx->ai_cars[i]
-							  .pos_z_rest_percent);
-
-				// Skip AI cars outside screen (right side)
-				if (sprite_x > SCREEN_WIDTH)
-					continue;
-
-				sprite_y =
-					(int)(seg->p1.screen.y -
-					      (seg->p1.screen.y -
-					       seg->p2.screen.y) *
-						      ctx->ai_cars[i]
-							      .pos_z_rest_percent -
-					      (float)ctx->ai_cars[i].t.h *
-						      car_x_scale);
-
-				//////////////////////////////////////////////////////////////////////////////////////////
-				SDL_Rect *r = NULL;
-
-				// if sprite is behind a hill, set a clip to
-				// crop its lower part
-				if (tmp_idx > tmp_max_y_idx) {
-					if (sprite_y >= ctx->max_y) {
-						continue;
-					}
-
-					r = calloc(1, sizeof(SDL_Rect));
-					r->w = ctx->ai_cars[i].t.w;
-					int clip_h = ctx->max_y - sprite_y;
-					int clip_h_inv_scale =
-						(int)((float)(ctx->max_y -
-							      sprite_y) /
-						      car_x_scale);
-					if (clip_h <
-						    (int)((float)ctx->ai_cars[i]
-								  .t.h *
-							  car_x_scale) &&
-					    clip_h > 0) {
-						r->h = clip_h_inv_scale;
-					} else {
-						r->h = ctx->ai_cars[i].t.h;
-					}
-					// sprite is behind a hill, crop it
-					// accodingly
-				} else if (tmp_idx > tmp_max_y_bis_idx) {
-					if (sprite_y >= ctx->max_y_bis) {
-						continue;
-					}
-
-					r = calloc(1, sizeof(SDL_Rect));
-					r->w = ctx->ai_cars[i].t.w;
-					int clip_h = ctx->max_y_bis - sprite_y;
-					int clip_h_inv_scale =
-						(int)((float)(ctx->max_y_bis -
-							      sprite_y) /
-						      car_x_scale);
-					if (clip_h <
-						    (int)((float)ctx->ai_cars[i]
-								  .t.h *
-							  car_x_scale) &&
-					    clip_h > 0) {
-						r->h = clip_h_inv_scale;
-					} else {
-						r->h = ctx->ai_cars[i].t.h;
-					}
-				}
-				//////////////////////////////////////////////////////////////////////////////////////////
-
-				ret = texture_render(
-					ctx,
-					&ctx->ai_cars[i].t,
-					sprite_x,
-					sprite_y,
-					r,
-					car_screen_scale *
-						ctx->constants
-							.ai_car_scale_coef,
-					SDL_FLIP_NONE);
-
-				if (r)
-					free(r);
-			}
-		}
 	}
 
 	return ret;
@@ -1020,8 +1034,8 @@ static int display_screen_race(struct game_context *ctx)
 	// render the road
 	ret = display_render_road(ctx);
 
-	// render scenery sprites
-	ret = display_render_scenery(ctx);
+	// render scenery sprites and AI cars
+	ret = display_render_scaled_sprites(ctx);
 
 	// just draw the player in middle of the screen. It doesn't move, that's
 	// the world around it which moves.
