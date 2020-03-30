@@ -4,10 +4,18 @@
 {
 	float pos_x;
 	// x position in a [0,1] range
-	pos_x = (float)idx_lane / (float)nb_lanes +
-		1.f / ((float)nb_lanes * 2.f);
-	// shift x position in a [-1,1] range
-	return pos_x * 2.f - 1.f;
+	if (idx_lane > 0) {
+		pos_x = (float)idx_lane / (float)nb_lanes +
+			1.f / ((float)nb_lanes * 2.f);
+		// shift x position in a [-1,1] range
+		return pos_x * 2.f - 1.f;
+	} else {
+		pos_x = (float)(nb_lanes - 1) / (float)nb_lanes +
+			1.f / ((float)nb_lanes * 2.f);
+		// shift x position in a [-1,1] range
+		return -(pos_x * 2.f - 1.f) +
+		       2.f / (2.f + 5.f * (float)nb_lanes);
+	}
 }
 
 
