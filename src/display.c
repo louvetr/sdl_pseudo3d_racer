@@ -501,6 +501,24 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 			float car_x_scale = car_screen_scale *
 					    ctx->ai_cars[i].car_x_scale_coef;
 
+			// select sprite to simulate a steering in curves
+			if (seg->curve > 2.f) {
+				ctx->ai_cars[i].sprite_idx = CAR_SPRITE_RIGHT2;
+				ctx->ai_cars[i].car_flip = SDL_FLIP_NONE;
+			} else if (seg->curve > 0.5f) {
+				ctx->ai_cars[i].sprite_idx = CAR_SPRITE_RIGHT1;
+				ctx->ai_cars[i].car_flip = SDL_FLIP_NONE;
+			} else if (seg->curve < -2.f) {
+				ctx->ai_cars[i].sprite_idx = CAR_SPRITE_RIGHT2;
+				ctx->ai_cars[i].car_flip = SDL_FLIP_HORIZONTAL;
+			} else if (seg->curve < -0.5f) {
+				ctx->ai_cars[i].sprite_idx = CAR_SPRITE_RIGHT1;
+				ctx->ai_cars[i].car_flip = SDL_FLIP_HORIZONTAL;
+			} else {
+				ctx->ai_cars[i].sprite_idx = CAR_SPRITE_REAR;
+				ctx->ai_cars[i].car_flip = SDL_FLIP_NONE;
+			}
+
 			sprite_x =
 				seg->p1.screen.x +
 				(int)(car_screen_scale * ctx->ai_cars[i].pos_x *
@@ -623,7 +641,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				r,
 				car_screen_scale *
 					ctx->ai_cars[i].ai_car_scale_coef,
-				SDL_FLIP_NONE);
+				ctx->ai_cars[i].car_flip);
 
 			if (r)
 				free(r);
