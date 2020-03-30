@@ -16,23 +16,23 @@ static int logic_set_player_sprite(struct game_context *ctx)
 {
 	switch (ctx->car_orientation_cur) {
 	case PLAYER_SPRITE_HARD_LEFT:
-		ctx->car_player_texture = &ctx->gfx.car_player_right2;
+		ctx->car_player_sprite_idx = CAR_SPRITE_RIGHT2;
 		ctx->car_player_flip = SDL_FLIP_HORIZONTAL;
 		break;
 	case PLAYER_SPRITE_LIGHT_LEFT:
-		ctx->car_player_texture = &ctx->gfx.car_player_right1;
+		ctx->car_player_sprite_idx = CAR_SPRITE_RIGHT1;
 		ctx->car_player_flip = SDL_FLIP_HORIZONTAL;
 		break;
 	case PLAYER_SPRITE_STRAIGHT:
-		ctx->car_player_texture = &ctx->gfx.car_player_rear;
+		ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 		ctx->car_player_flip = SDL_FLIP_NONE;
 		break;
 	case PLAYER_SPRITE_LIGHT_RIGHT:
-		ctx->car_player_texture = &ctx->gfx.car_player_right1;
+		ctx->car_player_sprite_idx = CAR_SPRITE_RIGHT1;
 		ctx->car_player_flip = SDL_FLIP_NONE;
 		break;
 	case PLAYER_SPRITE_HARD_RIGHT:
-		ctx->car_player_texture = &ctx->gfx.car_player_right2;
+		ctx->car_player_sprite_idx = CAR_SPRITE_RIGHT2;
 		ctx->car_player_flip = SDL_FLIP_NONE;
 		break;
 	}
@@ -136,7 +136,9 @@ static int logic_race_collision(struct game_context *ctx)
 			break;
 
 		} else if (ctx->player_car_x_in_pixels +
-				   ctx->car_player_texture->w /
+				   ctx->gfx.cars[ctx->car_player_model]
+						[ctx->car_player_sprite_idx]
+							.w /
 					   2 /* TODO: use player car zoom define
 					      */
 			   > sprite_right_hb_x) {

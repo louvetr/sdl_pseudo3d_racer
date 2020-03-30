@@ -27,9 +27,19 @@
 //#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
 
 //#define PNG_CAR_PLAYER "./media/car_rear_01.png"
-#define PNG_CAR_PLAYER_REAR "./media/imprezia_rear.png"
-#define PNG_CAR_PLAYER_RIGHT1 "./media/imprezia_right_1.png"
-#define PNG_CAR_PLAYER_RIGHT2 "./media/imprezia_right_2.png"
+#define PNG_IMPREZIA_REAR "./media/imprezia_rear.png"
+#define PNG_IMPREZIA_RIGHT1 "./media/imprezia_right_1.png"
+#define PNG_IMPREZIA_RIGHT2 "./media/imprezia_right_2.png"
+
+#define PNG_FALCON_REAR "./media/falcon_rear.png"
+#define PNG_FALCON_RIGHT1 "./media/falcon_right_1.png"
+#define PNG_FALCON_RIGHT2 "./media/falcon_right_2.png"
+
+#define PNG_LOTUS_REAR "./media/lotus_rear.png"
+#define PNG_LOTUS_RIGHT1 "./media/lotus_right_1.png"
+#define PNG_LOTUS_RIGHT2 "./media/lotus_right_2.png"
+
+
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/bg_clouds_far.png"
@@ -52,10 +62,13 @@
 
 #define RUMBLE_LENGTH 3
 
-//#define PLAYER_CAR_SPRITE_ZOOM 0.5f
-#define PLAYER_CAR_SPRITE_ZOOM 0.33f
+#define PLAYER_CAR_SCALE_FALCON 1.f
+#define PLAYER_CAR_SCALE_LOTUS 1.f
+#define PLAYER_CAR_SCALE_IMPREZIA 0.66f
 
-#define AI_CAR_SPRITE_ZOOM 0.22f
+#define AI_CAR_SCALE_FALCON 0.4f
+#define AI_CAR_SCALE_LOTUS 0.33f
+#define AI_CAR_SCALE_IMPREZIA 0.33f
 
 
 #define NB_AI_CARS 19
@@ -137,6 +150,20 @@ enum player_sprite_orientation {
  	PLAYER_SPRITE_HARD_RIGHT
 };
 
+enum car_sprite_idx {
+ 	CAR_SPRITE_REAR,
+ 	CAR_SPRITE_RIGHT1,
+ 	CAR_SPRITE_RIGHT2,
+ 	CAR_SPRITE_LAST
+};
+
+enum car_model_type {
+ 	CAR_MODEL_IMPREZIA = 0,
+ 	CAR_MODEL_LOTUS,
+ 	CAR_MODEL_FALCON,
+ 	CAR_MODEL_LAST
+};
+
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
 /////////////////////////////////////////////////////////////////
@@ -157,12 +184,23 @@ struct texture {
 	SDL_Texture *texture;
 };
 
+/*struct car_model_texture{
+    // image textures
+	struct texture rear;
+	struct texture right_1;
+	struct texture right_2;
+};*/
+
 // grapĥics of the game
 struct game_graphics{
     // image textures
-	struct texture car_player_rear;
+	/*struct texture car_player_rear;
 	struct texture car_player_right1;
-	struct texture car_player_right2;
+	struct texture car_player_right2;*/
+
+	//struct car_model_texture cars[CAR_MODEL_LAST]; 
+	struct texture cars[CAR_MODEL_LAST][CAR_SPRITE_LAST];
+
 	struct texture bg_mountains;
 	struct texture bg_sky_near;
 	struct texture bg_sky_far;
@@ -272,15 +310,20 @@ struct ai_car_info {
 	SDL_Rect hitbox;
 
 	// car sprite
-	struct texture t;
+	enum car_sprite_idx sprite_idx;
+	enum car_model_type car_model;	
+	SDL_RendererFlip car_flip;
 
+	//struct texture *t;
+	
+	//struct car_model_texture;
+	float car_x_scale_coef;
+	float ai_car_scale_coef;
 };
 
 // Various constants computed once for all to avoid to recompute them at each frame
 struct various_constants {
 	float scene_sprite_coef;
-	float car_x_scale_coef;
-	float ai_car_scale_coef;
 };
 
 // game context, contains all information of the game
@@ -380,7 +423,11 @@ struct game_context {
 	enum player_sprite_orientation car_orientation_cur;
 	enum player_sprite_orientation car_orientation_prev;
 	int same_car_orientation_in_frame;
-	struct texture *car_player_texture;
+//	struct texture *car_player_texture;
+//	struct car_model_texture *car_player_textures;
+
+	enum car_sprite_idx car_player_sprite_idx;
+	enum car_model_type car_player_model;	
 	SDL_RendererFlip car_player_flip;
 
     // font to display text
@@ -424,6 +471,9 @@ struct game_context {
     int exit;
 
 	struct various_constants constants;
+
+	float scale_player_car[CAR_MODEL_LAST];
+	float scale_ai_car[CAR_MODEL_LAST];
 };
 
 

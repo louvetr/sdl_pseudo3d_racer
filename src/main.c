@@ -84,30 +84,100 @@ static int main_init(struct game_context *ctx)
 	return 0;
 }
 
+
+static int main_load_cars_sprites_one_model(struct game_context *ctx,
+					    enum car_model_type idx,
+					    char *rear,
+					    char *right1,
+					    char *right2)
+{
+	int ret;
+
+	ret = load_texture_from_file(
+		ctx, rear, &ctx->gfx.cars[idx][CAR_SPRITE_REAR]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, right1, &ctx->gfx.cars[idx][CAR_SPRITE_RIGHT1]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, right2, &ctx->gfx.cars[idx][CAR_SPRITE_RIGHT2]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	return ret;
+}
+
+static int main_load_cars_sprites(struct game_context *ctx)
+{
+	int ret;
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_IMPREZIA,
+					       PNG_IMPREZIA_REAR,
+					       PNG_IMPREZIA_RIGHT1,
+					       PNG_IMPREZIA_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_IMPREZIA);
+		return ret;
+	}
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_LOTUS,
+					       PNG_LOTUS_REAR,
+					       PNG_LOTUS_RIGHT1,
+					       PNG_LOTUS_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_LOTUS);
+		return ret;
+	}
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_FALCON,
+					       PNG_FALCON_REAR,
+					       PNG_FALCON_RIGHT1,
+					       PNG_FALCON_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_FALCON);
+		return ret;
+	}
+
+	return ret;
+}
+
+
 static int main_load_media(struct game_context *ctx)
 {
 	// TODO, use macro for texture loading
 
 	int ret;
-	// load png
-	ret = load_texture_from_file(
-		ctx, PNG_CAR_PLAYER_REAR, &ctx->gfx.car_player_rear);
+
+	// load PNG
+
+	ret = main_load_cars_sprites(ctx);
 	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		SDL_Log("[%s:%d] main_load_cars_sprites!\n",
+			__func__,
+			__LINE__);
 		return ret;
 	}
-	ret = load_texture_from_file(
-		ctx, PNG_CAR_PLAYER_RIGHT1, &ctx->gfx.car_player_right1);
-	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
-		return ret;
-	}
-	ret = load_texture_from_file(
-		ctx, PNG_CAR_PLAYER_RIGHT2, &ctx->gfx.car_player_right2);
-	if (ret < 0) {
-		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
-		return ret;
-	}
+
 
 	ret = load_texture_from_file(
 		ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
@@ -186,17 +256,19 @@ static int main_load_media(struct game_context *ctx)
 		return ret;
 	}
 
-
-	for (int i = 0; i < NB_AI_CARS; i++) {
-		ret = load_texture_from_file(
-			ctx, PNG_AI_CAR_01, &ctx->ai_cars[i].t);
-		if (ret < 0) {
-			SDL_Log("[%s:%d] Failed to load PNG!\n",
-				__func__,
-				__LINE__);
-			return ret;
+	/*
+		for (int i = 0; i < NB_AI_CARS; i++) {
+			ret = load_texture_from_file(
+				//ctx, PNG_AI_CAR_01, &ctx->ai_cars[i].t);
+				ctx, PNG_IMPREZIA_REAR, &ctx->ai_cars[i].t);
+			if (ret < 0) {
+				SDL_Log("[%s:%d] Failed to load PNG!\n",
+					__func__,
+					__LINE__);
+				return ret;
+			}
 		}
-	}
+	*/
 
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
@@ -301,18 +373,27 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 	ctx->car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
 	ctx->same_car_orientation_in_frame = 0;
-	ctx->car_player_texture = &ctx->gfx.car_player_rear;
+
+	ctx->car_player_model = CAR_MODEL_LOTUS;
+	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
 	ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;
 
+
+	ctx->scale_player_car[CAR_MODEL_IMPREZIA] = PLAYER_CAR_SCALE_IMPREZIA;
+	ctx->scale_player_car[CAR_MODEL_LOTUS] = PLAYER_CAR_SCALE_LOTUS;
+	ctx->scale_player_car[CAR_MODEL_FALCON] = PLAYER_CAR_SCALE_FALCON;
+
+	ctx->scale_ai_car[CAR_MODEL_IMPREZIA] = AI_CAR_SCALE_IMPREZIA;
+	ctx->scale_ai_car[CAR_MODEL_LOTUS] = AI_CAR_SCALE_LOTUS;
+	ctx->scale_ai_car[CAR_MODEL_FALCON] = AI_CAR_SCALE_FALCON;
+
+
 	ctx->constants.scene_sprite_coef =
 		(float)ctx->road_width * (float)SCREEN_WIDTH / 2.f;
-	ctx->constants.car_x_scale_coef =
-		SCREEN_WIDTH * 2 * (float)AI_CAR_SPRITE_ZOOM;
-	ctx->constants.ai_car_scale_coef =
-		(float)SCREEN_WIDTH * 2.f * AI_CAR_SPRITE_ZOOM;
+
 
 	return 0;
 };

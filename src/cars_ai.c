@@ -77,6 +77,12 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].speed = 0.f;
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;
 
+
+		ctx->ai_cars[i].car_model = CAR_MODEL_FALCON;
+		ctx->ai_cars[i].sprite_idx = CAR_SPRITE_REAR;
+		ctx->ai_cars[i].car_flip = SDL_FLIP_NONE;
+
+
 		/*ctx->ai_cars[i].speed_max_straight =
 		ctx->ai_cars[i].speed_max_straight * 0.05;
 		ctx->ai_cars[i].speed_max_curve =
@@ -84,6 +90,14 @@ int ai_car_init(struct game_context *ctx)
 
 
 		// TODO: change the idx of each car randomly
+
+
+		ctx->ai_cars[i].car_x_scale_coef =
+			(float)SCREEN_WIDTH * 2.f *
+			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
+		ctx->ai_cars[i].ai_car_scale_coef =
+			(float)SCREEN_WIDTH * 2.f *
+			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
 	}
 	return 0;
 }

@@ -499,19 +499,28 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 					ctx->ai_cars[i].pos_z_rest_percent;
 
 			float car_x_scale = car_screen_scale *
-					    ctx->constants.car_x_scale_coef;
+					    ctx->ai_cars[i].car_x_scale_coef;
 
 			sprite_x =
 				seg->p1.screen.x +
 				(int)(car_screen_scale * ctx->ai_cars[i].pos_x *
 				      (float)ctx->road_width *
 				      (float)SCREEN_WIDTH / 2.f) -
-				(int)((float)ctx->ai_cars[i].t.w * car_x_scale /
-				      2.f);
+				(int)((float)ctx->gfx
+					      .cars[ctx->ai_cars[i].car_model]
+						   [ctx->ai_cars[i].sprite_idx]
+					      .w *
+				      car_x_scale / 2.f);
 
 			if (ctx->ai_cars[i].pos_x < 0)
-				sprite_x -= (int)((float)ctx->ai_cars[i].t.w *
-						  car_x_scale / 2.f);
+				sprite_x -=
+					(int)((float)ctx->gfx
+						      .cars[ctx->ai_cars[i]
+								    .car_model]
+							   [ctx->ai_cars[i]
+								    .sprite_idx]
+						      .w *
+					      car_x_scale / 2.f);
 
 			// Avoid AI cars X jump by smoothering sprite_x
 			sprite_x += (int)((float)(seg->p2.screen.x -
@@ -527,7 +536,12 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				      (seg->p1.screen.y - seg->p2.screen.y) *
 					      ctx->ai_cars[i]
 						      .pos_z_rest_percent -
-				      (float)ctx->ai_cars[i].t.h * car_x_scale);
+				      (float)ctx->gfx.cars[ctx->ai_cars[i]
+								   .car_model]
+							  [ctx->ai_cars[i]
+								   .sprite_idx]
+								  .h *
+					      car_x_scale);
 
 			SDL_Rect *r = NULL;
 
@@ -539,17 +553,30 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				}
 
 				r = calloc(1, sizeof(SDL_Rect));
-				r->w = ctx->ai_cars[i].t.w;
+				r->w = ctx->gfx.cars[ctx->ai_cars[i].car_model]
+						    [ctx->ai_cars[i].sprite_idx]
+							    .w;
 				int clip_h = ctx->max_y - sprite_y;
 				int clip_h_inv_scale =
 					(int)((float)(ctx->max_y - sprite_y) /
 					      car_x_scale);
-				if (clip_h < (int)((float)ctx->ai_cars[i].t.h *
-						   car_x_scale) &&
+				if (clip_h <
+					    (int)((float)ctx->gfx
+							  .cars[ctx->ai_cars[i]
+									.car_model]
+							       [ctx->ai_cars[i]
+									.sprite_idx]
+							  .h *
+						  car_x_scale) &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
 				} else {
-					r->h = ctx->ai_cars[i].t.h;
+					r->h = ctx->gfx.cars
+						       [ctx->ai_cars[i]
+								.car_model]
+						       [ctx->ai_cars[i]
+								.sprite_idx]
+							       .h;
 				}
 				// sprite is behind a hill, crop it
 				// accodingly
@@ -559,29 +586,43 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				}
 
 				r = calloc(1, sizeof(SDL_Rect));
-				r->w = ctx->ai_cars[i].t.w;
+				r->w = ctx->gfx.cars[ctx->ai_cars[i].car_model]
+						    [ctx->ai_cars[i].sprite_idx]
+							    .w;
 				int clip_h = ctx->max_y_bis - sprite_y;
 				int clip_h_inv_scale =
 					(int)((float)(ctx->max_y_bis -
 						      sprite_y) /
 					      car_x_scale);
-				if (clip_h < (int)((float)ctx->ai_cars[i].t.h *
-						   car_x_scale) &&
+				if (clip_h <
+					    (int)((float)ctx->gfx
+							  .cars[ctx->ai_cars[i]
+									.car_model]
+							       [ctx->ai_cars[i]
+									.sprite_idx]
+							  .h *
+						  car_x_scale) &&
 				    clip_h > 0) {
 					r->h = clip_h_inv_scale;
 				} else {
-					r->h = ctx->ai_cars[i].t.h;
+					r->h = ctx->gfx.cars
+						       [ctx->ai_cars[i]
+								.car_model]
+						       [ctx->ai_cars[i]
+								.sprite_idx]
+							       .h;
 				}
 			}
 
 			ret = texture_render(
 				ctx,
-				&ctx->ai_cars[i].t,
+				&ctx->gfx.cars[ctx->ai_cars[i].car_model]
+					      [ctx->ai_cars[i].sprite_idx],
 				sprite_x,
 				sprite_y,
 				r,
 				car_screen_scale *
-					ctx->constants.ai_car_scale_coef,
+					ctx->ai_cars[i].ai_car_scale_coef,
 				SDL_FLIP_NONE);
 
 			if (r)
@@ -1044,24 +1085,32 @@ static int display_screen_race(struct game_context *ctx)
 	// the world around it which moves.
 	ctx->player_car_x_in_pixels =
 		(SCREEN_WIDTH / 2) -
-		(int)((float)ctx->car_player_texture->w *
-		      PLAYER_CAR_SPRITE_ZOOM /
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .w *
+		      ctx->scale_player_car[ctx->car_player_model] /
 		      2.f); // reduce texture by 2 then remove it half width
 
 	//////////////// render player car
 	// TODO put somewhere else
 	if (!ctx->player_sprite_y)
-		ctx->player_sprite_y = SCREEN_HEIGHT -
-				       (int)((float)ctx->car_player_texture->h *
-					     PLAYER_CAR_SPRITE_ZOOM) -
-				       30; // TODO: Why 30 ??????
+		ctx->player_sprite_y =
+			SCREEN_HEIGHT -
+			(int)((float)ctx->gfx
+				      .cars[ctx->car_player_model]
+					   [ctx->car_player_sprite_idx]
+				      .h *
+			      ctx->scale_player_car[ctx->car_player_model]) -
+			30; // TODO: Why 30 ??????
 
 	ret = texture_render(ctx,
-			     ctx->car_player_texture,
+			     &ctx->gfx.cars[ctx->car_player_model]
+					   [ctx->car_player_sprite_idx],
 			     ctx->player_car_x_in_pixels,
 			     ctx->player_sprite_y,
 			     NULL,
-			     PLAYER_CAR_SPRITE_ZOOM,
+			     ctx->scale_player_car[ctx->car_player_model],
 			     ctx->car_player_flip);
 
 	// render scenery text message
