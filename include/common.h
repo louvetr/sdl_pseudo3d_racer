@@ -39,6 +39,21 @@
 #define PNG_LOTUS_RIGHT1 "./media/lotus_right_1.png"
 #define PNG_LOTUS_RIGHT2 "./media/lotus_right_2.png"
 
+#define PNG_TT_REAR "./media/tt_rear.png"
+#define PNG_TT_RIGHT1 "./media/tt_right_1.png"
+#define PNG_TT_RIGHT2 "./media/tt_right_2.png"
+
+#define PNG_NSX_REAR "./media/nsx_rear.png"
+#define PNG_NSX_RIGHT1 "./media/nsx_right_1.png"
+#define PNG_NSX_RIGHT2 "./media/nsx_right_2.png"
+
+#define PNG_TRUENO_REAR "./media/trueno_rear.png"
+#define PNG_TRUENO_RIGHT1 "./media/trueno_right_1.png"
+#define PNG_TRUENO_RIGHT2 "./media/trueno_right_2.png"
+
+#define PNG_VIPER_REAR "./media/viper_rear.png"
+#define PNG_VIPER_RIGHT1 "./media/viper_right_1.png"
+#define PNG_VIPER_RIGHT2 "./media/viper_right_2.png"
 
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
@@ -65,10 +80,18 @@
 #define PLAYER_CAR_SCALE_FALCON 1.f
 #define PLAYER_CAR_SCALE_LOTUS 1.f
 #define PLAYER_CAR_SCALE_IMPREZIA 0.66f
+#define PLAYER_CAR_SCALE_NSX 1.f
+#define PLAYER_CAR_SCALE_TRUENO 1.f
+#define PLAYER_CAR_SCALE_TT 1.f
+#define PLAYER_CAR_SCALE_VIPER 1.f
 
 #define AI_CAR_SCALE_FALCON 0.4f
-#define AI_CAR_SCALE_LOTUS 0.33f
+#define AI_CAR_SCALE_LOTUS 0.4f
 #define AI_CAR_SCALE_IMPREZIA 0.33f
+#define AI_CAR_SCALE_NSX 0.4f
+#define AI_CAR_SCALE_TRUENO 0.4f
+#define AI_CAR_SCALE_TT 0.4f
+#define AI_CAR_SCALE_VIPER 0.4f
 
 
 #define NB_AI_CARS 19
@@ -161,6 +184,10 @@ enum car_model_type {
  	CAR_MODEL_IMPREZIA = 0,
  	CAR_MODEL_LOTUS,
  	CAR_MODEL_FALCON,
+ 	CAR_MODEL_TT,
+ 	CAR_MODEL_TRUENO,
+ 	CAR_MODEL_VIPER,
+ 	CAR_MODEL_NSX,
  	CAR_MODEL_LAST
 };
 

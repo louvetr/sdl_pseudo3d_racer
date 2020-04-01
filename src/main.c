@@ -158,6 +158,55 @@ static int main_load_cars_sprites(struct game_context *ctx)
 		return ret;
 	}
 
+	ret = main_load_cars_sprites_one_model(
+		ctx, CAR_MODEL_TT, PNG_TT_REAR, PNG_TT_RIGHT1, PNG_TT_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_FALCON);
+		return ret;
+	}
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_TRUENO,
+					       PNG_TRUENO_REAR,
+					       PNG_TRUENO_RIGHT1,
+					       PNG_TRUENO_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_TRUENO);
+		return ret;
+	}
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_NSX,
+					       PNG_NSX_REAR,
+					       PNG_NSX_RIGHT1,
+					       PNG_NSX_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_NSX);
+		return ret;
+	}
+
+	ret = main_load_cars_sprites_one_model(ctx,
+					       CAR_MODEL_VIPER,
+					       PNG_VIPER_REAR,
+					       PNG_VIPER_RIGHT1,
+					       PNG_VIPER_RIGHT2);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
+			__func__,
+			__LINE__,
+			CAR_MODEL_VIPER);
+		return ret;
+	}
+
 	return ret;
 }
 
@@ -374,7 +423,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
 	ctx->same_car_orientation_in_frame = 0;
 
-	ctx->car_player_model = CAR_MODEL_LOTUS;
+	// ctx->car_player_model = CAR_MODEL_LOTUS;
+	ctx->car_player_model = CAR_MODEL_IMPREZIA;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
@@ -389,6 +439,10 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->scale_ai_car[CAR_MODEL_IMPREZIA] = AI_CAR_SCALE_IMPREZIA;
 	ctx->scale_ai_car[CAR_MODEL_LOTUS] = AI_CAR_SCALE_LOTUS;
 	ctx->scale_ai_car[CAR_MODEL_FALCON] = AI_CAR_SCALE_FALCON;
+	ctx->scale_ai_car[CAR_MODEL_TT] = AI_CAR_SCALE_TT;
+	ctx->scale_ai_car[CAR_MODEL_TRUENO] = AI_CAR_SCALE_TRUENO;
+	ctx->scale_ai_car[CAR_MODEL_NSX] = AI_CAR_SCALE_NSX;
+	ctx->scale_ai_car[CAR_MODEL_VIPER] = AI_CAR_SCALE_VIPER;
 
 
 	ctx->constants.scene_sprite_coef =

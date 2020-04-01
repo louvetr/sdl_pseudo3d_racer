@@ -86,11 +86,14 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;
 
 
-		if (i % 2 == 0)
+		ctx->ai_cars[i].car_model = i%CAR_MODEL_LAST;
+		//ctx->ai_cars[i].car_model = CAR_MODEL_NSX;
+		/*if (i % 2 == 0)
 			ctx->ai_cars[i].car_model = CAR_MODEL_FALCON;
 		else
-			ctx->ai_cars[i].car_model = CAR_MODEL_IMPREZIA;
-
+			ctx->ai_cars[i].car_model = CAR_MODEL_LOTUS;
+			//ctx->ai_cars[i].car_model = CAR_MODEL_IMPREZIA;
+		*/
 		ctx->ai_cars[i].sprite_idx = CAR_SPRITE_REAR;
 		ctx->ai_cars[i].car_flip = SDL_FLIP_NONE;
 
