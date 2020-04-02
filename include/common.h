@@ -55,6 +55,19 @@
 #define PNG_VIPER_RIGHT1 "./media/viper_right_1.png"
 #define PNG_VIPER_RIGHT2 "./media/viper_right_2.png"
 
+#define PNG_HART_REAR "./media/hart_rear.png"
+#define PNG_HART_RIGHT1 "./media/hart_right_1.png"
+#define PNG_HART_RIGHT2 "./media/hart_right_2.png"
+
+#define PNG_DELTA_REAR "./media/delta_rear.png"
+#define PNG_DELTA_RIGHT1 "./media/delta_right_1.png"
+#define PNG_DELTA_RIGHT2 "./media/delta_right_2.png"
+
+#define PNG_LANCER_REAR "./media/lancer_rear.png"
+#define PNG_LANCER_RIGHT1 "./media/lancer_right_1.png"
+#define PNG_LANCER_RIGHT2 "./media/lancer_right_2.png"
+
+
 #define PNG_BG_MOUNTAINS "./media/bg_mountains.png"
 #define PNG_BG_SKY_NEAR "./media/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/bg_clouds_far.png"
@@ -84,6 +97,9 @@
 #define PLAYER_CAR_SCALE_TRUENO 1.f
 #define PLAYER_CAR_SCALE_TT 1.f
 #define PLAYER_CAR_SCALE_VIPER 1.f
+#define PLAYER_CAR_SCALE_HART 1.f
+#define PLAYER_CAR_SCALE_DELTA 1.f
+#define PLAYER_CAR_SCALE_LANCER 1.f
 
 #define AI_CAR_SCALE_FALCON 0.4f
 #define AI_CAR_SCALE_LOTUS 0.4f
@@ -92,7 +108,9 @@
 #define AI_CAR_SCALE_TRUENO 0.4f
 #define AI_CAR_SCALE_TT 0.4f
 #define AI_CAR_SCALE_VIPER 0.4f
-
+#define AI_CAR_SCALE_HART 0.4f
+#define AI_CAR_SCALE_DELTA 0.4f
+#define AI_CAR_SCALE_LANCER 0.4f
 
 #define NB_AI_CARS 19
 //#define NB_AI_CARS 1
@@ -188,6 +206,9 @@ enum car_model_type {
  	CAR_MODEL_TRUENO,
  	CAR_MODEL_VIPER,
  	CAR_MODEL_NSX,
+ 	CAR_MODEL_HART,
+ 	CAR_MODEL_DELTA,
+ 	CAR_MODEL_LANCER,
  	CAR_MODEL_LAST
 };
 
