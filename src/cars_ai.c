@@ -282,7 +282,8 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 			(float)ROAD_SEGMENT_LENGTH;
 
 
-		//float dx = (ctx->dt * (ctx->speed / ctx->max_speed)) / 3000 / 2;
+		// float dx = (ctx->dt * (ctx->speed / ctx->max_speed)) / 3000 /
+		// 2;
 		float dx = (ctx->dt * max_speed) / 3000 / 10;
 
 		if (ctx->ai_cars[i].state ==
@@ -304,6 +305,10 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 	int ret;
 	enum ai_car_available_lane lane_status;
 	int closest_car_idx;
+
+	static int cpt = 0;
+	int can_switch_lane = 0;
+	cpt++;
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
 
@@ -331,8 +336,11 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 
 		//////////////////////////////////////////////////////////////////
 #if 1
-		static int cpt = 0;
-		cpt++;
+
+		// possibly change lanes every 5 seconds
+		if ((cpt + i) % 150 == 0)
+			can_switch_lane = 1;
+
 
 		if (cpt % 30 == 0)
 			SDL_Log("[%d] model = %d, state = %d, lane_status = %d, lane = %d, closest_idx = %d, slow_speed = %f, full_speed = %f\n",
@@ -347,16 +355,12 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 
 		switch (lane_status) {
 		case lane____:
-			// if (cpt % 30)
-			/*SDL_Log("ctx->ai_cars[%d].state = %d\n",
-				i,
-				ctx->ai_cars[i].state);*/
 			if (ctx->ai_cars[i].state == AI_CAR_STATE_SPEED_SLOW) {
 				ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_FULL;
-			} else if (ctx->ai_cars[i].state ==
-				   AI_CAR_STATE_SPEED_FULL) {
+			} else if (can_switch_lane &&
+				   ctx->ai_cars[i].state ==
+					   AI_CAR_STATE_SPEED_FULL) {
 				int rnd = rand_interval(0, 2);
-				SDL_Log("rnd = %d\n", rnd);
 				if (rnd == 1 && ctx->ai_cars[i].lane > 0) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SWITCHING_LANE_LEFT;
@@ -384,8 +388,9 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 		case lane___r:
 			if (ctx->ai_cars[i].state == AI_CAR_STATE_SPEED_SLOW) {
 				ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_FULL;
-			} else if (ctx->ai_cars[i].state ==
-				   AI_CAR_STATE_SPEED_FULL) {
+			} else if (can_switch_lane &&
+				   ctx->ai_cars[i].state ==
+					   AI_CAR_STATE_SPEED_FULL) {
 				if (rand_interval(0, 1) == 0 &&
 				    ctx->ai_cars[i].lane > 0) {
 					ctx->ai_cars[i].state =
@@ -428,8 +433,9 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 		case lane_l__:
 			if (ctx->ai_cars[i].state == AI_CAR_STATE_SPEED_SLOW) {
 				ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_FULL;
-			} else if (ctx->ai_cars[i].state ==
-				   AI_CAR_STATE_SPEED_FULL) {
+			} else if (can_switch_lane &&
+				   ctx->ai_cars[i].state ==
+					   AI_CAR_STATE_SPEED_FULL) {
 				if (rand_interval(0, 1) == 0 &&
 				    ctx->ai_cars[i].lane < ctx->lanes - 1) {
 					ctx->ai_cars[i].state =
@@ -576,8 +582,8 @@ int ai_car_init(struct game_context *ctx)
 			inline_get_segment_idx(ctx,
 		ctx->ai_cars[i].pos_z);*/
 		ctx->ai_cars[i].speed_max_straight =
-			// ctx->max_speed * (0.98f - (float)i * 0.01f);
-			ctx->max_speed * (0.88f - (float)i * 0.01f);
+			ctx->max_speed * (0.98f - (float)i * 0.01f);
+		// ctx->max_speed * (0.88f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed_max_curve =
 			ctx->max_speed * (0.88f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed = 0.f;
@@ -621,18 +627,34 @@ int ai_car_init(struct game_context *ctx)
 			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
 	}
 
-#if 0
+#if 1
 	// shuffle ai cars
 	for (int i = 0; i < NB_AI_CARS - 1; i++) {
 		int j = i + rand() / (RAND_MAX / (NB_AI_CARS - i) + 1);
 
 		int tmp_segment = ctx->ai_cars[j].segment;
 		int tmp_pos_z = ctx->ai_cars[j].pos_z;
+		enum car_model_type tmp_model = ctx->ai_cars[j].car_model;
+		float car_x_scale_coef = ctx->ai_cars[j].car_x_scale_coef;
+		float ai_car_scale_coef = ctx->ai_cars[j].ai_car_scale_coef;
+
+
+		ctx->ai_cars[j].car_model = ctx->ai_cars[i].car_model;
+		ctx->ai_cars[i].car_model = tmp_model;
+		ctx->ai_cars[j].car_x_scale_coef =
+			ctx->ai_cars[i].car_x_scale_coef;
+		ctx->ai_cars[i].car_x_scale_coef = car_x_scale_coef;
+		ctx->ai_cars[j].ai_car_scale_coef =
+			ctx->ai_cars[i].ai_car_scale_coef;
+		ctx->ai_cars[i].ai_car_scale_coef = ai_car_scale_coef;
+
+		if (i < 3)
+			continue;
 
 		ctx->ai_cars[j].segment = ctx->ai_cars[i].segment;
-		ctx->ai_cars[j].pos_z = ctx->ai_cars[i].pos_z;
-
 		ctx->ai_cars[i].segment = tmp_segment;
+
+		ctx->ai_cars[j].pos_z = ctx->ai_cars[i].pos_z;
 		ctx->ai_cars[i].pos_z = tmp_pos_z;
 
 		/*struct ai_car_info tmp = ctx->ai_cars[j];
