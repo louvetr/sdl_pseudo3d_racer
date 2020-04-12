@@ -389,7 +389,7 @@ struct ai_car_info {
 	int closest_car_idx;
 	// destination x value when switching lane
 	float dest_x;
-	float dest_lane;
+	int dest_lane;
 };
 
 // Various constants computed once for all to avoid to recompute them at each frame
@@ -634,18 +634,18 @@ static inline float inline_interpolate (float a,float b, float percent)
 }
 
 
-static int rand_interval(unsigned int min, unsigned int max)
+static inline int rand_interval(int min, int max)
 {
     int r;
-    const unsigned int range = 1 + max - min;
-    const unsigned int buckets = RAND_MAX / range;
-    const unsigned int limit = buckets * range;
+    const int range = 1 + max - min;
+    const int buckets = RAND_MAX / range;
+    const int limit = buckets * range;
 
     do {
         r = rand();
     } while (r >= limit);
 
-    return (int)(min + (r / buckets));
+    return (min + (r / buckets));
 }
 
 

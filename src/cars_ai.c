@@ -232,7 +232,7 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 
 	float max_speed;
 
-	static cpt = 0;
+	static unsigned int cpt = 0;
 	cpt++;
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
@@ -301,11 +301,7 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 
 int logic_race_ai_cars_state(struct game_context *ctx)
 {
-
-	int ret;
-	enum ai_car_available_lane lane_status;
-	int closest_car_idx;
-
+	int lane_status;
 	static int cpt = 0;
 	int can_switch_lane = 0;
 	cpt++;
@@ -554,7 +550,7 @@ int logic_race_ai_cars(struct game_context *ctx)
 	ret = logic_race_ai_cars_state(ctx);
 	ret = logic_race_ai_cars_speed(ctx);
 
-	return 0;
+	return ret;
 }
 
 
