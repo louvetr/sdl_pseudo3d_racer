@@ -114,6 +114,7 @@
 
 #define NB_AI_CARS 19
 //#define NB_AI_CARS 1
+#define AI_SEGMENTS_SPACING 20
 
 /////////////////////////////////////////////////////////////////
 // enums
@@ -211,6 +212,15 @@ enum car_model_type {
  	CAR_MODEL_LANCER,
  	CAR_MODEL_LAST
 };
+
+enum ai_car_state {
+	AI_CAR_STATE_SPEED_FULL = 0,
+	AI_CAR_STATE_SPEED_SLOW,
+	AI_CAR_STATE_SWITCHING_LANE_LEFT,
+	AI_CAR_STATE_SWITCHING_LANE_RIGHT
+};
+
+
 
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
@@ -346,6 +356,12 @@ struct ai_car_info {
 	float speed_max_straight;
 	// max speed in curves
 	float speed_max_curve;
+
+	// to use in SLOW state
+	float speed_slow_straight;
+	float speed_slow_curve;
+
+
 	// car position (distance) on the road
 	int pos_z;
 	float pos_z_rest_percent;
@@ -367,6 +383,13 @@ struct ai_car_info {
 	//struct car_model_texture;
 	float car_x_scale_coef;
 	float ai_car_scale_coef;
+
+	enum ai_car_state state;
+	// idx of the closest car ahead. Align speeds (straight and turn on this car)
+	int closest_car_idx;
+	// destination x value when switching lane
+	float dest_x;
+	float dest_lane;
 };
 
 // Various constants computed once for all to avoid to recompute them at each frame
@@ -609,6 +632,22 @@ static inline float inline_interpolate (float a,float b, float percent)
 { 
 	return a + (b-a)*percent;
 }
+
+
+static int rand_interval(unsigned int min, unsigned int max)
+{
+    int r;
+    const unsigned int range = 1 + max - min;
+    const unsigned int buckets = RAND_MAX / range;
+    const unsigned int limit = buckets * range;
+
+    do {
+        r = rand();
+    } while (r >= limit);
+
+    return (int)(min + (r / buckets));
+}
+
 
 /////////////////////////////////////////////////////////////////
 // functions declarations
