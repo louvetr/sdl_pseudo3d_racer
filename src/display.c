@@ -146,7 +146,8 @@ static int texture_render(struct game_context *ctx,
 			  /*int scale_num,
 			  int scale_den*/
 			  float scale,
-			  SDL_RendererFlip flip)
+			  SDL_RendererFlip flip,
+			  SDL_Rect *hitbox)
 {
 	if (!t || !ctx) {
 		SDL_Log("[%s] invalid param\n", __func__);
@@ -175,6 +176,33 @@ static int texture_render(struct game_context *ctx,
 	// SDL_RenderCopy(ctx->renderer, t->texture, clip, &render_quad);
 	SDL_RenderCopyEx(
 		ctx->renderer, t->texture, clip, &render_quad, 0, NULL, flip);
+
+
+	/* Set hitbox. Only for AI cars since scene sprite hitbox doesn't always
+	 * follow the sprite shape (eg. tree with trunk) */
+	if (hitbox) {
+		memcpy(hitbox, &render_quad, sizeof(SDL_Rect));
+		//*hitbox = render_quad;
+		/*if (clip) {
+			*hitbox = clip;
+		} else {
+		}*/
+
+		/*if (clip)
+			SDL_Log("[%s][clip] x=%d, y=%d, w=%d, h=%d\n",
+				__func__,
+				clip->x,
+				clip->y,
+				clip->w,
+				clip->h);
+
+		SDL_Log("[%s][render_quad] x=%d, y=%d, w=%d, h=%d\n",
+			__func__,
+			render_quad.x,
+			render_quad.y,
+			render_quad.w,
+			render_quad.h);*/
+	}
 
 	return 0;
 }
@@ -372,7 +400,7 @@ static int display_load_render_text(struct game_context *ctx,
 	int ret;
 
 	ret = load_text_message(ctx, font, t, msg, *color);
-	ret = texture_render(ctx, t, x, y, NULL, 1, SDL_FLIP_NONE);
+	ret = texture_render(ctx, t, x, y, NULL, 1, SDL_FLIP_NONE, NULL);
 
 	// TODO: manage error
 
@@ -488,7 +516,10 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 	int ret = 0;
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
+
 		if (idx == ctx->ai_cars[i].segment) {
+
+			memset(&ctx->ai_cars[i].hitbox, 0, sizeof(SDL_Rect));
 
 			struct road_segment *seg = &ctx->segments[idx];
 			int sprite_x, sprite_y;
@@ -632,6 +663,14 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				}
 			}
 
+			if (sprite_x < 0 || sprite_y < 0)
+				continue;
+
+			if (sprite_y < SCREEN_HEIGHT / 3) {
+				SDL_Log("[%s] AI CAR GLITCH !!!\n", __func__);
+				continue;
+			}
+
 			ret = texture_render(
 				ctx,
 				&ctx->gfx.cars[ctx->ai_cars[i].car_model]
@@ -641,7 +680,8 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				r,
 				car_screen_scale *
 					ctx->ai_cars[i].ai_car_scale_coef,
-				ctx->ai_cars[i].car_flip);
+				ctx->ai_cars[i].car_flip,
+				&ctx->ai_cars[i].hitbox);
 
 			if (r)
 				free(r);
@@ -735,7 +775,8 @@ static int display_render_scene_sprites(struct game_context *ctx,
 				     sprite_y,
 				     r,
 				     seg->scene->sprite[j]->scale,
-				     seg->scene->sprite[j]->flip);
+				     seg->scene->sprite[j]->flip,
+				     NULL);
 
 		if (r)
 			free(r);
@@ -1027,7 +1068,8 @@ static int display_render_background_layer(struct game_context *ctx,
 				     bg_texture->h,
 			     &bg_clip_rect,
 			     1,
-			     SDL_FLIP_NONE);
+			     SDL_FLIP_NONE,
+			     NULL);
 
 	if (another_bg == ANOTHER_BG_RIGHT) {
 		bg_x2 = bg_clip_rect.w;
@@ -1047,7 +1089,8 @@ static int display_render_background_layer(struct game_context *ctx,
 					     bg_texture->h,
 				     &bg_clip_rect,
 				     1,
-				     SDL_FLIP_NONE);
+				     SDL_FLIP_NONE,
+				     NULL);
 	}
 
 	return ret;
@@ -1129,7 +1172,8 @@ static int display_screen_race(struct game_context *ctx)
 			     ctx->player_sprite_y,
 			     NULL,
 			     ctx->scale_player_car[ctx->car_player_model],
-			     ctx->car_player_flip);
+			     ctx->car_player_flip,
+			     NULL);
 
 	// render scenery text message
 	ret = display_render_text(ctx);

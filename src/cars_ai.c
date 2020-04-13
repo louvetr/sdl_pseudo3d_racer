@@ -245,16 +245,16 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 				SDL_Log("ai_cars[%d] use SLOW speed\n", i);*/
 
 			if (ctx->segments[ctx->ai_cars[i].segment].curve != 0)
-				max_speed =
-					ctx->ai_cars[i].speed_slow_curve * .9f;
+				max_speed = ctx->ai_cars[i]
+						    .speed_slow_curve /** .9f*/;
 			else
 				max_speed = ctx->ai_cars[i].speed_slow_straight;
 		} else {
 			/*if (cpt % 30 == 0)
 				SDL_Log("ai_cars[%d] use FULL speed\n", i);*/
 			if (ctx->segments[ctx->ai_cars[i].segment].curve != 0)
-				max_speed =
-					ctx->ai_cars[i].speed_max_curve * .9f;
+				max_speed = ctx->ai_cars[i]
+						    .speed_max_curve /** .9f*/;
 			else
 				max_speed = ctx->ai_cars[i].speed_max_straight;
 		}
@@ -302,8 +302,8 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 int logic_race_ai_cars_state(struct game_context *ctx)
 {
 	int lane_status;
-	static int cpt = 0;
 	int can_switch_lane = 0;
+	static int cpt = 0;
 	cpt++;
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
@@ -338,7 +338,7 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 			can_switch_lane = 1;
 
 
-		if (cpt % 30 == 0)
+		/*if (cpt % 30 == 0)
 			SDL_Log("[%d] model = %d, state = %d, lane_status = %d, lane = %d, closest_idx = %d, slow_speed = %f, full_speed = %f\n",
 				i,
 				ctx->ai_cars[i].car_model,
@@ -347,7 +347,7 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 				ctx->ai_cars[i].lane,
 				ctx->ai_cars[i].closest_car_idx,
 				ctx->ai_cars[i].speed_slow_straight,
-				ctx->ai_cars[i].speed_max_curve);
+				ctx->ai_cars[i].speed_max_curve);*/
 
 		switch (lane_status) {
 		case lane____:
@@ -578,10 +578,15 @@ int ai_car_init(struct game_context *ctx)
 			inline_get_segment_idx(ctx,
 		ctx->ai_cars[i].pos_z);*/
 		ctx->ai_cars[i].speed_max_straight =
-			ctx->max_speed * (0.98f - (float)i * 0.01f);
+			ctx->max_speed * (.99f - (float)i * 0.01f);
 		// ctx->max_speed * (0.88f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed_max_curve =
-			ctx->max_speed * (0.88f - (float)i * 0.01f);
+			ctx->max_speed * (0.95f - (float)i * 0.01f);
+
+		// DBG
+		/*ctx->ai_cars[i].speed_max_straight /= 2;
+		ctx->ai_cars[i].speed_max_curve /= 2;*/
+
 		ctx->ai_cars[i].speed = 0.f;
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;
 
