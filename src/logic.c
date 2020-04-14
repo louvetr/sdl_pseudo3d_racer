@@ -63,34 +63,52 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			ctx->ai_cars[i].hitbox.y + ctx->ai_cars[i].hitbox.h;
 
 		// Front collision
-		if (ctx->player_sprite_y < ai_max_y) {
-			if ((player_max_x > ctx->ai_cars[i].hitbox.x &&
-			     player_max_x < ai_max_x) ||
-			    (ctx->player_car_x_in_pixels < ai_max_x &&
-			     ctx->player_car_x_in_pixels >
-				     ctx->ai_cars[i].hitbox.x)) {
+		if ((player_max_x > ctx->ai_cars[i].hitbox.x &&
+		     player_max_x < ai_max_x) ||
+		    (ctx->player_car_x_in_pixels < ai_max_x &&
+		     ctx->player_car_x_in_pixels > ctx->ai_cars[i].hitbox.x)) {
 
-				SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d, %d->%d])\n",
-					__func__,
-					ctx->player_car_x_in_pixels,
-					player_max_x,
-					ctx->player_sprite_y,
-					player_max_y,
-					ctx->ai_cars[i].hitbox.x,
-					ai_max_x,
-					ctx->ai_cars[i].hitbox.y,
-					ai_max_y);
+			/*SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d, %d->%d])\n",
+				__func__,
+				ctx->player_car_x_in_pixels,
+				player_max_x,
+				ctx->player_sprite_y,
+				player_max_y,
+				ctx->ai_cars[i].hitbox.x,
+				ai_max_x,
+				ctx->ai_cars[i].hitbox.y,
+				ai_max_y);*/
 
 
+			if (ai_max_y > ctx->player_sprite_y &&
+			    ai_max_y < player_max_y) {
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
 				    3)
 					ctx->speed /= 2.f;
 			}
+			if (ctx->ai_cars[i].hitbox.y < player_max_y &&
+			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
+				if (ctx->player_segment -
+					    ctx->ai_cars[i].segment <
+				    3) {
+					ctx->ai_cars[i].state =
+						AI_CAR_STATE_SPEED_BEHIND_PLAYER;
+					ctx->ai_cars[i].behind_player_frames =
+						0;
+					ctx->ai_cars[i].speed_slow_straight =
+						ctx->speed * .9f;
+					ctx->ai_cars[i].speed_slow_curve =
+						ctx->ai_cars[i]
+							.speed_slow_straight;
+
+					/* TODO : maybe give a little temporary
+					 * speed boost */
+				}
+			}
 		}
 
 		// Back collison
-
 	}
 
 	return 0;
@@ -223,6 +241,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 	return 0;
 }
 
+
 static int logic_race_control(struct game_context *ctx)
 {
 	float speed_ratio = ctx->speed / ctx->max_speed;
@@ -326,13 +345,16 @@ static int logic_race(struct game_context *ctx)
 	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 
-	ret = logic_race_check_collision_with_scene(ctx);
-	ret = logic_race_check_collision_with_cars(ctx);
+	/*ret = logic_race_check_collision_with_scene(ctx);
+	ret = logic_race_check_collision_with_cars(ctx);*/
 	ret = logic_race_control(ctx);
 	ret = logic_race_ai_cars(ctx);
+	ret = logic_race_check_collision_with_scene(ctx);
+	ret = logic_race_check_collision_with_cars(ctx);
 
 	return ret;
 }
+
 
 static int logic_race_collision_scene(struct game_context *ctx)
 {

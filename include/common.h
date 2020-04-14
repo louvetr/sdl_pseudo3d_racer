@@ -216,6 +216,7 @@ enum car_model_type {
 enum ai_car_state {
 	AI_CAR_STATE_SPEED_FULL = 0,
 	AI_CAR_STATE_SPEED_SLOW,
+	AI_CAR_STATE_SPEED_BEHIND_PLAYER,
 	AI_CAR_STATE_SWITCHING_LANE_LEFT,
 	AI_CAR_STATE_SWITCHING_LANE_RIGHT
 };
@@ -390,6 +391,10 @@ struct ai_car_info {
 	// destination x value when switching lane
 	float dest_x;
 	int dest_lane;
+
+	// number of frame the AI car is in 'BEHIND_CAR' state after colliding it from behind
+	int behind_player_frames;
+
 };
 
 // Various constants computed once for all to avoid to recompute them at each frame

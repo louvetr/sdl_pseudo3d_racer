@@ -237,7 +237,9 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
 
-		if (ctx->ai_cars[i].state == AI_CAR_STATE_SPEED_SLOW &&
+		if ((ctx->ai_cars[i].state == AI_CAR_STATE_SPEED_SLOW ||
+		     ctx->ai_cars[i].state ==
+			     AI_CAR_STATE_SPEED_BEHIND_PLAYER) &&
 		    ctx->ai_cars[i].speed_slow_straight <
 			    ctx->ai_cars[i].speed_max_straight) {
 
@@ -320,6 +322,14 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 				ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_FULL;
 				ctx->ai_cars[i].lane++;
 			}
+		} else if (ctx->ai_cars[i].state ==
+			   AI_CAR_STATE_SPEED_BEHIND_PLAYER) {
+
+			if (ctx->ai_cars[i].behind_player_frames > FPS)
+				ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_SLOW;
+
+			ctx->ai_cars[i].behind_player_frames++;
+			continue;
 		}
 
 		// change state according lane status
@@ -339,10 +349,9 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 
 
 		/*if (cpt % 30 == 0)
-			SDL_Log("[%d] model = %d, state = %d, lane_status = %d, lane = %d, closest_idx = %d, slow_speed = %f, full_speed = %f\n",
-				i,
-				ctx->ai_cars[i].car_model,
-				ctx->ai_cars[i].state,
+			SDL_Log("[%d] model = %d, state = %d, lane_status = %d,
+		   lane = %d, closest_idx = %d, slow_speed = %f, full_speed =
+		   %f\n", i, ctx->ai_cars[i].car_model, ctx->ai_cars[i].state,
 				lane_status,
 				ctx->ai_cars[i].lane,
 				ctx->ai_cars[i].closest_car_idx,
