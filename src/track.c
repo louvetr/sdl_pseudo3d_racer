@@ -520,7 +520,8 @@ int track_build(struct game_context *ctx)
 	///////////////////////////////////
 	// TODO: put this in a function elsewhere
 	// ctx->player_segment = ctx->nb_segments - 30;
-	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+	
+	//ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 
 	int player_lane = NB_AI_CARS % ctx->lanes;
 	// ctx->position =
@@ -529,6 +530,12 @@ int track_build(struct game_context *ctx)
 	ctx->player_segment = ctx->nb_segments -
 			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+	ctx->player_distance_ran =
+			(ctx->player_segment - ctx->nb_segments) *
+			ROAD_SEGMENT_LENGTH - 1;
+
+	SDL_Log("PLAYER player_distance_ran = %d\n", ctx->player_distance_ran);
+
 	///////////////////////////////////
 
 	ctx->segments =

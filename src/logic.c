@@ -68,7 +68,8 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 		    (ctx->player_car_x_in_pixels < ai_max_x &&
 		     ctx->player_car_x_in_pixels > ctx->ai_cars[i].hitbox.x)) {
 
-			/*SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d, %d->%d])\n",
+			/*SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d,
+			   %d->%d])\n",
 				__func__,
 				ctx->player_car_x_in_pixels,
 				player_max_x,
@@ -259,8 +260,10 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->dt = 35;
 	}
 
+	int step = (int)(ctx->dt * ctx->speed);
 	ctx->position = inline_increase(
-		ctx->position, (int)(ctx->dt * ctx->speed), ctx->track_length);
+		ctx->position, step, ctx->track_length);
+	ctx->player_distance_ran += step;
 
 	// screen crossing should take 1sec at top speed
 	float dx = (ctx->dt * 2 * (ctx->speed / ctx->max_speed)) / 3000;
@@ -413,6 +416,31 @@ int logic_project_coord(struct segment_point *p,
 	return 0;
 }
 
+// TODO static inline in utilitary function file
+int logic_get_player_place_nb(struct game_context *ctx)
+{
+	int pos = 1;
+	for (int i = 0; i < NB_AI_CARS; i++) {
+		//if (ctx->ai_cars[i].distance > (ctx->position + ctx->player_z))
+		if (ctx->ai_cars[i].distance > ctx->player_distance_ran)
+			pos++;
+	}
+	return pos;
+}
+
+char* logic_get_player_place_suffix(int pos)
+{
+	switch (pos) {
+	case 1:
+		return "st";
+	case 2:
+		return "nd";
+	case 3:
+		return "rd";
+	default:
+		return "th";
+	}
+}
 
 int main_logic(struct game_context *ctx)
 {

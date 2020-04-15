@@ -457,11 +457,19 @@ static int display_render_text(struct game_context *ctx)
 		&text_color,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_title.w / 2,
 		0);*/
+
+	int place = logic_get_player_place_nb(ctx);
+	char place_str[3];
+	if (place < 10)
+		snprintf(place_str, 3, " %d", place);
+	else
+		snprintf(place_str, 3, "%d", place);
+
 	display_load_render_text(
 		ctx,
 		ctx->sc_font_big,
 		&ctx->gfx.font_game_position_value,
-		" 1",
+		place_str,
 		&text_color,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2,
 		0 /*ctx->gfx.font_game_position_title.h*/);
@@ -469,7 +477,7 @@ static int display_render_text(struct game_context *ctx)
 		ctx,
 		ctx->sc_font_medium,
 		&ctx->gfx.font_game_position_unit,
-		"st",
+		logic_get_player_place_suffix(place),
 		&text_color,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2 +
 			ctx->gfx.font_game_position_value.w,

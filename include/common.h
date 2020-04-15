@@ -482,7 +482,10 @@ struct game_context {
 	int player_segment;
 
 	int player_car_x_in_pixels;
-	
+
+	// distance travelled by the player
+	int player_distance_ran;
+
 	// collion related
 	float collision_dst_x;
 
@@ -683,6 +686,11 @@ int logic_project_coord(struct segment_point *p,
 
 int ai_car_init(struct game_context *ctx);
 int logic_race_ai_cars(struct game_context *ctx);
+
+
+int logic_get_player_place_nb(struct game_context *ctx);
+char* logic_get_player_place_suffix(int pos);
+
 
 int load_texture_from_file(struct game_context *ctx,
 			   char *path,

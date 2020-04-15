@@ -266,10 +266,11 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 				max_speed, ctx->ai_cars[i].accel, ctx->dt);
 		}*/
 
+		int step = (int)(ctx->dt * max_speed);
+		ctx->ai_cars[i].distance += step;
+
 		ctx->ai_cars[i].pos_z = inline_increase(
-			ctx->ai_cars[i].pos_z,
-			(int)(ctx->dt * /*ctx->ai_cars[i].speed*/ max_speed),
-			ctx->track_length);
+			ctx->ai_cars[i].pos_z, step, ctx->track_length);
 
 		/*ctx->ai_cars[i].segment =
 			inline_get_segment_idx(ctx,
@@ -582,6 +583,10 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].pos_z =
 			ctx->ai_cars[i].segment * ROAD_SEGMENT_LENGTH;
 
+		ctx->ai_cars[i].distance =
+			(ctx->ai_cars[i].segment - ctx->nb_segments) *
+			ROAD_SEGMENT_LENGTH;
+
 		/*ctx->ai_cars[i].pos_z = 0;
 		ctx->ai_cars[i].segment =
 			inline_get_segment_idx(ctx,
@@ -635,6 +640,9 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].ai_car_scale_coef =
 			(float)SCREEN_WIDTH * 2.f *
 			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
+
+	SDL_Log("ctx->ai_cars[%d].distance = %d\n", i, ctx->ai_cars[i].distance);
+
 	}
 
 #if 1
@@ -644,6 +652,7 @@ int ai_car_init(struct game_context *ctx)
 
 		int tmp_segment = ctx->ai_cars[j].segment;
 		int tmp_pos_z = ctx->ai_cars[j].pos_z;
+		int tmp_distance = ctx->ai_cars[j].distance;
 		enum car_model_type tmp_model = ctx->ai_cars[j].car_model;
 		float car_x_scale_coef = ctx->ai_cars[j].car_x_scale_coef;
 		float ai_car_scale_coef = ctx->ai_cars[j].ai_car_scale_coef;
@@ -666,6 +675,9 @@ int ai_car_init(struct game_context *ctx)
 
 		ctx->ai_cars[j].pos_z = ctx->ai_cars[i].pos_z;
 		ctx->ai_cars[i].pos_z = tmp_pos_z;
+
+		ctx->ai_cars[j].distance = ctx->ai_cars[i].distance;
+		ctx->ai_cars[i].distance = tmp_distance;
 
 		/*struct ai_car_info tmp = ctx->ai_cars[j];
 
