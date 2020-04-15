@@ -493,10 +493,13 @@ static int display_render_text(struct game_context *ctx)
 				 &text_color,
 				 0,
 				 0);*/
+	char lap_str[8];
+	snprintf(lap_str, 8, "%d/%d", logic_get_player_lap_nb(ctx), ctx->nb_lap);
+
 	display_load_render_text(ctx,
 				 ctx->sc_font_big,
 				 &ctx->gfx.font_game_lap_value,
-				 "1/5",
+				 lap_str,
 				 &text_color,
 				 0,
 				 0 /*ctx->gfx.font_game_lap_title.h*/);
@@ -671,10 +674,10 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				}
 			}
 
-			if (sprite_x < 0 || sprite_y < 0)
-				continue;
+			/*if (sprite_x < 0 || sprite_y < 0)
+				continue;*/
 
-			if (sprite_y < SCREEN_HEIGHT / 3) {
+			if (sprite_y < SCREEN_HEIGHT / 4) {
 				SDL_Log("[%s] AI CAR GLITCH !!!\n", __func__);
 				continue;
 			}

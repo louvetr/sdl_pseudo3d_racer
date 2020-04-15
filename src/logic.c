@@ -261,8 +261,7 @@ static int logic_race_control(struct game_context *ctx)
 	}
 
 	int step = (int)(ctx->dt * ctx->speed);
-	ctx->position = inline_increase(
-		ctx->position, step, ctx->track_length);
+	ctx->position = inline_increase(ctx->position, step, ctx->track_length);
 	ctx->player_distance_ran += step;
 
 	// screen crossing should take 1sec at top speed
@@ -345,6 +344,7 @@ static int logic_race(struct game_context *ctx)
 {
 	int ret;
 
+	ctx->player_segment_prev = ctx->player_segment;
 	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 
@@ -363,6 +363,7 @@ static int logic_race_collision_scene(struct game_context *ctx)
 {
 	int ret;
 
+	ctx->player_segment_prev = ctx->player_segment;
 	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 
@@ -421,7 +422,6 @@ int logic_get_player_place_nb(struct game_context *ctx)
 {
 	int pos = 1;
 	for (int i = 0; i < NB_AI_CARS; i++) {
-		//if (ctx->ai_cars[i].distance > (ctx->position + ctx->player_z))
 		if (ctx->ai_cars[i].distance > ctx->player_distance_ran)
 			pos++;
 	}
@@ -441,6 +441,22 @@ char* logic_get_player_place_suffix(int pos)
 		return "th";
 	}
 }
+
+int logic_get_player_lap_nb(struct game_context *ctx)
+{
+	static int last_lap = 0;
+
+	if (ctx->player_segment_prev > ctx->player_segment)
+		last_lap++;
+
+	if (last_lap == 0)
+		return 1;
+	else if (last_lap > ctx->nb_lap)
+		return ctx->nb_lap;
+	else
+		return last_lap;
+}
+
 
 int main_logic(struct game_context *ctx)
 {

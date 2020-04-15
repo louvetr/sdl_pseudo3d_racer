@@ -480,14 +480,20 @@ struct game_context {
 	float centrifugal;
 	// index of the current player segment in segments array
 	int player_segment;
+	int player_segment_prev;
 
 	int player_car_x_in_pixels;
 
+	// distance from start line at beginning of the race
+	// int player_distance_start_offset;
 	// distance travelled by the player
 	int player_distance_ran;
 
-	// collion related
+	// collision related
 	float collision_dst_x;
+
+	// nb of lap of the race
+	int nb_lap;
 
     // window
     SDL_Window *window;
@@ -690,6 +696,7 @@ int logic_race_ai_cars(struct game_context *ctx);
 
 int logic_get_player_place_nb(struct game_context *ctx);
 char* logic_get_player_place_suffix(int pos);
+int logic_get_player_lap_nb(struct game_context *ctx);
 
 
 int load_texture_from_file(struct game_context *ctx,
