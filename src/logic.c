@@ -1,5 +1,6 @@
 #include "common.h"
 
+#define NB_SEGMENT_CAR_COLLISION 5
 
 static float COLLIONSION_SCENE_SHIFT = 0.5f;
 
@@ -62,7 +63,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 		int ai_max_y =
 			ctx->ai_cars[i].hitbox.y + ctx->ai_cars[i].hitbox.h;
 
-		// Front collision
+		// Xs collides
 		if ((player_max_x > ctx->ai_cars[i].hitbox.x &&
 		     player_max_x < ai_max_x) ||
 		    (ctx->player_car_x_in_pixels < ai_max_x &&
@@ -80,19 +81,28 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				ctx->ai_cars[i].hitbox.y,
 				ai_max_y);*/
 
-
+			// Front collision
 			if (ai_max_y > ctx->player_sprite_y &&
 			    ai_max_y < player_max_y) {
+
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
-				    3)
+				    NB_SEGMENT_CAR_COLLISION)
+					ctx->speed /= 2.f;
+				else if (ctx->nb_segments -
+						 ctx->player_segment +
+						 ctx->ai_cars[i].segment <
+					 NB_SEGMENT_CAR_COLLISION)
 					ctx->speed /= 2.f;
 			}
+
+			// Back collison
 			if (ctx->ai_cars[i].hitbox.y < player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
+
 				if (ctx->player_segment -
 					    ctx->ai_cars[i].segment <
-				    3) {
+				    NB_SEGMENT_CAR_COLLISION) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SPEED_BEHIND_PLAYER;
 					ctx->ai_cars[i].behind_player_frames =
@@ -102,14 +112,26 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 					ctx->ai_cars[i].speed_slow_curve =
 						ctx->ai_cars[i]
 							.speed_slow_straight;
-
-					/* TODO : maybe give a little temporary
-					 * speed boost */
+				} else if (ctx->nb_segments -
+						   ctx->ai_cars[i].segment +
+						   ctx->player_segment <
+					   NB_SEGMENT_CAR_COLLISION) {
+					ctx->ai_cars[i].state =
+						AI_CAR_STATE_SPEED_BEHIND_PLAYER;
+					ctx->ai_cars[i].behind_player_frames =
+						0;
+					ctx->ai_cars[i].speed_slow_straight =
+						ctx->speed * .9f;
+					ctx->ai_cars[i].speed_slow_curve =
+						ctx->ai_cars[i]
+							.speed_slow_straight;
 				}
+
+
+				/* TODO : maybe give a little temporary
+				 * speed boost */
 			}
 		}
-
-		// Back collison
 	}
 
 	return 0;
@@ -428,7 +450,7 @@ int logic_get_player_place_nb(struct game_context *ctx)
 	return pos;
 }
 
-char* logic_get_player_place_suffix(int pos)
+char *logic_get_player_place_suffix(int pos)
 {
 	switch (pos) {
 	case 1:
