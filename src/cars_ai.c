@@ -652,6 +652,7 @@ int ai_car_init(struct game_context *ctx)
 
 		int tmp_segment = ctx->ai_cars[j].segment;
 		int tmp_pos_z = ctx->ai_cars[j].pos_z;
+		float tmp_pos_x = ctx->ai_cars[j].pos_x;
 		int tmp_distance = ctx->ai_cars[j].distance;
 		enum car_model_type tmp_model = ctx->ai_cars[j].car_model;
 		float car_x_scale_coef = ctx->ai_cars[j].car_x_scale_coef;
@@ -679,6 +680,8 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[j].distance = ctx->ai_cars[i].distance;
 		ctx->ai_cars[i].distance = tmp_distance;
 
+		ctx->ai_cars[j].pos_x = ctx->ai_cars[i].pos_x;
+		ctx->ai_cars[i].pos_x = tmp_pos_x;
 		/*struct ai_car_info tmp = ctx->ai_cars[j];
 
 		memcpy(&tmp, &ctx->ai_cars[j], sizeof(struct ai_car_info));
