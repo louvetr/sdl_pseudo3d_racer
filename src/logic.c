@@ -1,6 +1,7 @@
 #include "common.h"
 
 #define NB_SEGMENT_CAR_COLLISION 5
+#define NITRO_DURATION 5
 
 static float COLLIONSION_SCENE_SHIFT = 0.5f;
 
@@ -267,7 +268,28 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 static int logic_race_control(struct game_context *ctx)
 {
-	float speed_ratio = ctx->speed / ctx->max_speed;
+
+	float max_speed, accel;
+
+	if (ctx->keys.nitro && ctx->nb_nitro > 0 &&
+	    ctx->status_cur != GAME_STATE_RACE_NITRO) {
+		ctx->status_cur = GAME_STATE_RACE_NITRO;
+		ctx->nitro_nb_frame = 0;
+		ctx->nb_nitro--;
+	}
+
+	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
+		max_speed = ctx->max_speed_nitro;
+		accel = ctx->accel_nitro;
+		ctx->nitro_nb_frame++;
+		if (ctx->nitro_nb_frame > NITRO_DURATION * FPS)
+			ctx->status_cur = GAME_STATE_RACE;
+	} else {
+		max_speed = ctx->max_speed;
+		accel = ctx->accel;
+	}
+
+	float speed_ratio = ctx->speed / max_speed;
 	float player_ratio =
 		(float)((ctx->position + ctx->player_z) % ROAD_SEGMENT_LENGTH) /
 		(float)ROAD_SEGMENT_LENGTH;
@@ -287,7 +309,7 @@ static int logic_race_control(struct game_context *ctx)
 	ctx->player_distance_ran += step;
 
 	// screen crossing should take 1sec at top speed
-	float dx = (ctx->dt * 2 * (ctx->speed / ctx->max_speed)) / 3000;
+	float dx = (ctx->dt * 2 * (ctx->speed / max_speed)) / 3000;
 
 	if (ctx->keys.left) {
 		ctx->player_x = ctx->player_x - dx;
@@ -327,14 +349,13 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->same_car_orientation_in_frame++;
 	}
 
-
 	ctx->player_x =
 		ctx->player_x -
 		(dx * speed_ratio * ctx->segments[ctx->player_segment].curve *
 		 ctx->centrifugal);
 
 	if (ctx->keys.accel) {
-		ctx->speed = inline_accelerate(ctx->speed, ctx->accel, ctx->dt);
+		ctx->speed = inline_accelerate(ctx->speed, accel, ctx->dt);
 	} else if (ctx->keys.brake) {
 		ctx->speed =
 			inline_accelerate(ctx->speed, ctx->breaking, ctx->dt);
@@ -351,7 +372,7 @@ static int logic_race_control(struct game_context *ctx)
 	// don't let player go out of bounds
 	ctx->player_x = inline_limit(ctx->player_x, -2, 2);
 	// cap player speed
-	ctx->speed = inline_limit(ctx->speed, 0, ctx->max_speed);
+	ctx->speed = inline_limit(ctx->speed, 0, max_speed);
 
 	ctx->player_y = (int)inline_interpolate(
 		ctx->segments[ctx->player_segment].p1.world.y,
@@ -419,7 +440,6 @@ int logic_project_coord(struct segment_point *p,
 	p->camera.y = p->world.y - (float)camera_y;
 	p->camera.z =
 		p->world.z - (float)camera_z + (float)first_segments_z_offset;
-
 
 	// compute scaling factor
 	if (p->camera.z != 0) // TODO: what about this case ?
@@ -492,6 +512,7 @@ int main_logic(struct game_context *ctx)
 	case GAME_STATE_TITLE:
 		break;
 	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_NITRO:
 		logic_race(ctx);
 		break;
 	case GAME_STATE_RACE_COLLISION_SCENE:

@@ -449,6 +449,10 @@ static int main_ctx_init(struct game_context *ctx)
 			 (float)ctx->step * (30.f / (float)FPS);
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
+
+	ctx->max_speed_nitro = 	ctx->max_speed * 1.33f;
+	ctx->accel_nitro = ctx->accel * 2.f;
+	ctx->nb_nitro = 3;
 	ctx->breaking = ctx->max_speed * -1 / 20;
 	// ctx->decel = (ctx->max_speed / 5) * -1;
 	ctx->decel = (ctx->max_speed / 50) * -1;

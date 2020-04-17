@@ -127,6 +127,7 @@ enum game_status {
 	GAME_STATE_GAME,
 	GAME_STATE_RACE,
 	GAME_STATE_RACE_COLLISION_SCENE,
+	GAME_STATE_RACE_NITRO,
 	GAME_STATE_PAUSE,
 	GAME_STATE_GAMEOVER,
 	GAME_STATE_QUIT
@@ -467,6 +468,14 @@ struct game_context {
 	float max_speed;
 	// acceleration rate - tuned until it 'felt' right
 	float accel;
+	// top speed under nitro
+	float max_speed_nitro;
+	// acceleration rate under nitro
+	float accel_nitro;
+	// number of nitro of player	
+	int nb_nitro;
+	// number of frames in nitro state
+	int nitro_nb_frame;
 	// deceleration rate when braking
 	float breaking;
 	// 'natural' deceleration rate when neither accelerating, nor braking

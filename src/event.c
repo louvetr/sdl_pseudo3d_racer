@@ -175,6 +175,8 @@ int main_event(struct game_context *ctx)
 	case GAME_STATE_QUIT:
 		break;
 	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_NITRO:
+	case GAME_STATE_RACE_COLLISION_SCENE:
 		event_race(ctx);
 		break;
 	case GAME_STATE_PAUSE:

@@ -494,7 +494,8 @@ static int display_render_text(struct game_context *ctx)
 				 0,
 				 0);*/
 	char lap_str[8];
-	snprintf(lap_str, 8, "%d/%d", logic_get_player_lap_nb(ctx), ctx->nb_lap);
+	snprintf(
+		lap_str, 8, "%d/%d", logic_get_player_lap_nb(ctx), ctx->nb_lap);
 
 	display_load_render_text(ctx,
 				 ctx->sc_font_big,
@@ -510,6 +511,69 @@ static int display_render_text(struct game_context *ctx)
 				 &text_color,
 				 ctx->gfx.font_game_lap_value.w,
 				 0 /*ctx->gfx.font_game_lap_title.h*/);
+
+
+	// Nitro
+	display_load_render_text(ctx,
+				 ctx->sc_font_medium,
+				 &ctx->gfx.font_game_lap_title,
+				 "Nitro",
+				 &text_color,
+				 SCREEN_WIDTH * 64 / 100,
+				 0 /*ctx->gfx.font_game_lap_title.h*/);
+
+	// display nitro icons
+	for (int i = 0; i < ctx->nb_nitro; i++) {
+		filledCircleRGBA(
+			ctx->renderer,
+			(int16_t)(SCREEN_WIDTH * (662 + i * 30) / 1000),
+			(int16_t)(ctx->gfx.font_game_lap_title.h * 135 / 100),
+			15,
+			0,
+			0,
+			0,
+			255);
+		filledCircleRGBA(
+			ctx->renderer,
+			(int16_t)(SCREEN_WIDTH * (662 + i * 30) / 1000),
+			(int16_t)(ctx->gfx.font_game_lap_title.h * 135 / 100),
+			11,
+			255,
+			0,
+			0,
+			255);
+	}
+
+	// blink current nitro
+	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
+		if (ctx->nitro_nb_frame % (FPS / 2) > FPS / 4) {
+			filledCircleRGBA(
+				ctx->renderer,
+				(int16_t)(SCREEN_WIDTH *
+					  (662 + (ctx->nb_nitro + 0) * 30) /
+					  1000),
+				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
+					  100),
+				15,
+				0,
+				0,
+				0,
+				255);
+
+			filledCircleRGBA(
+				ctx->renderer,
+				(int16_t)(SCREEN_WIDTH *
+					  (662 + (ctx->nb_nitro + 0) * 30) /
+					  1000),
+				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
+					  100),
+				11,
+				255,
+				0,
+				0,
+				255);
+		}
+	}
 
 	return ret;
 }
@@ -676,6 +740,9 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 
 			/*if (sprite_x < 0 || sprite_y < 0)
 				continue;*/
+
+			if (ctx->ai_cars[i].car_flip == SDL_FLIP_VERTICAL)
+				continue;
 
 			if (sprite_y < SCREEN_HEIGHT / 4) {
 				SDL_Log("[%s] AI CAR GLITCH !!!\n", __func__);
@@ -1219,6 +1286,7 @@ int main_display(struct game_context *ctx)
 	case GAME_STATE_QUIT:
 		break;
 	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		display_screen_race(ctx);
 		break;
