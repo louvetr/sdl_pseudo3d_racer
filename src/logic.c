@@ -88,13 +88,16 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
-				    NB_SEGMENT_CAR_COLLISION)
-					ctx->speed /= 2.f;
-				else if (ctx->nb_segments -
-						 ctx->player_segment +
-						 ctx->ai_cars[i].segment <
-					 NB_SEGMENT_CAR_COLLISION)
-					ctx->speed /= 2.f;
+				    NB_SEGMENT_CAR_COLLISION) {
+					if (ctx->speed >= ctx->max_speed / 4)
+						ctx->speed /= 2.f;
+				} else if (ctx->nb_segments -
+						   ctx->player_segment +
+						   ctx->ai_cars[i].segment <
+					   NB_SEGMENT_CAR_COLLISION) {
+					if (ctx->speed >= ctx->max_speed / 4)
+						ctx->speed /= 2.f;
+				}
 			}
 
 			// Back collison
