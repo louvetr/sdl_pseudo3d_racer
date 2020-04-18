@@ -174,6 +174,14 @@ static int texture_render(struct game_context *ctx,
 
 	// SET 3rd PARAM to 'clip'
 	// SDL_RenderCopy(ctx->renderer, t->texture, clip, &render_quad);
+
+	// workaround to avoid random blinking AI car sprite in middle of screen
+	if (hitbox && y + render_quad.h < ctx->max_y) {
+		SDL_Log("[%s] AI CAR GLITCH ##################################\n",
+			__func__);
+		return 0;
+	}
+
 	SDL_RenderCopyEx(
 		ctx->renderer, t->texture, clip, &render_quad, 0, NULL, flip);
 
@@ -182,26 +190,6 @@ static int texture_render(struct game_context *ctx,
 	 * follow the sprite shape (eg. tree with trunk) */
 	if (hitbox) {
 		memcpy(hitbox, &render_quad, sizeof(SDL_Rect));
-		//*hitbox = render_quad;
-		/*if (clip) {
-			*hitbox = clip;
-		} else {
-		}*/
-
-		/*if (clip)
-			SDL_Log("[%s][clip] x=%d, y=%d, w=%d, h=%d\n",
-				__func__,
-				clip->x,
-				clip->y,
-				clip->w,
-				clip->h);
-
-		SDL_Log("[%s][render_quad] x=%d, y=%d, w=%d, h=%d\n",
-			__func__,
-			render_quad.x,
-			render_quad.y,
-			render_quad.w,
-			render_quad.h);*/
 	}
 
 	return 0;
@@ -738,17 +726,6 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				}
 			}
 
-			/*if (sprite_x < 0 || sprite_y < 0)
-				continue;*/
-
-			if (ctx->ai_cars[i].car_flip == SDL_FLIP_VERTICAL)
-				continue;
-
-			if (sprite_y < SCREEN_HEIGHT / 4) {
-				SDL_Log("[%s] AI CAR GLITCH !!!\n", __func__);
-				continue;
-			}
-
 			ret = texture_render(
 				ctx,
 				&ctx->gfx.cars[ctx->ai_cars[i].car_model]
@@ -916,77 +893,6 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 	return ret;
 }
 
-
-#if 0
-static int display_render_ai_cars(struct game_context *ctx)
-{
-	int ret;
-	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
-	int last_idx =
-		(base_segment_idx + ctx->draw_distance) % ctx->nb_segments;
-
-
-	for (int i = ctx->draw_distance; i >= 0; i--) {
-
-		int cam_position = ctx->position;
-		int idx = (base_segment_idx + i) % ctx->nb_segments;
-
-		// TODO: add a ref to the ai car in the segment info struct
-		if (idx == ctx->ai_cars[0].segment) {
-
-			struct road_segment *seg = &ctx->segments[idx];
-			int sprite_x, sprite_y;
-
-			if (ctx->ai_cars[0].position >= 0)
-				sprite_x = seg->p1.screen.x +
-					   (int)(seg->p1.screen.scale *
-						 ctx->ai_cars[0].position *
-						 (float)ctx->road_width *
-						 (float)SCREEN_WIDTH / 2.f);
-			else
-				sprite_x = seg->p1.screen.x +
-					   (int)(seg->p1.screen.scale *
-						 ctx->ai_cars[0].position *
-						 (float)ctx->road_width *
-						 (float)SCREEN_WIDTH / 2.f) -
-					   ctx->ai_cars[0].t.w *
-						   PLAYER_CAR_SPRITE_ZOOM /**
-				     seg->scene->sprite[j]->scale*/
-					;
-
-
-			// TODO: filter porperly % sprite width ?
-			if (sprite_x > SCREEN_WIDTH)
-				continue;
-
-
-			sprite_y = (float)seg->p1.screen.y -
-				   (float)ctx->ai_cars[0].t.h *
-					   seg->p1.screen.scale;
-
-			ret = texture_render(ctx,
-					     &ctx->ai_cars[0].t,
-					     sprite_x,
-					     sprite_y,
-					     NULL,
-					     seg->p1.screen.scale *
-						     SCREEN_WIDTH * 2 *
-						     PLAYER_CAR_SPRITE_ZOOM,
-					     SDL_FLIP_NONE);
-
-			/*ret = texture_render(ctx,
-					     &ctx->ai_cars[0].t,
-					     ctx->player_car_x_in_pixels,
-					     ctx->player_sprite_y,
-					     NULL,
-					     PLAYER_CAR_SPRITE_ZOOM,
-					     SDL_FLIP_NONE);*/
-		}
-	}
-
-	return 0;
-}
-#endif
 
 static int display_render_road(struct game_context *ctx)
 {
