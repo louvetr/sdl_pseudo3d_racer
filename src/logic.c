@@ -394,10 +394,11 @@ static int logic_race(struct game_context *ctx)
 	ctx->player_segment =
 		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
 
-	/*ret = logic_race_check_collision_with_scene(ctx);
-	ret = logic_race_check_collision_with_cars(ctx);*/
 	ret = logic_race_control(ctx);
-	ret = logic_race_ai_cars(ctx);
+
+	if(ctx->status_cur != GAME_STATE_RACE_ANIM_START)
+			ret = logic_race_ai_cars(ctx);
+
 	ret = logic_race_check_collision_with_scene(ctx);
 	ret = logic_race_check_collision_with_cars(ctx);
 
@@ -514,6 +515,11 @@ int main_logic(struct game_context *ctx)
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
 		break;
+	case GAME_STATE_RACE_ANIM_START:
+		if (ctx->nb_frame_anim > FPS * 4) {
+			ctx->nb_frame_anim = 0;
+			ctx->status_cur = GAME_STATE_RACE;
+		}
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_NITRO:
 		logic_race(ctx);

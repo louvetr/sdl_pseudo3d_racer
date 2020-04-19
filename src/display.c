@@ -395,7 +395,77 @@ static int display_load_render_text(struct game_context *ctx,
 	return ret;
 }
 
-static int display_render_text(struct game_context *ctx)
+
+static int display_render_anim_race_start(struct game_context *ctx)
+{
+	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
+	SDL_Color text_color_front_2 = {0xFF, 0xFF, 0x00};
+	SDL_Color text_color_shadow = {0, 0, 0};
+	char msg[8];
+	int cpt = 0;
+	int font_size_big, font_size_small;
+	TTF_Font *font_big, *font_small;
+
+	ctx->nb_frame_anim++;
+
+	if (ctx->nb_frame_anim < FPS) {
+		cpt = 3;
+	} else if (ctx->nb_frame_anim < FPS * 2) {
+		cpt = 2;
+	} else if (ctx->nb_frame_anim < FPS * 3) {
+		cpt = 1;
+	}
+
+	if (cpt)
+		sprintf(msg, "%d", cpt);
+	else
+		sprintf(msg, "%s", "GO!");
+
+	font_size_small = (ctx->nb_frame_anim % FPS) * 4;
+	font_size_big = font_size_small * 120 / 100;
+
+	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
+	if (!font_small) {
+		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
+		       __func__,
+		       TTF_GetError());
+		return -EINVAL;
+	}
+	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
+	if (!font_big) {
+		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
+		       __func__,
+		       TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text(
+		ctx,
+		font_small,
+		&ctx->gfx.font_race_anim_1,
+		msg,
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_1.w * 85 / (2 * 100),
+		SCREEN_HEIGHT / 2 -
+			ctx->gfx.font_race_anim_1.h * 85 / (2 * 100));
+
+	display_load_render_text(
+		ctx,
+		font_small,
+		&ctx->gfx.font_race_anim_2,
+		msg,
+		cpt ? &text_color_front_1 : &text_color_front_2,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2,
+		SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim_2.h / 2);
+
+
+	TTF_CloseFont(font_big);
+	TTF_CloseFont(font_small);
+
+	return 0;
+}
+
+static int display_render_hud(struct game_context *ctx)
 {
 	int ret = 0;
 	SDL_Color text_color = {0, 0, 0};
@@ -1160,11 +1230,16 @@ static int display_screen_race(struct game_context *ctx)
 			     NULL);
 
 	// render scenery text message
-	ret = display_render_text(ctx);
+	ret = display_render_hud(ctx);
+
+	// render start animation
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START)
+		ret = display_render_anim_race_start(ctx);
 
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
 
+	// TODO: put at the end of switch case
 	// update screen
 	SDL_RenderPresent(ctx->renderer);
 
@@ -1192,6 +1267,7 @@ int main_display(struct game_context *ctx)
 	case GAME_STATE_QUIT:
 		break;
 	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_ANIM_START:
 	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		display_screen_race(ctx);

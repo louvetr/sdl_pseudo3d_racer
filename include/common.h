@@ -116,6 +116,9 @@
 //#define NB_AI_CARS 1
 #define AI_SEGMENTS_SPACING 20
 
+#define START_ANIM_DURATION	5
+
+
 /////////////////////////////////////////////////////////////////
 // enums
 /////////////////////////////////////////////////////////////////
@@ -126,6 +129,8 @@ enum game_status {
 	GAME_STATE_CREDIT,
 	GAME_STATE_GAME,
 	GAME_STATE_RACE,
+	GAME_STATE_RACE_ANIM_START,
+	GAME_STATE_RACE_ANIM_END,
 	GAME_STATE_RACE_COLLISION_SCENE,
 	GAME_STATE_RACE_NITRO,
 	GAME_STATE_PAUSE,
@@ -286,6 +291,9 @@ struct game_graphics{
 	/*struct texture font_game_laptime_title;
 	struct texture font_game_laptime_value;
 	struct texture font_game_laptime_unit;*/
+	
+	struct texture font_race_anim_1;
+	struct texture font_race_anim_2;
 
 };
 
@@ -565,6 +573,9 @@ struct game_context {
     int exit;
 
 	struct various_constants constants;
+
+	// number of frame spent in STATE_RACE_ANIM_START
+	int nb_frame_anim;
 
 	float scale_player_car[CAR_MODEL_LAST];
 	float scale_ai_car[CAR_MODEL_LAST];
