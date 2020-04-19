@@ -396,6 +396,32 @@ static int display_load_render_text(struct game_context *ctx,
 }
 
 
+static int display_load_render_text_with_shade(struct game_context *ctx,
+					       TTF_Font *font,
+					       struct texture *t,
+					       char *msg,
+					       SDL_Color *color_front,
+					       SDL_Color *color_shadow,
+					       int x_front,
+					       int y_front,
+					       int x_shadow,
+					       int y_shadow)
+{
+
+	display_load_render_text(
+		ctx, font, t, msg, color_shadow, x_shadow, y_shadow);
+
+	display_load_render_text(ctx,
+				 font,
+				 t,
+				 msg,
+				 color_front,
+				 x_front,
+				 y_front);
+
+	return 0;
+}
+
 static int display_render_anim_race_start(struct game_context *ctx)
 {
 	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
@@ -403,8 +429,8 @@ static int display_render_anim_race_start(struct game_context *ctx)
 	SDL_Color text_color_shadow = {0, 0, 0};
 	char msg[8];
 	int cpt = 0;
-	int font_size_big, font_size_small;
-	TTF_Font *font_big, *font_small;
+	int font_size;
+	TTF_Font *font;
 
 	ctx->nb_frame_anim++;
 
@@ -421,46 +447,30 @@ static int display_render_anim_race_start(struct game_context *ctx)
 	else
 		sprintf(msg, "%s", "GO!");
 
-	font_size_small = (ctx->nb_frame_anim % FPS) * 4;
-	font_size_big = font_size_small * 120 / 100;
+	font_size = (ctx->nb_frame_anim % FPS) * 5;
 
-	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
-	if (!font_small) {
-		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
-		       __func__,
-		       TTF_GetError());
-		return -EINVAL;
-	}
-	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
-	if (!font_big) {
+	font = TTF_OpenFont(SOFACHROME_FONT, font_size);
+	if (!font) {
 		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
 		       __func__,
 		       TTF_GetError());
 		return -EINVAL;
 	}
 
-	display_load_render_text(
+	display_load_render_text_with_shade(
 		ctx,
-		font_small,
-		&ctx->gfx.font_race_anim_1,
-		msg,
-		&text_color_shadow,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_1.w * 85 / (2 * 100),
-		SCREEN_HEIGHT / 2 -
-			ctx->gfx.font_race_anim_1.h * 85 / (2 * 100));
-
-	display_load_render_text(
-		ctx,
-		font_small,
-		&ctx->gfx.font_race_anim_2,
+		font,
+		&ctx->gfx.font_race_anim,
 		msg,
 		cpt ? &text_color_front_1 : &text_color_front_2,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2,
-		SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim_2.h / 2);
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+		SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim.h / 2,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w * 85 / (2 * 100),
+		SCREEN_HEIGHT / 2 -
+			ctx->gfx.font_race_anim.h * 85 / (2 * 100));
 
-
-	TTF_CloseFont(font_big);
-	TTF_CloseFont(font_small);
+	TTF_CloseFont(font);
 
 	return 0;
 }

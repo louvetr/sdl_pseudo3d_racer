@@ -292,9 +292,7 @@ struct game_graphics{
 	struct texture font_game_laptime_value;
 	struct texture font_game_laptime_unit;*/
 	
-	struct texture font_race_anim_1;
-	struct texture font_race_anim_2;
-
+	struct texture font_race_anim;
 };
 
 struct color_desc {
