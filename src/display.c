@@ -404,20 +404,20 @@ static int display_load_render_text_with_shade(struct game_context *ctx,
 					       SDL_Color *color_shadow,
 					       int x_front,
 					       int y_front,
-					       int x_shadow,
-					       int y_shadow)
+					       int shadow_num,
+					       int shadow_den)
 {
-
-	display_load_render_text(
-		ctx, font, t, msg, color_shadow, x_shadow, y_shadow);
 
 	display_load_render_text(ctx,
 				 font,
 				 t,
 				 msg,
-				 color_front,
-				 x_front,
-				 y_front);
+				 color_shadow,
+				 x_front + t->w * shadow_num / shadow_den,
+				 y_front + t->h * shadow_num / shadow_den);
+
+	display_load_render_text(
+		ctx, font, t, msg, color_front, x_front, y_front);
 
 	return 0;
 }
@@ -466,9 +466,8 @@ static int display_render_anim_race_start(struct game_context *ctx)
 		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
 		SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim.h / 2,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w * 85 / (2 * 100),
-		SCREEN_HEIGHT / 2 -
-			ctx->gfx.font_race_anim.h * 85 / (2 * 100));
+		15,
+		200);
 
 	TTF_CloseFont(font);
 
@@ -479,6 +478,20 @@ static int display_render_hud(struct game_context *ctx)
 {
 	int ret = 0;
 	SDL_Color text_color = {0, 0, 0};
+	// SDL_Color text_color = {255, 255, 255};
+	// SDL_Color text_color = {230, 230, 230};
+	// SDL_Color text_color = {255, 255, 0};
+
+	// SDL_Color text_color_shadow = {0, 0, 0};
+	// SDL_Color text_color_shadow = {150, 150, 150};
+	// SDL_Color text_color_shadow = {200, 200, 200};
+	// SDL_Color text_color_shadow = {255, 0, 0};
+	SDL_Color text_color_shadow = {255, 255, 255};
+	// SDL_Color text_color_shadow = {230, 230, 230};
+
+	int shadow_num = 3;
+	int shadow_den = 100;
+
 	char speed[8];
 	sprintf(speed,
 		"%03d",
@@ -486,46 +499,32 @@ static int display_render_hud(struct game_context *ctx)
 		      ctx->max_speed)); // TODO: set max_speed in kph per car
 
 	// Right
-	// part///////////////////////////////////////////////////////////////
-	// speed
-	/*display_load_render_text(
+	display_load_render_text_with_shade(
 		ctx,
 		ctx->sc_font_medium,
-		&ctx->gfx.font_game_speed_title,
-		"speed:",
+		&ctx->gfx.font_game_speed_unit,
+		"kph",
 		&text_color,
-		SCREEN_WIDTH - ctx->gfx.font_game_speed_title.w * 15 / 10,
-		0);*/
-	display_load_render_text(ctx,
-				 ctx->sc_font_medium,
-				 &ctx->gfx.font_game_speed_unit,
-				 "kph",
-				 &text_color,
-				 SCREEN_WIDTH - ctx->gfx.font_game_speed_unit.w,
-				 0 /*ctx->gfx.font_game_speed_title.h*/);
-	display_load_render_text(ctx,
-				 ctx->sc_font_big,
-				 &ctx->gfx.font_game_speed_value,
-				 speed,
-				 &text_color,
-				 SCREEN_WIDTH -
-					 ctx->gfx.font_game_speed_value.w -
-					 ctx->gfx.font_game_speed_unit.w,
-				 0 /*ctx->gfx.font_game_speed_title.h*/);
+		&text_color_shadow,
+		SCREEN_WIDTH - ctx->gfx.font_game_speed_unit.w,
+		0,
+		shadow_num,
+		shadow_den);
 
+	display_load_render_text_with_shade(
+		ctx,
+		ctx->sc_font_big,
+		&ctx->gfx.font_game_speed_value,
+		speed,
+		&text_color,
+		&text_color_shadow,
+		SCREEN_WIDTH - ctx->gfx.font_game_speed_value.w -
+			ctx->gfx.font_game_speed_unit.w,
+		0,
+		shadow_num,
+		shadow_den);
 
 	// Mid
-	// part///////////////////////////////////////////////////////////////
-	// position
-	/*display_load_render_text(
-		ctx,
-		ctx->sc_font_medium,
-		&ctx->gfx.font_game_position_title,
-		"position:",
-		&text_color,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_title.w / 2,
-		0);*/
-
 	int place = logic_get_player_place_nb(ctx);
 	char place_str[3];
 	if (place < 10)
@@ -533,62 +532,69 @@ static int display_render_hud(struct game_context *ctx)
 	else
 		snprintf(place_str, 3, "%d", place);
 
-	display_load_render_text(
+	display_load_render_text_with_shade(
 		ctx,
 		ctx->sc_font_big,
 		&ctx->gfx.font_game_position_value,
 		place_str,
 		&text_color,
+		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2,
-		0 /*ctx->gfx.font_game_position_title.h*/);
-	display_load_render_text(
+		0,
+		shadow_num,
+		shadow_den);
+
+	display_load_render_text_with_shade(
 		ctx,
 		ctx->sc_font_medium,
 		&ctx->gfx.font_game_position_unit,
 		logic_get_player_place_suffix(place),
 		&text_color,
+		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2 +
 			ctx->gfx.font_game_position_value.w,
-		0 /*ctx->gfx.font_game_position_unit.h*/);
+		0,
+		shadow_num,
+		shadow_den);
 
 	// Left
-	// part///////////////////////////////////////////////////////////////
-	// lap
-	/*display_load_render_text(ctx,
-				 ctx->sc_font_medium,
-				 &ctx->gfx.font_game_lap_title,
-				 "lap:",
-				 &text_color,
-				 0,
-				 0);*/
 	char lap_str[8];
 	snprintf(
 		lap_str, 8, "%d/%d", logic_get_player_lap_nb(ctx), ctx->nb_lap);
 
-	display_load_render_text(ctx,
-				 ctx->sc_font_big,
-				 &ctx->gfx.font_game_lap_value,
-				 lap_str,
-				 &text_color,
-				 0,
-				 0 /*ctx->gfx.font_game_lap_title.h*/);
-	display_load_render_text(ctx,
-				 ctx->sc_font_medium,
-				 &ctx->gfx.font_game_lap_title,
-				 "lap",
-				 &text_color,
-				 ctx->gfx.font_game_lap_value.w,
-				 0 /*ctx->gfx.font_game_lap_title.h*/);
+	display_load_render_text_with_shade(ctx,
+					    ctx->sc_font_big,
+					    &ctx->gfx.font_game_lap_value,
+					    lap_str,
+					    &text_color,
+					    &text_color_shadow,
+					    0,
+					    0,
+					    shadow_num,
+					    shadow_den);
+	display_load_render_text_with_shade(ctx,
+					    ctx->sc_font_medium,
+					    &ctx->gfx.font_game_lap_title,
+					    "lap",
+					    &text_color,
+					    &text_color_shadow,
+					    ctx->gfx.font_game_lap_value.w,
+					    0,
+					    shadow_num,
+					    shadow_den);
 
 
 	// Nitro
-	display_load_render_text(ctx,
-				 ctx->sc_font_medium,
-				 &ctx->gfx.font_game_lap_title,
-				 "Nitro",
-				 &text_color,
-				 SCREEN_WIDTH * 64 / 100,
-				 0 /*ctx->gfx.font_game_lap_title.h*/);
+	display_load_render_text_with_shade(ctx,
+					    ctx->sc_font_medium,
+					    &ctx->gfx.font_game_lap_title,
+					    "Nitro",
+					    &text_color,
+					    &text_color_shadow,
+					    SCREEN_WIDTH * 64 / 100,
+					    0,
+					    shadow_num,
+					    shadow_den);
 
 	// display nitro icons
 	for (int i = 0; i < ctx->nb_nitro; i++) {
