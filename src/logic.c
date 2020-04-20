@@ -396,8 +396,20 @@ static int logic_race(struct game_context *ctx)
 
 	ret = logic_race_control(ctx);
 
-	if(ctx->status_cur != GAME_STATE_RACE_ANIM_START)
-			ret = logic_race_ai_cars(ctx);
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
+		if (ctx->nb_frame_anim > FPS * 4) {
+			ctx->nb_frame_anim = 0;
+			ctx->status_cur = GAME_STATE_RACE;
+		}
+
+		// TODO: used define values
+		if(ctx->camera_height >= 1000) {
+			ctx->camera_height -= (10000 - 1000) / (3 * FPS);
+		}
+
+	} else {
+		ret = logic_race_ai_cars(ctx);
+	}
 
 	ret = logic_race_check_collision_with_scene(ctx);
 	ret = logic_race_check_collision_with_cars(ctx);
@@ -516,10 +528,6 @@ int main_logic(struct game_context *ctx)
 	case GAME_STATE_TITLE:
 		break;
 	case GAME_STATE_RACE_ANIM_START:
-		if (ctx->nb_frame_anim > FPS * 4) {
-			ctx->nb_frame_anim = 0;
-			ctx->status_cur = GAME_STATE_RACE;
-		}
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_NITRO:
 		logic_race(ctx);

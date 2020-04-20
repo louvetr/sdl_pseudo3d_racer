@@ -433,7 +433,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->track_length = 0;
 	ctx->lanes = 3;
 	ctx->field_of_view = 100;
-	ctx->camera_height = 1000;
+	//ctx->camera_height = 1000;
+	ctx->camera_height = 10000;
 	ctx->camera_depth = 0;
 	ctx->draw_distance = 500;
 	ctx->player_x = 0;
@@ -469,6 +470,8 @@ static int main_ctx_init(struct game_context *ctx)
 
 	ctx->status_cur = GAME_STATE_RACE_ANIM_START;
 	ctx->status_prev = GAME_STATE_RACE_ANIM_START;
+	/*ctx->status_cur = GAME_STATE_RACE;
+	ctx->status_prev = GAME_STATE_RACE;*/
 
 	ctx->nb_lap = 4;
 

@@ -1211,6 +1211,7 @@ static int display_screen_race(struct game_context *ctx)
 
 	// TODO: separate player car display in a function
 
+	// ######################################################################
 
 	// just draw the player in middle of the screen. It doesn't move, that's
 	// the world around it which moves.
@@ -1235,6 +1236,33 @@ static int display_screen_race(struct game_context *ctx)
 			      ctx->scale_player_car[ctx->car_player_model]) -
 			30; // TODO: Why 30 ??????
 
+	// TODO: set this var in init fct
+	int player_sprite_y_final =
+		SCREEN_HEIGHT -
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .h *
+		      ctx->scale_player_car[ctx->car_player_model]) -
+		30; // TODO: Why 30 ??????
+
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
+		if (ctx->camera_height > 3000) {
+			ctx->player_sprite_y = SCREEN_HEIGHT + 1;
+		} else {
+			float percent =
+				(float)(1000 - (ctx->camera_height - 1000)) /
+				1000.f;
+			ctx->player_sprite_y =
+				SCREEN_HEIGHT + 1 -
+				(int)((float)(SCREEN_HEIGHT + 1 -
+					      player_sprite_y_final) *
+				      percent);
+		}
+	} /*else {
+		ctx->player_sprite_y = player_sprite_y_final;
+	}*/
+
 	ret = texture_render(ctx,
 			     &ctx->gfx.cars[ctx->car_player_model]
 					   [ctx->car_player_sprite_idx],
@@ -1244,6 +1272,9 @@ static int display_screen_race(struct game_context *ctx)
 			     ctx->scale_player_car[ctx->car_player_model],
 			     ctx->car_player_flip,
 			     NULL);
+
+
+	// ######################################################################
 
 	// render scenery text message
 	ret = display_render_hud(ctx);
