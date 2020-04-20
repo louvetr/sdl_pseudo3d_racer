@@ -434,15 +434,9 @@ static int display_render_anim_race_start(struct game_context *ctx)
 
 	ctx->nb_frame_anim++;
 
-	if (ctx->nb_frame_anim < FPS) {
-		cpt = 3;
-	} else if (ctx->nb_frame_anim < FPS * 2) {
-		cpt = 2;
-	} else if (ctx->nb_frame_anim < FPS * 3) {
-		cpt = 1;
-	}
+	cpt = (START_ANIM_DURATION - 1) - ctx->nb_frame_anim / FPS;
 
-	if (cpt)
+	if (cpt > 0)
 		sprintf(msg, "%d", cpt);
 	else
 		sprintf(msg, "%s", "GO!");
@@ -457,17 +451,18 @@ static int display_render_anim_race_start(struct game_context *ctx)
 		return -EINVAL;
 	}
 
-	display_load_render_text_with_shade(
-		ctx,
-		font,
-		&ctx->gfx.font_race_anim,
-		msg,
-		cpt ? &text_color_front_1 : &text_color_front_2,
-		&text_color_shadow,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
-		SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim.h / 2,
-		15,
-		200);
+	if (cpt != START_ANIM_DURATION - 1)
+		display_load_render_text_with_shade(
+			ctx,
+			font,
+			&ctx->gfx.font_race_anim,
+			msg,
+			cpt ? &text_color_front_1 : &text_color_front_2,
+			&text_color_shadow,
+			SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+			SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim.h / 2,
+			15,
+			200);
 
 	TTF_CloseFont(font);
 

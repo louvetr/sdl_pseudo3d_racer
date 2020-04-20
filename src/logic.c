@@ -397,14 +397,16 @@ static int logic_race(struct game_context *ctx)
 	ret = logic_race_control(ctx);
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
-		if (ctx->nb_frame_anim > FPS * 4) {
+		if (ctx->nb_frame_anim > FPS * START_ANIM_DURATION) {
 			ctx->nb_frame_anim = 0;
 			ctx->status_cur = GAME_STATE_RACE;
 		}
 
 		// TODO: used define values
-		if(ctx->camera_height > CAMERA_HEIGHT_RACE) {
-			ctx->camera_height -= (CAMERA_HEIGHT_START - CAMERA_HEIGHT_RACE) / (3 * FPS);
+		if (ctx->camera_height > CAMERA_HEIGHT_RACE) {
+			ctx->camera_height -=
+				(CAMERA_HEIGHT_START - CAMERA_HEIGHT_RACE) /
+				((START_ANIM_DURATION - 2) * FPS);
 		}
 
 	} else {
