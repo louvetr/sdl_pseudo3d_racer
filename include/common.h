@@ -118,6 +118,8 @@
 
 #define START_ANIM_DURATION	5
 
+#define CAMERA_HEIGHT_RACE 1000
+#define CAMERA_HEIGHT_START 10000
 
 /////////////////////////////////////////////////////////////////
 // enums

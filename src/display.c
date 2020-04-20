@@ -1224,50 +1224,35 @@ static int display_screen_race(struct game_context *ctx)
 		      ctx->scale_player_car[ctx->car_player_model] /
 		      2.f); // reduce texture by 2 then remove it half width
 
-	//////////////// render player car
-	// TODO put somewhere else
-	if (!ctx->player_sprite_y)
-		ctx->player_sprite_y =
-			SCREEN_HEIGHT -
-			(int)((float)ctx->gfx
-				      .cars[ctx->car_player_model]
-					   [ctx->car_player_sprite_idx]
-				      .h *
-			      ctx->scale_player_car[ctx->car_player_model]) -
-			30; // TODO: Why 30 ??????
+	int player_sprite_y = ctx->player_sprite_y;
 
-	// TODO: set this var in init fct
-	int player_sprite_y_final =
-		SCREEN_HEIGHT -
-		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
-			      .h *
-		      ctx->scale_player_car[ctx->car_player_model]) -
-		30; // TODO: Why 30 ??????
-
+	// During start animation car y depends camera height
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
-		if (ctx->camera_height > 3000) {
-			ctx->player_sprite_y = SCREEN_HEIGHT + 1;
+		if (ctx->camera_height > CAMERA_HEIGHT_RACE * 2) {
+			player_sprite_y = SCREEN_HEIGHT + 1;
 		} else {
-			float percent =
-				(float)(1000 - (ctx->camera_height - 1000)) /
-				1000.f;
-			ctx->player_sprite_y =
-				SCREEN_HEIGHT + 1 -
-				(int)((float)(SCREEN_HEIGHT + 1 -
-					      player_sprite_y_final) *
-				      percent);
+			float percent = (float)(CAMERA_HEIGHT_RACE -
+						(ctx->camera_height -
+						 CAMERA_HEIGHT_RACE)) /
+					(float)CAMERA_HEIGHT_RACE;
+			player_sprite_y = SCREEN_HEIGHT -
+					  (int)((float)(SCREEN_HEIGHT -
+							ctx->player_sprite_y) *
+						percent);
 		}
-	} /*else {
-		ctx->player_sprite_y = player_sprite_y_final;
-	}*/
+	}
+
+	/*SDL_Log("[%s][h=%d] ctx->player_sprite_y = %d, player_sprite_y = %d",
+		__func__,
+		ctx->camera_height,
+		ctx->player_sprite_y,
+		player_sprite_y);*/
 
 	ret = texture_render(ctx,
 			     &ctx->gfx.cars[ctx->car_player_model]
 					   [ctx->car_player_sprite_idx],
 			     ctx->player_car_x_in_pixels,
-			     ctx->player_sprite_y,
+			     player_sprite_y,
 			     NULL,
 			     ctx->scale_player_car[ctx->car_player_model],
 			     ctx->car_player_flip,

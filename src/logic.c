@@ -403,8 +403,8 @@ static int logic_race(struct game_context *ctx)
 		}
 
 		// TODO: used define values
-		if(ctx->camera_height >= 1000) {
-			ctx->camera_height -= (10000 - 1000) / (3 * FPS);
+		if(ctx->camera_height > CAMERA_HEIGHT_RACE) {
+			ctx->camera_height -= (CAMERA_HEIGHT_START - CAMERA_HEIGHT_RACE) / (3 * FPS);
 		}
 
 	} else {

@@ -433,8 +433,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->track_length = 0;
 	ctx->lanes = 3;
 	ctx->field_of_view = 100;
-	//ctx->camera_height = 1000;
-	ctx->camera_height = 10000;
+	// ctx->camera_height = 1000;
+	ctx->camera_height = CAMERA_HEIGHT_START;
 	ctx->camera_depth = 0;
 	ctx->draw_distance = 500;
 	ctx->player_x = 0;
@@ -447,7 +447,7 @@ static int main_ctx_init(struct game_context *ctx)
 	// ctx->accel = ctx->max_speed / 5;
 	ctx->accel = ctx->max_speed / 50;
 
-	ctx->max_speed_nitro = 	ctx->max_speed * 1.33f;
+	ctx->max_speed_nitro = ctx->max_speed * 1.33f;
 	ctx->accel_nitro = ctx->accel * 2.f;
 	ctx->nb_nitro = 3;
 	ctx->breaking = ctx->max_speed * -1 / 20;
@@ -464,7 +464,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->same_car_orientation_in_frame = 0;
 
 	ctx->car_player_model = CAR_MODEL_VIPER;
-	//ctx->car_player_model = CAR_MODEL_IMPREZIA;
+	// ctx->car_player_model = CAR_MODEL_IMPREZIA;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
@@ -501,6 +501,14 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->constants.scene_sprite_coef =
 		(float)ctx->road_width * (float)SCREEN_WIDTH / 2.f;
 
+	ctx->player_sprite_y =
+		SCREEN_HEIGHT -
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .h *
+		      ctx->scale_player_car[ctx->car_player_model]) -
+		30; // TODO: Why 30 ??????
 
 	return 0;
 };
