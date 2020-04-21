@@ -416,6 +416,8 @@ static int logic_race(struct game_context *ctx)
 	ret = logic_race_check_collision_with_scene(ctx);
 	ret = logic_race_check_collision_with_cars(ctx);
 
+	ctx->player_lap = logic_get_player_lap_nb(ctx);
+
 	return ret;
 }
 
@@ -504,17 +506,18 @@ char *logic_get_player_place_suffix(int pos)
 
 int logic_get_player_lap_nb(struct game_context *ctx)
 {
-	static int last_lap = 0;
+	static int lap = 0;
 
-	if (ctx->player_segment_prev > ctx->player_segment)
-		last_lap++;
+	if (ctx->status_cur == GAME_STATE_RACE &&
+	    ctx->player_segment_prev > ctx->player_segment)
+		lap++;
 
-	if (last_lap == 0)
+	if (lap == 0)
 		return 1;
-	else if (last_lap > ctx->nb_lap)
+	else if (lap > ctx->nb_lap)
 		return ctx->nb_lap;
 	else
-		return last_lap;
+		return lap;
 }
 
 

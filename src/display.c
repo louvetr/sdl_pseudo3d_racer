@@ -555,7 +555,7 @@ static int display_render_hud(struct game_context *ctx)
 	// Left
 	char lap_str[8];
 	snprintf(
-		lap_str, 8, "%d/%d", logic_get_player_lap_nb(ctx), ctx->nb_lap);
+		lap_str, 8, "%d/%d", ctx->player_lap, ctx->nb_lap);
 
 	display_load_render_text_with_shade(ctx,
 					    ctx->sc_font_big,

@@ -511,6 +511,8 @@ struct game_context {
 
 	// nb of lap of the race
 	int nb_lap;
+	// nb_lap the player has done
+	int player_lap;
 
     // window
     SDL_Window *window;
