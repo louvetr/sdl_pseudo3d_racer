@@ -31,6 +31,9 @@ static int event_race(struct game_context *ctx)
 			case SDLK_d:
 				ctx->keys.right = 1;
 				break;
+			case SDLK_ESCAPE:
+				exit(0);
+				break;
 			default:
 				continue;
 			}
@@ -175,6 +178,7 @@ int main_event(struct game_context *ctx)
 	case GAME_STATE_QUIT:
 		break;
 	case GAME_STATE_RACE:
+	case GAME_STATE_RACE_ANIM_END:
 	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		event_race(ctx);
