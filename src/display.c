@@ -143,8 +143,7 @@ static int texture_render(struct game_context *ctx,
 			  int x,
 			  int y,
 			  SDL_Rect *clip,
-			  /*int scale_num,
-			  int scale_den*/
+			  float angle,
 			  float scale,
 			  SDL_RendererFlip flip,
 			  SDL_Rect *hitbox)
@@ -182,8 +181,13 @@ static int texture_render(struct game_context *ctx,
 		return 0;
 	}
 
-	SDL_RenderCopyEx(
-		ctx->renderer, t->texture, clip, &render_quad, 0, NULL, flip);
+	SDL_RenderCopyEx(ctx->renderer,
+			 t->texture,
+			 clip,
+			 &render_quad,
+			 angle,
+			 NULL,
+			 flip);
 
 
 	/* Set hitbox. Only for AI cars since scene sprite hitbox doesn't always
@@ -383,12 +387,13 @@ static int display_load_render_text(struct game_context *ctx,
 				    char *msg,
 				    SDL_Color *color,
 				    int x,
-				    int y)
+				    int y,
+				    float angle)
 {
 	int ret;
 
 	ret = load_text_message(ctx, font, t, msg, *color);
-	ret = texture_render(ctx, t, x, y, NULL, 1, SDL_FLIP_NONE, NULL);
+	ret = texture_render(ctx, t, x, y, NULL, angle, 1, SDL_FLIP_NONE, NULL);
 
 	// TODO: manage error
 
@@ -405,7 +410,8 @@ static int display_load_render_text_with_shade(struct game_context *ctx,
 					       int x_front,
 					       int y_front,
 					       int shadow_num,
-					       int shadow_den)
+					       int shadow_den,
+					       float angle)
 {
 
 	display_load_render_text(ctx,
@@ -414,13 +420,158 @@ static int display_load_render_text_with_shade(struct game_context *ctx,
 				 msg,
 				 color_shadow,
 				 x_front + t->w * shadow_num / shadow_den,
-				 y_front + t->h * shadow_num / shadow_den);
+				 y_front + t->h * shadow_num / shadow_den,
+				 angle);
 
 	display_load_render_text(
-		ctx, font, t, msg, color_front, x_front, y_front);
+		ctx, font, t, msg, color_front, x_front, y_front, angle);
 
 	return 0;
 }
+
+
+static int display_render_anim_race_end(struct game_context *ctx)
+{
+	int alpha = ctx->nb_frame_anim / 2;
+	if (alpha > 200)
+		alpha = 200;
+
+	// bright the screen progressively
+	boxRGBA(ctx->renderer,
+		0,
+		0,
+		SCREEN_WIDTH - 1,
+		SCREEN_HEIGHT - 1,
+		200,
+		200,
+		200,
+		(uint8_t)alpha);
+
+	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
+	SDL_Color text_color_front_2 = {0xFF, 0xFF, 0x00};
+	SDL_Color text_color_shadow = {0, 0, 0};
+	char msg[32];
+	int finish_font_size;
+	int font_size_2 = 100;
+	TTF_Font *finish_font = NULL;
+	TTF_Font *nb_font = NULL;
+	TTF_Font *place_font = NULL;
+	float angle;
+
+	ctx->nb_frame_anim++;
+
+	//sprintf(msg, "%s", "FINISH!");
+
+	finish_font_size = ctx->nb_frame_anim;
+	if (finish_font_size > 150)
+		finish_font_size = 150;
+
+	angle = (float)ctx->nb_frame_anim * 4.f;
+	if (angle > 360.f) {
+		angle = 0.f;
+		if (ctx->finish_placed_frame_nb == 0) {
+			ctx->finish_placed_frame_nb = ctx->nb_frame_anim;
+		}
+	}
+
+	finish_font = TTF_OpenFont(SOFACHROME_FONT, finish_font_size);
+	if (!finish_font) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		"FINISH!",
+		&text_color_front_2,
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+		SCREEN_HEIGHT / 3 - ctx->gfx.font_race_anim.h / 2,
+		5,
+		200,
+		angle);
+
+
+	if (ctx->finish_placed_frame_nb) {
+
+		nb_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
+		if (!nb_font) {
+			SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+				__func__,
+				TTF_GetError());
+			return -EINVAL;
+		}
+
+		int nb_pos_x =
+			-ctx->gfx.font_race_anim_2.w +
+			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
+		if (nb_pos_x > SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w)
+			nb_pos_x =
+				SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w;
+
+		// glitch fix
+		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+			nb_pos_x = -SCREEN_WIDTH;
+
+		display_load_render_text_with_shade(
+			ctx,
+			nb_font,
+			&ctx->gfx.font_race_anim_2,
+			"1st ",
+			&text_color_front_2,
+			&text_color_shadow,
+			nb_pos_x,
+			SCREEN_HEIGHT * 2 / 3 - ctx->gfx.font_race_anim_2.h / 2,
+			5,
+			200,
+			angle);
+
+
+		place_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
+		if (!place_font) {
+			SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+				__func__,
+				TTF_GetError());
+			return -EINVAL;
+		}
+
+		int place_pos_x =
+			SCREEN_WIDTH -
+			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
+		if (place_pos_x < SCREEN_WIDTH / 2)
+			place_pos_x = SCREEN_WIDTH / 2;
+
+		// glitch fix
+		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+			nb_pos_x = SCREEN_WIDTH;
+
+		display_load_render_text_with_shade(
+			ctx,
+			place_font,
+			&ctx->gfx.font_race_anim_3,
+			"place",
+			&text_color_front_2,
+			&text_color_shadow,
+			place_pos_x,
+			SCREEN_HEIGHT * 2 / 3 - ctx->gfx.font_race_anim_3.h / 2,
+			5,
+			200,
+			angle);
+	}
+
+	TTF_CloseFont(finish_font);
+	TTF_CloseFont(nb_font);
+	TTF_CloseFont(place_font);
+
+	ctx->nb_frame_anim++;
+
+	return 0;
+}
+
 
 static int display_render_anim_race_start(struct game_context *ctx)
 {
@@ -462,7 +613,8 @@ static int display_render_anim_race_start(struct game_context *ctx)
 			SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
 			SCREEN_HEIGHT / 2 - ctx->gfx.font_race_anim.h / 2,
 			15,
-			200);
+			200,
+			0.f);
 
 	TTF_CloseFont(font);
 
@@ -504,7 +656,8 @@ static int display_render_hud(struct game_context *ctx)
 		SCREEN_WIDTH - ctx->gfx.font_game_speed_unit.w,
 		0,
 		shadow_num,
-		shadow_den);
+		shadow_den,
+		0.f);
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -517,7 +670,8 @@ static int display_render_hud(struct game_context *ctx)
 			ctx->gfx.font_game_speed_unit.w,
 		0,
 		shadow_num,
-		shadow_den);
+		shadow_den,
+		0.f);
 
 	// Mid
 	int place = logic_get_player_place_nb(ctx);
@@ -537,7 +691,8 @@ static int display_render_hud(struct game_context *ctx)
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2,
 		0,
 		shadow_num,
-		shadow_den);
+		shadow_den,
+		0.f);
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -550,12 +705,12 @@ static int display_render_hud(struct game_context *ctx)
 			ctx->gfx.font_game_position_value.w,
 		0,
 		shadow_num,
-		shadow_den);
+		shadow_den,
+		0.f);
 
 	// Left
 	char lap_str[8];
-	snprintf(
-		lap_str, 8, "%d/%d", ctx->player_lap, ctx->nb_lap);
+	snprintf(lap_str, 8, "%d/%d", ctx->player_lap, ctx->nb_lap);
 
 	display_load_render_text_with_shade(ctx,
 					    ctx->sc_font_big,
@@ -566,7 +721,8 @@ static int display_render_hud(struct game_context *ctx)
 					    0,
 					    0,
 					    shadow_num,
-					    shadow_den);
+					    shadow_den,
+					    0.f);
 	display_load_render_text_with_shade(ctx,
 					    ctx->sc_font_medium,
 					    &ctx->gfx.font_game_lap_title,
@@ -576,7 +732,8 @@ static int display_render_hud(struct game_context *ctx)
 					    ctx->gfx.font_game_lap_value.w,
 					    0,
 					    shadow_num,
-					    shadow_den);
+					    shadow_den,
+					    0.f);
 
 
 	// Nitro
@@ -589,7 +746,8 @@ static int display_render_hud(struct game_context *ctx)
 					    SCREEN_WIDTH * 64 / 100,
 					    0,
 					    shadow_num,
-					    shadow_den);
+					    shadow_den,
+					    0.f);
 
 	// display nitro icons
 	for (int i = 0; i < ctx->nb_nitro; i++) {
@@ -814,6 +972,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				sprite_x,
 				sprite_y,
 				r,
+				0.f,
 				car_screen_scale *
 					ctx->ai_cars[i].ai_car_scale_coef,
 				ctx->ai_cars[i].car_flip,
@@ -910,6 +1069,7 @@ static int display_render_scene_sprites(struct game_context *ctx,
 				     seg->scene->sprite[j]->scaled_x,
 				     sprite_y,
 				     r,
+				     0.f,
 				     seg->scene->sprite[j]->scale,
 				     seg->scene->sprite[j]->flip,
 				     NULL);
@@ -1132,6 +1292,7 @@ static int display_render_background_layer(struct game_context *ctx,
 			     SCREEN_HEIGHT * bg_y_offset_num / 100 -
 				     bg_texture->h,
 			     &bg_clip_rect,
+			     0.f,
 			     1,
 			     SDL_FLIP_NONE,
 			     NULL);
@@ -1153,6 +1314,7 @@ static int display_render_background_layer(struct game_context *ctx,
 				     SCREEN_HEIGHT * bg_y_offset_num / 100 -
 					     bg_texture->h,
 				     &bg_clip_rect,
+				     0.f,
 				     1,
 				     SDL_FLIP_NONE,
 				     NULL);
@@ -1249,6 +1411,7 @@ static int display_screen_race(struct game_context *ctx)
 			     ctx->player_car_x_in_pixels,
 			     player_sprite_y,
 			     NULL,
+			     0.f,
 			     ctx->scale_player_car[ctx->car_player_model],
 			     ctx->car_player_flip,
 			     NULL);
@@ -1262,6 +1425,8 @@ static int display_screen_race(struct game_context *ctx)
 	// render start animation
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START)
 		ret = display_render_anim_race_start(ctx);
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END)
+		ret = display_render_anim_race_end(ctx);
 
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
@@ -1295,6 +1460,7 @@ int main_display(struct game_context *ctx)
 		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_START:
+	case GAME_STATE_RACE_ANIM_END:
 	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		display_screen_race(ctx);

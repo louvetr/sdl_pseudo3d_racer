@@ -295,6 +295,8 @@ struct game_graphics{
 	struct texture font_game_laptime_unit;*/
 	
 	struct texture font_race_anim;
+	struct texture font_race_anim_2;
+	struct texture font_race_anim_3;
 };
 
 struct color_desc {
@@ -578,6 +580,7 @@ struct game_context {
 
 	// number of frame spent in STATE_RACE_ANIM_START
 	int nb_frame_anim;
+	int finish_placed_frame_nb;
 
 	float scale_player_car[CAR_MODEL_LAST];
 	float scale_ai_car[CAR_MODEL_LAST];

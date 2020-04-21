@@ -314,36 +314,63 @@ static int logic_race_control(struct game_context *ctx)
 	// screen crossing should take 1sec at top speed
 	float dx = (ctx->dt * 2 * (ctx->speed / max_speed)) / 3000;
 
-	if (ctx->keys.left) {
-		ctx->player_x = ctx->player_x - dx;
-		if (ctx->car_orientation_cur == PLAYER_SPRITE_STRAIGHT ||
-		    ctx->car_orientation_cur == PLAYER_SPRITE_LIGHT_RIGHT ||
-		    ctx->car_orientation_cur == PLAYER_SPRITE_HARD_RIGHT) {
-			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_LEFT;
-			ctx->same_car_orientation_in_frame = 0;
-		} else if (ctx->car_orientation_cur ==
-				   PLAYER_SPRITE_LIGHT_LEFT &&
-			   ctx->same_car_orientation_in_frame > 5) {
-			ctx->car_orientation_cur = PLAYER_SPRITE_HARD_LEFT;
+	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END) {
+		if (ctx->keys.left) {
+			ctx->player_x = ctx->player_x - dx;
+			if (ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_STRAIGHT ||
+			    ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_LIGHT_RIGHT ||
+			    ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_HARD_RIGHT) {
+				ctx->car_orientation_cur =
+					PLAYER_SPRITE_LIGHT_LEFT;
+				ctx->same_car_orientation_in_frame = 0;
+			} else if (ctx->car_orientation_cur ==
+					   PLAYER_SPRITE_LIGHT_LEFT &&
+				   ctx->same_car_orientation_in_frame > 5) {
+				ctx->car_orientation_cur =
+					PLAYER_SPRITE_HARD_LEFT;
+			}
+		} else if (ctx->keys.right) {
+			ctx->player_x = ctx->player_x + dx;
+			if (ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_STRAIGHT ||
+			    ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_LIGHT_LEFT ||
+			    ctx->car_orientation_cur ==
+				    PLAYER_SPRITE_HARD_LEFT) {
+				ctx->car_orientation_cur =
+					PLAYER_SPRITE_LIGHT_RIGHT;
+				ctx->same_car_orientation_in_frame = 0;
+			} else if (ctx->car_orientation_cur ==
+					   PLAYER_SPRITE_LIGHT_RIGHT &&
+				   ctx->same_car_orientation_in_frame > 5) {
+				ctx->car_orientation_cur =
+					PLAYER_SPRITE_HARD_RIGHT;
+			}
 		}
-	} else if (ctx->keys.right) {
-		ctx->player_x = ctx->player_x + dx;
-		if (ctx->car_orientation_cur == PLAYER_SPRITE_STRAIGHT ||
-		    ctx->car_orientation_cur == PLAYER_SPRITE_LIGHT_LEFT ||
-		    ctx->car_orientation_cur == PLAYER_SPRITE_HARD_LEFT) {
-			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_RIGHT;
+		// no dir key pressed
+		else {
+			ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 			ctx->same_car_orientation_in_frame = 0;
-		} else if (ctx->car_orientation_cur ==
-				   PLAYER_SPRITE_LIGHT_RIGHT &&
-			   ctx->same_car_orientation_in_frame > 5) {
+		}
+	} else {
+		struct road_segment *seg = &ctx->segments[ctx->player_segment];
+		// select sprite to simulate a steering in curves
+		if (seg->curve > 2.f) {
 			ctx->car_orientation_cur = PLAYER_SPRITE_HARD_RIGHT;
+		} else if (seg->curve > 0.5f) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_RIGHT;
+		} else if (seg->curve < -2.f) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_HARD_LEFT;
+		} else if (seg->curve < -0.5f) {
+			ctx->car_orientation_cur = PLAYER_SPRITE_LIGHT_LEFT;
+		} else {
+			ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 		}
 	}
-	// no dir key pressed
-	else {
-		ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
-		ctx->same_car_orientation_in_frame = 0;
-	}
+
 
 	if (ctx->car_orientation_cur != ctx->car_orientation_prev) {
 		ctx->car_orientation_prev = ctx->car_orientation_cur;
@@ -352,19 +379,20 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->same_car_orientation_in_frame++;
 	}
 
-	ctx->player_x =
-		ctx->player_x -
-		(dx * speed_ratio * ctx->segments[ctx->player_segment].curve *
-		 ctx->centrifugal);
+	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+		ctx->player_x = ctx->player_x -
+				(dx * speed_ratio *
+				 ctx->segments[ctx->player_segment].curve *
+				 ctx->centrifugal);
 
-	if (ctx->keys.accel) {
+	if (ctx->keys.accel || ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ctx->speed = inline_accelerate(ctx->speed, accel, ctx->dt);
-	} else if (ctx->keys.brake) {
+	else if (ctx->keys.brake)
 		ctx->speed =
 			inline_accelerate(ctx->speed, ctx->breaking, ctx->dt);
-	} else {
+	else
 		ctx->speed = inline_accelerate(ctx->speed, ctx->decel, ctx->dt);
-	}
+
 
 	if ((ctx->player_x < -1 || ctx->player_x > 1) &&
 	    ctx->speed > ctx->off_road_limit) {
@@ -509,15 +537,25 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 	static int lap = 0;
 
 	if (ctx->status_cur == GAME_STATE_RACE &&
-	    ctx->player_segment_prev > ctx->player_segment)
-		lap++;
+	    ctx->player_segment_prev > ctx->player_segment) {
+		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+			ctx->nb_frame_anim = 0;
 
-	if (lap == 0)
+		ctx->status_cur = GAME_STATE_RACE_ANIM_END;
+
+		lap++;
+	}
+
+	if (lap == 0) {
 		return 1;
-	else if (lap > ctx->nb_lap)
+	} else if (lap > ctx->nb_lap) {
+		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+			ctx->nb_frame_anim = 0;
+		ctx->status_cur = GAME_STATE_RACE_ANIM_END;
 		return ctx->nb_lap;
-	else
+	} else {
 		return lap;
+	}
 }
 
 
@@ -533,6 +571,7 @@ int main_logic(struct game_context *ctx)
 	case GAME_STATE_TITLE:
 		break;
 	case GAME_STATE_RACE_ANIM_START:
+	case GAME_STATE_RACE_ANIM_END:
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_NITRO:
 		logic_race(ctx);
