@@ -561,6 +561,7 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 
 int main_logic(struct game_context *ctx)
 {
+	int ret = 0;
 
 	if (!ctx) {
 		printf("invalid parameter\n");
@@ -577,7 +578,10 @@ int main_logic(struct game_context *ctx)
 		logic_race(ctx);
 		break;
 	case GAME_STATE_RACE_COLLISION_SCENE:
-		logic_race_collision_scene(ctx);
+		ret = logic_race_collision_scene(ctx);
+		ret = logic_race_ai_cars(ctx);
+		ret = logic_race_check_collision_with_cars(ctx);
+		ctx->player_lap = logic_get_player_lap_nb(ctx);
 		break;
 	case GAME_STATE_QUIT:
 	case GAME_STATE_PAUSE:
