@@ -450,7 +450,6 @@ static int display_render_anim_race_end(struct game_context *ctx)
 	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
 	SDL_Color text_color_front_2 = {0xFF, 0xFF, 0x00};
 	SDL_Color text_color_shadow = {0, 0, 0};
-	char msg[32];
 	int finish_font_size;
 	int font_size_2 = 100;
 	TTF_Font *finish_font = NULL;
@@ -459,8 +458,6 @@ static int display_render_anim_race_end(struct game_context *ctx)
 	float angle;
 
 	ctx->nb_frame_anim++;
-
-	//sprintf(msg, "%s", "FINISH!");
 
 	finish_font_size = ctx->nb_frame_anim;
 	if (finish_font_size > 150)
@@ -487,16 +484,23 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		finish_font,
 		&ctx->gfx.font_race_anim,
 		"FINISH!",
-		&text_color_front_2,
+		//&text_color_shadow,
+		&text_color_front_1,
 		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
-		SCREEN_HEIGHT / 3 - ctx->gfx.font_race_anim.h / 2,
-		5,
+		SCREEN_HEIGHT * 30 / 100 - ctx->gfx.font_race_anim.h / 2,
+		4,
 		200,
 		angle);
 
 
 	if (ctx->finish_placed_frame_nb) {
+
+		char msg[32];
+		sprintf(msg,
+			"%d%s",
+			ctx->player_place,
+			logic_get_player_place_suffix(ctx->player_place));
 
 		nb_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
 		if (!nb_font) {
@@ -509,9 +513,12 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		int nb_pos_x =
 			-ctx->gfx.font_race_anim_2.w +
 			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
-		if (nb_pos_x > SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w)
-			nb_pos_x =
-				SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w;
+		/*if (nb_pos_x >
+		    SCREEN_WIDTH * 45 / 100 - ctx->gfx.font_race_anim_2.w)
+			nb_pos_x = SCREEN_WIDTH * 45 / 100 -
+				   ctx->gfx.font_race_anim_2.w;*/
+		if (nb_pos_x > SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2)
+			nb_pos_x = SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2;
 
 		// glitch fix
 		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
@@ -521,11 +528,11 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			ctx,
 			nb_font,
 			&ctx->gfx.font_race_anim_2,
-			"1st ",
+			msg,
 			&text_color_front_2,
 			&text_color_shadow,
 			nb_pos_x,
-			SCREEN_HEIGHT * 2 / 3 - ctx->gfx.font_race_anim_2.h / 2,
+			SCREEN_HEIGHT * 55 / 100 - ctx->gfx.font_race_anim_2.h / 2,
 			5,
 			200,
 			angle);
@@ -542,8 +549,10 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		int place_pos_x =
 			SCREEN_WIDTH -
 			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
-		if (place_pos_x < SCREEN_WIDTH / 2)
-			place_pos_x = SCREEN_WIDTH / 2;
+		/*if (place_pos_x < SCREEN_WIDTH * 45 / 100)
+			place_pos_x = SCREEN_WIDTH * 45 / 100;*/
+		if (place_pos_x < SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_3.w / 2)
+			place_pos_x = SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_3.w / 2;
 
 		// glitch fix
 		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
@@ -557,7 +566,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			&text_color_front_2,
 			&text_color_shadow,
 			place_pos_x,
-			SCREEN_HEIGHT * 2 / 3 - ctx->gfx.font_race_anim_3.h / 2,
+			SCREEN_HEIGHT * 70 / 100 - ctx->gfx.font_race_anim_3.h / 2,
 			5,
 			200,
 			angle);
@@ -674,12 +683,12 @@ static int display_render_hud(struct game_context *ctx)
 		0.f);
 
 	// Mid
-	int place = logic_get_player_place_nb(ctx);
+	ctx->player_place = logic_get_player_place_nb(ctx);
 	char place_str[3];
-	if (place < 10)
-		snprintf(place_str, 3, " %d", place);
+	if (ctx->player_place < 10)
+		snprintf(place_str, 3, " %d", ctx->player_place);
 	else
-		snprintf(place_str, 3, "%d", place);
+		snprintf(place_str, 3, "%d", ctx->player_place);
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -698,7 +707,7 @@ static int display_render_hud(struct game_context *ctx)
 		ctx,
 		ctx->sc_font_medium,
 		&ctx->gfx.font_game_position_unit,
-		logic_get_player_place_suffix(place),
+		logic_get_player_place_suffix(ctx->player_place),
 		&text_color,
 		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2 +

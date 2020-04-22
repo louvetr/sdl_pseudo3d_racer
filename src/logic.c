@@ -538,10 +538,10 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 
 	if (ctx->status_cur == GAME_STATE_RACE &&
 	    ctx->player_segment_prev > ctx->player_segment) {
-		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+		/*if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
 			ctx->nb_frame_anim = 0;
 
-		ctx->status_cur = GAME_STATE_RACE_ANIM_END;
+		ctx->status_cur = GAME_STATE_RACE_ANIM_END;*/
 
 		lap++;
 	}

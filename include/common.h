@@ -508,6 +508,9 @@ struct game_context {
 	// distance travelled by the player
 	int player_distance_ran;
 
+	// player position
+	int player_place;
+
 	// collision related
 	float collision_dst_x;
 

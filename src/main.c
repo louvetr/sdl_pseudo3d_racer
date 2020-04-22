@@ -473,8 +473,9 @@ static int main_ctx_init(struct game_context *ctx)
 	/*ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;*/
 
-	ctx->nb_lap = 4;
+	ctx->nb_lap = 3;
 	ctx->player_lap = 0;
+	ctx->player_place = NB_AI_CARS + 1;
 
 	ctx->scale_player_car[CAR_MODEL_IMPREZIA] = PLAYER_CAR_SCALE_IMPREZIA;
 	ctx->scale_player_car[CAR_MODEL_LOTUS] = PLAYER_CAR_SCALE_LOTUS;
