@@ -590,5 +590,5 @@ int main_logic(struct game_context *ctx)
 		break;
 	}
 
-	return 0;
+	return ret;
 }

@@ -291,16 +291,11 @@ static int display_render_segment(struct game_context *ctx,
 						: &color_bright_rumble);
 
 	// render road
-
 	struct color_desc *road_color;
-	if (seg_idx < 3) {
-		road_color = &color_road_yellow;
-	} else {
-		if (color == COLOR_DARK)
-			road_color = &color_dark_road_asphalt;
-		else
-			road_color = &color_bright_road_asphalt;
-	}
+	if (color == COLOR_DARK)
+		road_color = &color_dark_road_asphalt;
+	else
+		road_color = &color_bright_road_asphalt;
 
 
 	display_render_quad(ctx,
@@ -312,38 +307,43 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 - w2,
 			    y2,
-				road_color/*
-			    color == COLOR_DARK ? &color_dark_road_asphalt
-						: &color_bright_road_asphalt*/);
+				road_color);
+
+	int grid_per_lane = 4;
+	int lane_separator = 1;
+	road_color = &color_lane;
+
+	if (seg_idx < 7) {
+		int j_offset = (seg_idx) % 2;
+		lane_separator = 0;
+
+		for (int j = 0 + j_offset; j < ctx->lanes * grid_per_lane; j += 2) {
+			int square_x1 = x1 - w1;
+			int square_x2 = x2 - w2;
+			int square_w1 = 2 * w1 / (grid_per_lane * ctx->lanes);
+			int square_w2 = 2 * w2 / (grid_per_lane * ctx->lanes);
+			display_render_quad(ctx,
+					    square_x1 + square_w1 * j,
+					    y1,
+					    square_x1 + square_w1 * (j + 1),
+					    y1,
+					    square_x2 + square_w2 * (j + 1),
+					    y2,
+					    square_x2 + square_w2 * j,
+					    y2,
+					    road_color);
+		}
+	}
 
 	// render lanes
-	if (color == COLOR_DARK && lanes > 0) {
+	if (color == COLOR_DARK && lanes > 0 && lane_separator) {
 		int lane_w1 = (w1 * 2) / lanes;
 		int lane_w2 = (w2 * 2) / lanes;
 		int lane_x1 = x1 - w1 + lane_w1;
 		int lane_x2 = x2 - w2 + lane_w2;
 
-		/*if(lane_w1 == 0)
-			 lane_w1 = 1;
-		if(lane_w2 == 0)
-			 lane_w2 = 1;*/
-
 		for (int lane = 1; lane < lanes;
 		     lane_x1 += lane_w1, lane_x2 += lane_w2, lane++) {
-
-			/*if (y1 > 700) {
-				SDL_Log("[%s] draw lane
-			(%d,%d),(%d,%d),(%d,%d),(%d,%d)\n",
-					__func__,
-					lane_x1 - l1 / 2,
-					y1,
-					lane_x1 + l1 / 2,
-					y1,
-					lane_x2 + l2 / 2,
-					y2,
-					lane_x2 - l2 / 2,
-					y2);
-			}*/
 
 			if (l1 <= 1) {
 				// far away lanes are simplified into rect
@@ -517,8 +517,10 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		    SCREEN_WIDTH * 45 / 100 - ctx->gfx.font_race_anim_2.w)
 			nb_pos_x = SCREEN_WIDTH * 45 / 100 -
 				   ctx->gfx.font_race_anim_2.w;*/
-		if (nb_pos_x > SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2)
-			nb_pos_x = SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2;
+		if (nb_pos_x >
+		    SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_2.w / 2)
+			nb_pos_x = SCREEN_WIDTH / 2 -
+				   ctx->gfx.font_race_anim_2.w / 2;
 
 		// glitch fix
 		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
@@ -532,7 +534,8 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			&text_color_front_2,
 			&text_color_shadow,
 			nb_pos_x,
-			SCREEN_HEIGHT * 55 / 100 - ctx->gfx.font_race_anim_2.h / 2,
+			SCREEN_HEIGHT * 55 / 100 -
+				ctx->gfx.font_race_anim_2.h / 2,
 			5,
 			200,
 			angle);
@@ -551,8 +554,10 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
 		/*if (place_pos_x < SCREEN_WIDTH * 45 / 100)
 			place_pos_x = SCREEN_WIDTH * 45 / 100;*/
-		if (place_pos_x < SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_3.w / 2)
-			place_pos_x = SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_3.w / 2;
+		if (place_pos_x <
+		    SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim_3.w / 2)
+			place_pos_x = SCREEN_WIDTH / 2 -
+				      ctx->gfx.font_race_anim_3.w / 2;
 
 		// glitch fix
 		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
@@ -566,7 +571,8 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			&text_color_front_2,
 			&text_color_shadow,
 			place_pos_x,
-			SCREEN_HEIGHT * 70 / 100 - ctx->gfx.font_race_anim_3.h / 2,
+			SCREEN_HEIGHT * 70 / 100 -
+				ctx->gfx.font_race_anim_3.h / 2,
 			5,
 			200,
 			angle);
