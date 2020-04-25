@@ -528,7 +528,7 @@ int track_build(struct game_context *ctx)
 	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
 
 	ctx->player_segment = ctx->nb_segments -
-			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING;
+			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING - 6;
 	ctx->player_segment_prev = ctx->player_segment;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 	ctx->player_distance_ran =

@@ -307,7 +307,7 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 - w2,
 			    y2,
-				road_color);
+			    road_color);
 
 	int grid_per_lane = 4;
 	int lane_separator = 1;
@@ -317,7 +317,8 @@ static int display_render_segment(struct game_context *ctx,
 		int j_offset = (seg_idx) % 2;
 		lane_separator = 0;
 
-		for (int j = 0 + j_offset; j < ctx->lanes * grid_per_lane; j += 2) {
+		for (int j = 0 + j_offset; j < ctx->lanes * grid_per_lane;
+		     j += 2) {
 			int square_x1 = x1 - w1;
 			int square_x2 = x2 - w2;
 			int square_w1 = 2 * w1 / (grid_per_lane * ctx->lanes);
