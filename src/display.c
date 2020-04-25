@@ -878,16 +878,6 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 					      .w *
 				      car_x_scale / 2.f);
 
-			if (ctx->ai_cars[i].pos_x < 0)
-				sprite_x -=
-					(int)((float)ctx->gfx
-						      .cars[ctx->ai_cars[i]
-								    .car_model]
-							   [ctx->ai_cars[i]
-								    .sprite_idx]
-						      .w *
-					      car_x_scale / 2.f);
-
 			// Avoid AI cars X jump by smoothering sprite_x
 			sprite_x += (int)((float)(seg->p2.screen.x -
 						  seg->p1.screen.x) *
