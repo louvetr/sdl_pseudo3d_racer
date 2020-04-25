@@ -641,59 +641,57 @@ int ai_car_init(struct game_context *ctx)
 			(float)SCREEN_WIDTH * 2.f *
 			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
 
-	SDL_Log("ctx->ai_cars[%d].distance = %d\n", i, ctx->ai_cars[i].distance);
-
+		SDL_Log("ctx->ai_cars[%d].distance = %d\n",
+			i,
+			ctx->ai_cars[i].distance);
 	}
 
-#if 1
-	// shuffle ai cars
-	for (int i = 0; i < NB_AI_CARS - 1; i++) {
-		int j = i + rand() / (RAND_MAX / (NB_AI_CARS - i) + 1);
+	// shuffle start grid 5 times
+	for (int k = 0; k < 5; k++) {
+		// shuffle the ai cars
+		for (int i = 0; i < NB_AI_CARS; i++) {
+			int j = i + rand() / (RAND_MAX / (NB_AI_CARS - i) + 1);
 
-		int tmp_segment = ctx->ai_cars[j].segment;
-		int tmp_pos_z = ctx->ai_cars[j].pos_z;
-		float tmp_pos_x = ctx->ai_cars[j].pos_x;
-		int tmp_distance = ctx->ai_cars[j].distance;
-		enum car_model_type tmp_model = ctx->ai_cars[j].car_model;
-		float car_x_scale_coef = ctx->ai_cars[j].car_x_scale_coef;
-		float ai_car_scale_coef = ctx->ai_cars[j].ai_car_scale_coef;
+			int tmp_segment = ctx->ai_cars[j].segment;
+			int tmp_pos_z = ctx->ai_cars[j].pos_z;
+			float tmp_pos_x = ctx->ai_cars[j].pos_x;
+			int tmp_distance = ctx->ai_cars[j].distance;
+			enum car_model_type tmp_model =
+				ctx->ai_cars[j].car_model;
+			float car_x_scale_coef =
+				ctx->ai_cars[j].car_x_scale_coef;
+			float ai_car_scale_coef =
+				ctx->ai_cars[j].ai_car_scale_coef;
 
+			ctx->ai_cars[j].car_model = ctx->ai_cars[i].car_model;
+			ctx->ai_cars[i].car_model = tmp_model;
+			ctx->ai_cars[j].car_x_scale_coef =
+				ctx->ai_cars[i].car_x_scale_coef;
+			ctx->ai_cars[i].car_x_scale_coef = car_x_scale_coef;
+			ctx->ai_cars[j].ai_car_scale_coef =
+				ctx->ai_cars[i].ai_car_scale_coef;
+			ctx->ai_cars[i].ai_car_scale_coef = ai_car_scale_coef;
 
-		ctx->ai_cars[j].car_model = ctx->ai_cars[i].car_model;
-		ctx->ai_cars[i].car_model = tmp_model;
-		ctx->ai_cars[j].car_x_scale_coef =
-			ctx->ai_cars[i].car_x_scale_coef;
-		ctx->ai_cars[i].car_x_scale_coef = car_x_scale_coef;
-		ctx->ai_cars[j].ai_car_scale_coef =
-			ctx->ai_cars[i].ai_car_scale_coef;
-		ctx->ai_cars[i].ai_car_scale_coef = ai_car_scale_coef;
+			/* Let the 3 first cars have the best stats so they
+			 * always are ahead */
+			if (i < 3)
+				continue;
 
-		if (i < 3)
-			continue;
+			ctx->ai_cars[j].segment = ctx->ai_cars[i].segment;
+			ctx->ai_cars[i].segment = tmp_segment;
 
-		ctx->ai_cars[j].segment = ctx->ai_cars[i].segment;
-		ctx->ai_cars[i].segment = tmp_segment;
+			ctx->ai_cars[j].pos_z = ctx->ai_cars[i].pos_z;
+			ctx->ai_cars[i].pos_z = tmp_pos_z;
 
-		ctx->ai_cars[j].pos_z = ctx->ai_cars[i].pos_z;
-		ctx->ai_cars[i].pos_z = tmp_pos_z;
+			ctx->ai_cars[j].distance = ctx->ai_cars[i].distance;
+			ctx->ai_cars[i].distance = tmp_distance;
 
-		ctx->ai_cars[j].distance = ctx->ai_cars[i].distance;
-		ctx->ai_cars[i].distance = tmp_distance;
+			ctx->ai_cars[j].pos_x = ctx->ai_cars[i].pos_x;
+			ctx->ai_cars[i].pos_x = tmp_pos_x;
 
-		ctx->ai_cars[j].pos_x = ctx->ai_cars[i].pos_x;
-		ctx->ai_cars[i].pos_x = tmp_pos_x;
-		/*struct ai_car_info tmp = ctx->ai_cars[j];
-
-		memcpy(&tmp, &ctx->ai_cars[j], sizeof(struct ai_car_info));
-		memcpy(&ctx->ai_cars[j], &ctx->ai_cars[i], sizeof(struct
-		ai_car_info)); memcpy(&ctx->ai_cars[i], &tmp, sizeof(struct
-		ai_car_info));*/
-
-		/*ctx->ai_cars[j] = ctx->ai_cars[i];
-		ctx->ai_cars[i] = tmp;*/
-		SDL_Log("[%s] swicthing #%d and #%d\n", __func__, i, j);
+			SDL_Log("[%s] swicthing #%d and #%d\n", __func__, i, j);
+		}
 	}
-#endif
 
 	return 0;
 }
