@@ -25,6 +25,10 @@
 
 
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
+#define NB_PARTICLES_SMOKE_AVAILABLE	7
+#define NB_PARTICLES_SMOKE_DISPLAY		10
+#define PARTICLE_SMOKE_SCALE	0.2f
+#define PARTICLE_SMOKE_FRAME_DURATION	10
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -194,6 +198,13 @@ struct texture {
 	SDL_Texture *texture;
 };
 
+struct particle {
+	int pos_x;
+	int pos_y;
+	int frame; // current frame
+	struct texture *t;
+};
+
 /*struct car_model_texture{
     // image textures
 	struct texture rear;
@@ -240,6 +251,10 @@ struct game_graphics{
 	struct texture font_race_anim;
 	struct texture font_race_anim_2;
 	struct texture font_race_anim_3;
+
+	struct texture part_smoke[NB_PARTICLES_SMOKE_AVAILABLE];
+
+
 };
 
 struct color_desc {
@@ -407,8 +422,6 @@ struct game_context {
 	int player_y;
 	// player relative z distance from camera (computed)
 	int player_z;
-	// position of player car sprite in pixel(top of texture)
-	int player_sprite_y;
 	// exponential fog density
 	int fog_density;
 	// current camera Z position (add playerZ to get player's absolute Z
@@ -444,7 +457,13 @@ struct game_context {
 	int player_segment;
 	int player_segment_prev;
 
-	int player_car_x_in_pixels;
+	// player car sprite values
+	int player_sprite_x;
+	int player_sprite_y;
+	int player_sprite_w;
+	int player_sprite_h;
+	int player_max_x;
+	int player_max_y;
 
 	// distance from start line at beginning of the race
 	// int player_distance_start_offset;
@@ -530,6 +549,9 @@ struct game_context {
 
 	float scale_player_car[CAR_MODEL_LAST];
 	float scale_ai_car[CAR_MODEL_LAST];
+
+	struct particle part_smoke[NB_PARTICLES_SMOKE_DISPLAY];
+
 };
 
 

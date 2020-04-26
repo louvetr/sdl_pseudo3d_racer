@@ -60,12 +60,20 @@
 #define PNG_SCENE_WINDMILL "./media/scene/scene_windmill.png"
 #define PNG_SCENE_BARN "./media/scene/scene_barn.png"
 
+#define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
+#define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
+#define PNG_SMOKE_02 "./media/particles/whitePuff02.png"
+#define PNG_SMOKE_03 "./media/particles/whitePuff03.png"
+#define PNG_SMOKE_04 "./media/particles/whitePuff04.png"
+#define PNG_SMOKE_05 "./media/particles/whitePuff05.png"
+#define PNG_SMOKE_06 "./media/particles/whitePuff24.png"
+
 
 static int media_load_cars_sprites_one_model(struct game_context *ctx,
-					    enum car_model_type idx,
-					    char *rear,
-					    char *right1,
-					    char *right2)
+					     enum car_model_type idx,
+					     char *rear,
+					     char *right1,
+					     char *right2)
 {
 	int ret;
 
@@ -96,10 +104,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	int ret;
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_IMPREZIA,
-					       PNG_IMPREZIA_REAR,
-					       PNG_IMPREZIA_RIGHT1,
-					       PNG_IMPREZIA_RIGHT2);
+						CAR_MODEL_IMPREZIA,
+						PNG_IMPREZIA_REAR,
+						PNG_IMPREZIA_RIGHT1,
+						PNG_IMPREZIA_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -109,10 +117,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_LOTUS,
-					       PNG_LOTUS_REAR,
-					       PNG_LOTUS_RIGHT1,
-					       PNG_LOTUS_RIGHT2);
+						CAR_MODEL_LOTUS,
+						PNG_LOTUS_REAR,
+						PNG_LOTUS_RIGHT1,
+						PNG_LOTUS_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -122,10 +130,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_FALCON,
-					       PNG_FALCON_REAR,
-					       PNG_FALCON_RIGHT1,
-					       PNG_FALCON_RIGHT2);
+						CAR_MODEL_FALCON,
+						PNG_FALCON_REAR,
+						PNG_FALCON_RIGHT1,
+						PNG_FALCON_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -145,10 +153,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_TRUENO,
-					       PNG_TRUENO_REAR,
-					       PNG_TRUENO_RIGHT1,
-					       PNG_TRUENO_RIGHT2);
+						CAR_MODEL_TRUENO,
+						PNG_TRUENO_REAR,
+						PNG_TRUENO_RIGHT1,
+						PNG_TRUENO_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -158,10 +166,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_NSX,
-					       PNG_NSX_REAR,
-					       PNG_NSX_RIGHT1,
-					       PNG_NSX_RIGHT2);
+						CAR_MODEL_NSX,
+						PNG_NSX_REAR,
+						PNG_NSX_RIGHT1,
+						PNG_NSX_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -171,10 +179,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_VIPER,
-					       PNG_VIPER_REAR,
-					       PNG_VIPER_RIGHT1,
-					       PNG_VIPER_RIGHT2);
+						CAR_MODEL_VIPER,
+						PNG_VIPER_REAR,
+						PNG_VIPER_RIGHT1,
+						PNG_VIPER_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -184,10 +192,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_HART,
-					       PNG_HART_REAR,
-					       PNG_HART_RIGHT1,
-					       PNG_HART_RIGHT2);
+						CAR_MODEL_HART,
+						PNG_HART_REAR,
+						PNG_HART_RIGHT1,
+						PNG_HART_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -197,10 +205,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_DELTA,
-					       PNG_DELTA_REAR,
-					       PNG_DELTA_RIGHT1,
-					       PNG_DELTA_RIGHT2);
+						CAR_MODEL_DELTA,
+						PNG_DELTA_REAR,
+						PNG_DELTA_RIGHT1,
+						PNG_DELTA_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -210,10 +218,10 @@ static int media_load_cars_sprites(struct game_context *ctx)
 	}
 
 	ret = media_load_cars_sprites_one_model(ctx,
-					       CAR_MODEL_LANCER,
-					       PNG_LANCER_REAR,
-					       PNG_LANCER_RIGHT1,
-					       PNG_LANCER_RIGHT2);
+						CAR_MODEL_LANCER,
+						PNG_LANCER_REAR,
+						PNG_LANCER_RIGHT1,
+						PNG_LANCER_RIGHT2);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load cars sprite of idx = %d!\n",
 			__func__,
@@ -340,6 +348,64 @@ static int media_load_font(struct game_context *ctx)
 	return 0;
 }
 
+
+static int media_load_particles(struct game_context *ctx)
+{
+	int ret;
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_00, &ctx->gfx.part_smoke[0]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_01, &ctx->gfx.part_smoke[1]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_02, &ctx->gfx.part_smoke[2]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_03, &ctx->gfx.part_smoke[3]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_04, &ctx->gfx.part_smoke[4]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_05, &ctx->gfx.part_smoke[5]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_SMOKE_06, &ctx->gfx.part_smoke[6]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	return 0;
+}
+
+
 /////////////////////////////////////////////////////////////////////////////////////
 // public function
 /////////////////////////////////////////////////////////////////////////////////////
@@ -365,6 +431,12 @@ int media_load_resources(struct game_context *ctx)
 	ret = media_load_scene_sprites(ctx);
 	if (ret < 0) {
 		SDL_Log("[%s] media_load_scene_sprites!\n", __func__);
+		return ret;
+	}
+
+	ret = media_load_particles(ctx);
+	if (ret < 0) {
+		SDL_Log("[%s] media_load_particles!\n", __func__);
 		return ret;
 	}
 

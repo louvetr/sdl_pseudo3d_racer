@@ -176,8 +176,9 @@ static int texture_render(struct game_context *ctx,
 
 	// workaround to avoid random blinking AI car sprite in middle of screen
 	if (hitbox && y + render_quad.h < ctx->max_y) {
-		SDL_Log("[%s] AI CAR GLITCH ##################################\n",
-			__func__);
+		/*SDL_Log("[%s] AI CAR GLITCH
+		   ##################################\n",
+			__func__);*/
 		return 0;
 	}
 
@@ -1354,6 +1355,33 @@ static int display_render_backgrounds(struct game_context *ctx)
 }
 
 
+static int display_render_particles(struct game_context *ctx)
+{
+	for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
+		if (ctx->part_smoke[k].pos_x != 0) {
+			ctx->part_smoke[k].frame++;
+
+			if (ctx->part_smoke[k].frame % 4)
+				texture_render(ctx,
+					       ctx->part_smoke[k].t,
+					       ctx->part_smoke[k].pos_x,
+					       ctx->part_smoke[k].pos_y,
+					       NULL,
+					       0.f,
+					       PARTICLE_SMOKE_SCALE,
+					       SDL_FLIP_NONE,
+					       NULL);
+
+			if (ctx->part_smoke[k].frame >
+			    PARTICLE_SMOKE_FRAME_DURATION)
+				ctx->part_smoke[k].pos_x = 0;
+		}
+	}
+
+
+	return 0;
+}
+
 static int display_screen_race(struct game_context *ctx)
 {
 	int ret = 0;
@@ -1371,21 +1399,9 @@ static int display_screen_race(struct game_context *ctx)
 	// render scenery sprites and AI cars
 	ret = display_render_scaled_sprites(ctx);
 
+	// display particles
+	ret = display_render_particles(ctx);
 
-	// TODO: separate player car display in a function
-
-	// ######################################################################
-
-	// just draw the player in middle of the screen. It doesn't move, that's
-	// the world around it which moves.
-	ctx->player_car_x_in_pixels =
-		(SCREEN_WIDTH / 2) -
-		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
-			      .w *
-		      ctx->scale_player_car[ctx->car_player_model] /
-		      2.f); // reduce texture by 2 then remove it half width
 
 	int player_sprite_y = ctx->player_sprite_y;
 
@@ -1414,7 +1430,7 @@ static int display_screen_race(struct game_context *ctx)
 	ret = texture_render(ctx,
 			     &ctx->gfx.cars[ctx->car_player_model]
 					   [ctx->car_player_sprite_idx],
-			     ctx->player_car_x_in_pixels,
+			     ctx->player_sprite_x,
 			     player_sprite_y,
 			     NULL,
 			     0.f,

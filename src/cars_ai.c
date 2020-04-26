@@ -586,7 +586,7 @@ int ai_car_init(struct game_context *ctx)
 			ctx->ai_cars[j].pos_x = ctx->ai_cars[i].pos_x;
 			ctx->ai_cars[i].pos_x = tmp_pos_x;
 
-			SDL_Log("[%s] swicthing #%d and #%d\n", __func__, i, j);
+			//SDL_Log("[%s] switching #%d and #%d\n", __func__, i, j);
 		}
 	}
 

@@ -81,8 +81,6 @@ static int main_init(struct game_context *ctx)
 }
 
 
-
-
 static int main_sleep(struct game_context *ctx)
 {
 	Uint32 frame_ticks = SDL_GetTicks() - ctx->start_ticks;
@@ -145,8 +143,8 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->same_car_orientation_in_frame = 0;
 
 	ctx->car_player_model = CAR_MODEL_NSX;
-	//ctx->car_player_model = CAR_MODEL_VIPER;
-	//ctx->car_player_model = CAR_MODEL_IMPREZIA;
+	// ctx->car_player_model = CAR_MODEL_VIPER;
+	// ctx->car_player_model = CAR_MODEL_IMPREZIA;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
@@ -185,6 +183,38 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->constants.scene_sprite_coef =
 		(float)ctx->road_width * (float)SCREEN_WIDTH / 2.f;
 
+
+	// player sprite constant values
+
+	/*ctx->player_sprite_y =
+		SCREEN_HEIGHT -
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .h *
+		      ctx->scale_player_car[ctx->car_player_model]) -
+		30; // TODO: Why 30 ??????*/
+
+	ctx->player_sprite_w =
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .w *
+		      ctx->scale_player_car[ctx->car_player_model]);
+
+	ctx->player_sprite_h =
+		(int)((float)ctx->gfx
+			      .cars[ctx->car_player_model]
+				   [ctx->car_player_sprite_idx]
+			      .h *
+		      ctx->scale_player_car[ctx->car_player_model]);
+
+
+	// just draw the player in middle of the screen. It doesn't
+	// move, that's
+	// the world around it which moves.
+	ctx->player_sprite_x = SCREEN_WIDTH / 2 - ctx->player_sprite_w / 2;
+
 	ctx->player_sprite_y =
 		SCREEN_HEIGHT -
 		(int)((float)ctx->gfx
@@ -192,7 +222,12 @@ static int main_ctx_init(struct game_context *ctx)
 				   [ctx->car_player_sprite_idx]
 			      .h *
 		      ctx->scale_player_car[ctx->car_player_model]) -
-		30; // TODO: Why 30 ??????
+		SCREEN_HEIGHT * 4 / 100;
+	/*- 30*/;
+
+
+	ctx->player_max_x = ctx->player_sprite_x + ctx->player_sprite_w;
+	ctx->player_max_y = ctx->player_sprite_y + ctx->player_sprite_h;
 
 	return 0;
 };

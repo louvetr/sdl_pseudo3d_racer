@@ -45,19 +45,6 @@ static int logic_set_player_sprite(struct game_context *ctx)
 
 static int logic_race_check_collision_with_cars(struct game_context *ctx)
 {
-	int player_max_x = ctx->player_car_x_in_pixels +
-			   (int)((float)ctx->gfx
-					 .cars[ctx->car_player_model]
-					      [ctx->car_player_sprite_idx]
-					 .w *
-				 ctx->scale_player_car[ctx->car_player_model]);
-	int player_max_y = ctx->player_sprite_y +
-			   (int)((float)ctx->gfx
-					 .cars[ctx->car_player_model]
-					      [ctx->car_player_sprite_idx]
-					 .h *
-				 ctx->scale_player_car[ctx->car_player_model]);
-
 	for (int i = 0; i < NB_AI_CARS; i++) {
 		int ai_max_x =
 			ctx->ai_cars[i].hitbox.x + ctx->ai_cars[i].hitbox.w;
@@ -65,15 +52,15 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			ctx->ai_cars[i].hitbox.y + ctx->ai_cars[i].hitbox.h;
 
 		// Xs collides
-		if ((player_max_x > ctx->ai_cars[i].hitbox.x &&
-		     player_max_x < ai_max_x) ||
-		    (ctx->player_car_x_in_pixels < ai_max_x &&
-		     ctx->player_car_x_in_pixels > ctx->ai_cars[i].hitbox.x)) {
+		if ((ctx->player_max_x > ctx->ai_cars[i].hitbox.x &&
+		     ctx->player_max_x < ai_max_x) ||
+		    (ctx->player_sprite_x < ai_max_x &&
+		     ctx->player_sprite_x > ctx->ai_cars[i].hitbox.x)) {
 
 			/*SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d,
 			   %d->%d])\n",
 				__func__,
-				ctx->player_car_x_in_pixels,
+				ctx->player_sprite_x,
 				player_max_x,
 				ctx->player_sprite_y,
 				player_max_y,
@@ -84,7 +71,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 
 			// Front collision
 			if (ai_max_y > ctx->player_sprite_y &&
-			    ai_max_y < player_max_y) {
+			    ai_max_y < ctx->player_max_y) {
 
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
@@ -101,7 +88,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			}
 
 			// Back collison
-			if (ctx->ai_cars[i].hitbox.y < player_max_y &&
+			if (ctx->ai_cars[i].hitbox.y < ctx->player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
 
 				int tmp_player_seg;
@@ -216,11 +203,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 				sprite_right_hb_x = sprite_right->scaled_x;
 		}
 		// check car collision with sprite on left
-		if (ctx->player_car_x_in_pixels < sprite_left_hb_x) {
+		if (ctx->player_sprite_x < sprite_left_hb_x) {
 			SDL_Log("[%s] collision detected on LEFT\n", __func__);
-			//} else if (ctx->player_car_x_in_pixels +
-			//(float)ctx->gfx.car_player.w * PLAYER_CAR_SPRITE_ZOOM
-			//>
 
 			ctx->collision_dst_x =
 				ctx->player_x + COLLIONSION_SCENE_SHIFT;
@@ -231,16 +215,9 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			break;
 
-		} else if (
-			ctx->player_car_x_in_pixels +
-				(int)((float)ctx->gfx
-					      .cars[ctx->car_player_model]
-						   [ctx->car_player_sprite_idx]
-					      .w *
-				      ctx->scale_player_car
-					      [ctx->car_player_model])
-			/* TODO : CHECK this coef is rightly used !!!! */
-			> sprite_right_hb_x) {
+		} else if (ctx->player_max_y
+			   /* TODO : CHECK this coef is rightly used !!!! */
+			   > sprite_right_hb_x) {
 			SDL_Log("[%s] collision detected on RIGHT\n", __func__);
 
 			ctx->collision_dst_x =
@@ -255,9 +232,9 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 			SDL_Log("[%s] car_x (%d) + car_w (%d) = %d,
 		   sprite_right_hb_x = %d\n",
 				__func__,
-				ctx->player_car_x_in_pixels,
+				ctx->player_sprite_x,
 				ctx->gfx.car_player.w / 2,
-				ctx->player_car_x_in_pixels +
+				ctx->player_sprite_x +
 		   ctx->gfx.car_player.w / 2, sprite_right_hb_x);*/
 	}
 
@@ -367,7 +344,6 @@ static int logic_race_control(struct game_context *ctx)
 		}
 	}
 
-
 	if (ctx->car_orientation_cur != ctx->car_orientation_prev) {
 		ctx->car_orientation_prev = ctx->car_orientation_cur;
 		logic_set_player_sprite(ctx);
@@ -375,11 +351,53 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->same_car_orientation_in_frame++;
 	}
 
-	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
-		ctx->player_x = ctx->player_x -
-				(dx * speed_ratio *
-				 ctx->segments[ctx->player_segment].curve *
-				 ctx->centrifugal);
+	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END) {
+		float drift = dx * speed_ratio *
+			      ctx->segments[ctx->player_segment].curve *
+			      ctx->centrifugal;
+		ctx->player_x = ctx->player_x - drift;
+
+		// TODO: manage smoke particles in a separate function
+		// SDL_Log("[%s] drift = %f\n", __func__, drift);
+		if (drift > 0.025f || drift < -0.025f) {
+			int smoke_idx = -1;
+			for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
+				if (ctx->part_smoke[k].pos_x == 0) {
+					smoke_idx = k;
+					break;
+				}
+			}
+
+			if (smoke_idx >= 0) {
+				ctx->part_smoke[smoke_idx].frame = rand() % 5;
+
+				ctx->part_smoke[smoke_idx].t =
+					&ctx->gfx.part_smoke
+						 [rand() %
+						  NB_PARTICLES_SMOKE_AVAILABLE];
+
+				int smoke_w =
+					(int)((float)ctx->part_smoke[smoke_idx]
+						      .t->w *
+					      PARTICLE_SMOKE_SCALE);
+				int smoke_w_rnd = rand() % (smoke_w * 2);
+
+				if (drift > 0)
+					ctx->part_smoke[smoke_idx].pos_x =
+						ctx->player_sprite_x - smoke_w +
+						smoke_w_rnd;
+				else
+					ctx->part_smoke[smoke_idx].pos_x =
+						ctx->player_max_x - smoke_w_rnd;
+
+				ctx->part_smoke[smoke_idx].pos_y =
+					ctx->player_max_y -
+					(int)((float)ctx->part_smoke[smoke_idx]
+						      .t->h *
+					      PARTICLE_SMOKE_SCALE);
+			}
+		}
+	}
 
 	if (ctx->keys.accel || ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ctx->speed = inline_accelerate(ctx->speed, accel, ctx->dt);
