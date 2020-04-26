@@ -1354,55 +1354,9 @@ static int display_render_backgrounds(struct game_context *ctx)
 	return ret;
 }
 
-
-static int display_render_particles(struct game_context *ctx)
+static int display_render_player_car(struct game_context *ctx)
 {
-	for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
-		if (ctx->part_smoke[k].pos_x != 0) {
-			ctx->part_smoke[k].frame++;
-
-			if (ctx->part_smoke[k].frame % 4)
-				texture_render(ctx,
-					       ctx->part_smoke[k].t,
-					       ctx->part_smoke[k].pos_x,
-					       ctx->part_smoke[k].pos_y,
-					       NULL,
-					       0.f,
-					       PARTICLE_SMOKE_SCALE,
-					       SDL_FLIP_NONE,
-					       NULL);
-
-			if (ctx->part_smoke[k].frame >
-			    PARTICLE_SMOKE_FRAME_DURATION)
-				ctx->part_smoke[k].pos_x = 0;
-		}
-	}
-
-
-	return 0;
-}
-
-static int display_screen_race(struct game_context *ctx)
-{
-	int ret = 0;
-
-	// clear screen
-	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
-	SDL_RenderClear(ctx->renderer);
-
-	// render the different layers of background
-	ret = display_render_backgrounds(ctx);
-
-	// render the road
-	ret = display_render_road(ctx);
-
-	// render scenery sprites and AI cars
-	ret = display_render_scaled_sprites(ctx);
-
-	// display particles
-	ret = display_render_particles(ctx);
-
-
+	int ret;
 	int player_sprite_y = ctx->player_sprite_y;
 
 	// During start animation car y depends camera height
@@ -1438,8 +1392,58 @@ static int display_screen_race(struct game_context *ctx)
 			     ctx->car_player_flip,
 			     NULL);
 
+	return ret;
+}
 
-	// ######################################################################
+
+static int display_render_particles(struct game_context *ctx)
+{
+	for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
+		if (ctx->part_smoke[k].pos_x != 0) {
+			ctx->part_smoke[k].frame++;
+
+			if (ctx->part_smoke[k].frame % 4)
+				texture_render(ctx,
+					       ctx->part_smoke[k].t,
+					       ctx->part_smoke[k].pos_x,
+					       ctx->part_smoke[k].pos_y,
+					       NULL,
+					       0.f,
+					       PARTICLE_SMOKE_SCALE,
+					       SDL_FLIP_NONE,
+					       NULL);
+
+			if (ctx->part_smoke[k].frame >
+			    PARTICLE_SMOKE_FRAME_DURATION)
+				ctx->part_smoke[k].pos_x = 0;
+		}
+	}
+
+	return 0;
+}
+
+static int display_screen_race(struct game_context *ctx)
+{
+	int ret = 0;
+
+	// clear screen
+	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
+	SDL_RenderClear(ctx->renderer);
+
+	// render the different layers of background
+	ret = display_render_backgrounds(ctx);
+
+	// render the road
+	ret = display_render_road(ctx);
+
+	// render scenery sprites and AI cars
+	ret = display_render_scaled_sprites(ctx);
+
+	// display particles
+	ret = display_render_particles(ctx);
+
+	// display player car
+	ret = display_render_player_car(ctx);
 
 	// render scenery text message
 	ret = display_render_hud(ctx);
