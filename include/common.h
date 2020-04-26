@@ -23,64 +23,8 @@
 #define FPS 30
 #define MS_PER_SEC 1000
 
+
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
-//#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
-
-//#define PNG_CAR_PLAYER "./media/car_rear_01.png"
-#define PNG_IMPREZIA_REAR "./media/cars/imprezia_rear.png"
-#define PNG_IMPREZIA_RIGHT1 "./media/cars/imprezia_right_1.png"
-#define PNG_IMPREZIA_RIGHT2 "./media/cars/imprezia_right_2.png"
-
-#define PNG_FALCON_REAR "./media/cars/falcon_rear.png"
-#define PNG_FALCON_RIGHT1 "./media/cars/falcon_right_1.png"
-#define PNG_FALCON_RIGHT2 "./media/cars/falcon_right_2.png"
-
-#define PNG_LOTUS_REAR "./media/cars/lotus_rear.png"
-#define PNG_LOTUS_RIGHT1 "./media/cars/lotus_right_1.png"
-#define PNG_LOTUS_RIGHT2 "./media/cars/lotus_right_2.png"
-
-#define PNG_TT_REAR "./media/cars/tt_rear.png"
-#define PNG_TT_RIGHT1 "./media/cars/tt_right_1.png"
-#define PNG_TT_RIGHT2 "./media/cars/tt_right_2.png"
-
-#define PNG_NSX_REAR "./media/cars/nsx_rear.png"
-#define PNG_NSX_RIGHT1 "./media/cars/nsx_right_1.png"
-#define PNG_NSX_RIGHT2 "./media/cars/nsx_right_2.png"
-
-#define PNG_TRUENO_REAR "./media/cars/trueno_rear.png"
-#define PNG_TRUENO_RIGHT1 "./media/cars/trueno_right_1.png"
-#define PNG_TRUENO_RIGHT2 "./media/cars/trueno_right_2.png"
-
-#define PNG_VIPER_REAR "./media/cars/viper_rear.png"
-#define PNG_VIPER_RIGHT1 "./media/cars/viper_right_1.png"
-#define PNG_VIPER_RIGHT2 "./media/cars/viper_right_2.png"
-
-#define PNG_HART_REAR "./media/cars/hart_rear.png"
-#define PNG_HART_RIGHT1 "./media/cars/hart_right_1.png"
-#define PNG_HART_RIGHT2 "./media/cars/hart_right_2.png"
-
-#define PNG_DELTA_REAR "./media/cars/delta_rear.png"
-#define PNG_DELTA_RIGHT1 "./media/cars/delta_right_1.png"
-#define PNG_DELTA_RIGHT2 "./media/cars/delta_right_2.png"
-
-#define PNG_LANCER_REAR "./media/cars/lancer_rear.png"
-#define PNG_LANCER_RIGHT1 "./media/cars/lancer_right_1.png"
-#define PNG_LANCER_RIGHT2 "./media/cars/lancer_right_2.png"
-
-
-#define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
-#define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
-#define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
-
-#define PNG_SCENE_TREE_OAK "./media/scene/scene_tree_oak.png"
-#define PNG_SCENE_TREE_WILLOW "./media/scene/scene_tree_willow.png"
-#define PNG_SCENE_TREE_PINE "./media/scene/scene_tree_pine.png"
-#define PNG_SCENE_CABIN "./media/scene/scene_cabin.png"
-#define PNG_SCENE_FENCE "./media/scene/scene_fence.png"
-#define PNG_SCENE_GRASS "./media/scene/scene_grass.png"
-#define PNG_SCENE_BUSH "./media/scene/scene_bush.png"
-#define PNG_SCENE_WINDMILL "./media/scene/scene_windmill.png"
-#define PNG_SCENE_BARN "./media/scene/scene_barn.png"
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
@@ -729,6 +673,10 @@ int logic_get_player_lap_nb(struct game_context *ctx);
 int load_texture_from_file(struct game_context *ctx,
 			   char *path,
 			   struct texture *in);
+
+
+int media_load_resources(struct game_context *ctx);
+
 
 int main_display(struct game_context *ctx);
 
