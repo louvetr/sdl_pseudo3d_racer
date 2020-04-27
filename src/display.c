@@ -1398,6 +1398,31 @@ static int display_render_player_car(struct game_context *ctx)
 
 static int display_render_particles(struct game_context *ctx)
 {
+	// render flame burst when nitro is on
+	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
+		for (int k = 0; k < NB_PARTICLES_NITRO_DISPLAY; k++) {
+			if (ctx->part_nitro[k].pos_x != 0) {
+				ctx->part_nitro[k].frame++;
+
+				if (ctx->part_nitro[k].frame % 4)
+					texture_render(ctx,
+						       ctx->part_nitro[k].t,
+						       ctx->part_nitro[k].pos_x,
+						       ctx->part_nitro[k].pos_y,
+						       NULL,
+						       0.f,
+						       PARTICLE_NITRO_SCALE,
+						       SDL_FLIP_NONE,
+						       NULL);
+
+				if (ctx->part_nitro[k].frame >
+				    PARTICLE_NITRO_FRAME_DURATION)
+					ctx->part_nitro[k].pos_x = 0;
+			}
+		}
+	}
+
+	// render smoke when drifting
 	for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
 		if (ctx->part_smoke[k].pos_x != 0) {
 			ctx->part_smoke[k].frame++;

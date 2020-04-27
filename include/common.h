@@ -30,6 +30,11 @@
 #define PARTICLE_SMOKE_SCALE	0.2f
 #define PARTICLE_SMOKE_FRAME_DURATION	10
 
+#define NB_PARTICLES_NITRO_AVAILABLE	5
+#define NB_PARTICLES_NITRO_DISPLAY		10
+#define PARTICLE_NITRO_SCALE	0.2f
+#define PARTICLE_NITRO_FRAME_DURATION	10
+
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
 
@@ -253,6 +258,7 @@ struct game_graphics{
 	struct texture font_race_anim_3;
 
 	struct texture part_smoke[NB_PARTICLES_SMOKE_AVAILABLE];
+	struct texture part_nitro[NB_PARTICLES_NITRO_AVAILABLE];
 
 
 };
@@ -551,6 +557,7 @@ struct game_context {
 	float scale_ai_car[CAR_MODEL_LAST];
 
 	struct particle part_smoke[NB_PARTICLES_SMOKE_DISPLAY];
+	struct particle part_nitro[NB_PARTICLES_NITRO_DISPLAY];
 
 };
 

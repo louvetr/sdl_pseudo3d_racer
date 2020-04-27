@@ -68,6 +68,12 @@
 #define PNG_SMOKE_05 "./media/particles/whitePuff05.png"
 #define PNG_SMOKE_06 "./media/particles/whitePuff24.png"
 
+#define PNG_NITRO_00 "./media/particles/explosion00.png"
+#define PNG_NITRO_01 "./media/particles/explosion01.png"
+#define PNG_NITRO_02 "./media/particles/explosion02.png"
+#define PNG_NITRO_03 "./media/particles/explosion06.png"
+#define PNG_NITRO_04 "./media/particles/explosion07.png"
+
 
 static int media_load_cars_sprites_one_model(struct game_context *ctx,
 					     enum car_model_type idx,
@@ -397,6 +403,38 @@ static int media_load_particles(struct game_context *ctx)
 
 	ret = load_texture_from_file(
 		ctx, PNG_SMOKE_06, &ctx->gfx.part_smoke[6]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_NITRO_00, &ctx->gfx.part_nitro[0]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+	ret = load_texture_from_file(
+		ctx, PNG_NITRO_01, &ctx->gfx.part_nitro[1]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, PNG_NITRO_02, &ctx->gfx.part_nitro[2]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, PNG_NITRO_03, &ctx->gfx.part_nitro[3]);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+	ret = load_texture_from_file(
+		ctx, PNG_NITRO_04, &ctx->gfx.part_nitro[4]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;

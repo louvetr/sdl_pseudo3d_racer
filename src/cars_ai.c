@@ -538,9 +538,9 @@ int ai_car_init(struct game_context *ctx)
 			(float)SCREEN_WIDTH * 2.f *
 			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
 
-		SDL_Log("ctx->ai_cars[%d].distance = %d\n",
+		/*SDL_Log("ctx->ai_cars[%d].distance = %d\n",
 			i,
-			ctx->ai_cars[i].distance);
+			ctx->ai_cars[i].distance);*/
 	}
 
 	// shuffle start grid 5 times

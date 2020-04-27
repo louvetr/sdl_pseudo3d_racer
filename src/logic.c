@@ -242,6 +242,84 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 }
 
 
+static int logic_race_particles(struct game_context *ctx, float drift)
+{
+	// SDL_Log("[%s] drift = %f\n", __func__, drift);
+	if (drift > 0.025f || drift < -0.025f) {
+		int smoke_idx = -1;
+		for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
+			if (ctx->part_smoke[k].pos_x == 0) {
+				smoke_idx = k;
+				break;
+			}
+		}
+
+		if (smoke_idx >= 0) {
+			ctx->part_smoke[smoke_idx].frame = rand() % 5;
+
+			ctx->part_smoke[smoke_idx].t =
+				&ctx->gfx.part_smoke
+					 [rand() %
+					  NB_PARTICLES_SMOKE_AVAILABLE];
+
+			int smoke_w =
+				(int)((float)ctx->part_smoke[smoke_idx].t->w *
+				      PARTICLE_SMOKE_SCALE);
+			int smoke_w_rnd = rand() % (smoke_w * 2);
+
+			if (drift > 0)
+				ctx->part_smoke[smoke_idx].pos_x =
+					ctx->player_sprite_x - smoke_w +
+					smoke_w_rnd;
+			else
+				ctx->part_smoke[smoke_idx].pos_x =
+					ctx->player_max_x - smoke_w_rnd;
+
+			ctx->part_smoke[smoke_idx].pos_y =
+				ctx->player_max_y -
+				(int)((float)ctx->part_smoke[smoke_idx].t->h *
+				      PARTICLE_SMOKE_SCALE);
+		}
+	}
+
+	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
+
+		int nitro_idx = -1;
+		for (int k = 0; k < NB_PARTICLES_NITRO_DISPLAY; k++) {
+			if (ctx->part_nitro[k].pos_x == 0) {
+				nitro_idx = k;
+				break;
+			}
+		}
+
+		if (nitro_idx >= 0) {
+			ctx->part_nitro[nitro_idx].frame = rand() % 5;
+
+			ctx->part_nitro[nitro_idx].t =
+				&ctx->gfx.part_nitro
+					 [rand() %
+					  NB_PARTICLES_NITRO_AVAILABLE];
+
+			int nitro_w =
+				(int)((float)ctx->part_nitro[nitro_idx].t->w *
+				      PARTICLE_NITRO_SCALE);
+			int nitro_w_rnd =
+				rand() % (ctx->player_sprite_w - nitro_w);
+
+			ctx->part_nitro[nitro_idx].pos_x =
+				ctx->player_sprite_x + nitro_w_rnd;
+
+			ctx->part_nitro[nitro_idx].pos_y =
+				ctx->player_max_y -
+				(int)((float)ctx->part_nitro[nitro_idx].t->h *
+				      PARTICLE_NITRO_SCALE * 0.85f);
+		}
+	}
+
+	return 0;
+}
+
+
 static int logic_race_control(struct game_context *ctx)
 {
 
@@ -357,47 +435,10 @@ static int logic_race_control(struct game_context *ctx)
 			      ctx->centrifugal;
 		ctx->player_x = ctx->player_x - drift;
 
-		// TODO: manage smoke particles in a separate function
-		// SDL_Log("[%s] drift = %f\n", __func__, drift);
-		if (drift > 0.025f || drift < -0.025f) {
-			int smoke_idx = -1;
-			for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
-				if (ctx->part_smoke[k].pos_x == 0) {
-					smoke_idx = k;
-					break;
-				}
-			}
-
-			if (smoke_idx >= 0) {
-				ctx->part_smoke[smoke_idx].frame = rand() % 5;
-
-				ctx->part_smoke[smoke_idx].t =
-					&ctx->gfx.part_smoke
-						 [rand() %
-						  NB_PARTICLES_SMOKE_AVAILABLE];
-
-				int smoke_w =
-					(int)((float)ctx->part_smoke[smoke_idx]
-						      .t->w *
-					      PARTICLE_SMOKE_SCALE);
-				int smoke_w_rnd = rand() % (smoke_w * 2);
-
-				if (drift > 0)
-					ctx->part_smoke[smoke_idx].pos_x =
-						ctx->player_sprite_x - smoke_w +
-						smoke_w_rnd;
-				else
-					ctx->part_smoke[smoke_idx].pos_x =
-						ctx->player_max_x - smoke_w_rnd;
-
-				ctx->part_smoke[smoke_idx].pos_y =
-					ctx->player_max_y -
-					(int)((float)ctx->part_smoke[smoke_idx]
-						      .t->h *
-					      PARTICLE_SMOKE_SCALE);
-			}
-		}
+		logic_race_particles(ctx, drift);
 	}
+
+	///////////////////////////////////////////////////////////////
 
 	if (ctx->keys.accel || ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ctx->speed = inline_accelerate(ctx->speed, accel, ctx->dt);
