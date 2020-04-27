@@ -748,10 +748,9 @@ static int display_render_hud(struct game_context *ctx)
 					    &text_color_shadow,
 					    ctx->gfx.font_game_lap_value.w,
 					    0,
-					    shadow_num,
-					    shadow_den,
+					    shadow_num * 2,
+					    shadow_den * 3,
 					    0.f);
-
 
 	// Nitro
 	display_load_render_text_with_shade(ctx,
@@ -794,8 +793,7 @@ static int display_render_hud(struct game_context *ctx)
 			filledCircleRGBA(
 				ctx->renderer,
 				(int16_t)(SCREEN_WIDTH *
-					  (662 + (ctx->nb_nitro + 0) * 30) /
-					  1000),
+					  (662 + ctx->nb_nitro * 30) / 1000),
 				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
 					  100),
 				15,
@@ -807,8 +805,7 @@ static int display_render_hud(struct game_context *ctx)
 			filledCircleRGBA(
 				ctx->renderer,
 				(int16_t)(SCREEN_WIDTH *
-					  (662 + (ctx->nb_nitro + 0) * 30) /
-					  1000),
+					  (662 + ctx->nb_nitro * 30) / 1000),
 				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
 					  100),
 				11,
@@ -818,6 +815,38 @@ static int display_render_hud(struct game_context *ctx)
 				255);
 		}
 	}
+
+	// Clock
+	display_load_render_text_with_shade(ctx,
+					    ctx->sc_font_medium,
+					    &ctx->gfx.font_game_lap_title,
+					    "Time",
+					    &text_color,
+					    &text_color_shadow,
+					    SCREEN_WIDTH * 28 / 100,
+					    0,
+					    shadow_num,
+					    shadow_den,
+					    0.f);
+
+	char time_str[16];
+	int time_min = ctx->race_time_ms / 60000;
+	int time_sec = (ctx->race_time_ms - time_min * 60000) / 1000;
+	int time_ms = ctx->race_time_ms - time_min * 60000 - time_sec * 1000;
+
+	sprintf(time_str, "%02d:%02d.%03d", time_min, time_sec, time_ms);
+
+	display_load_render_text_with_shade(ctx,
+					    ctx->sc_font_medium,
+					    &ctx->gfx.font_game_lap_title,
+					    time_str,
+					    &text_color,
+					    &text_color_shadow,
+					    SCREEN_WIDTH * 24 / 100,
+					    SCREEN_HEIGHT * 11 / 200,
+					    shadow_num,
+					    shadow_den,
+					    0.f);
 
 	return ret;
 }

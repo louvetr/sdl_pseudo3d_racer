@@ -535,6 +535,7 @@ struct game_context {
     
 	Uint32 ts_prev;
 	Uint32 ts_cur;
+	// delta time between 2 frame. float time to avoid several cast
 	float dt;
 
 	// struct containing all the sprites
@@ -558,6 +559,9 @@ struct game_context {
 
 	struct particle part_smoke[NB_PARTICLES_SMOKE_DISPLAY];
 	struct particle part_nitro[NB_PARTICLES_NITRO_DISPLAY];
+
+	// race duration in milli seconds
+	int race_time_ms;
 
 };
 
