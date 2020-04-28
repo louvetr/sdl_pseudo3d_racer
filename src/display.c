@@ -1428,7 +1428,7 @@ static int display_render_player_car(struct game_context *ctx)
 static int display_render_particles(struct game_context *ctx)
 {
 	// render flame burst when nitro is on
-	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
+	if (ctx->status_cur == GAME_STATE_RACE_NITRO && ctx->keys.accel) {
 		for (int k = 0; k < NB_PARTICLES_NITRO_DISPLAY; k++) {
 			if (ctx->part_nitro[k].pos_x != 0) {
 				ctx->part_nitro[k].frame++;
