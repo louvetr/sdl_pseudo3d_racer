@@ -87,7 +87,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				}
 			}
 
-			// Back collison
+			// Back collision
 			if (ctx->ai_cars[i].hitbox.y < ctx->player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
 
@@ -474,63 +474,8 @@ static int logic_race_control(struct game_context *ctx)
 }
 
 
-static int logic_race(struct game_context *ctx)
+static int logic_race_collision_scene_ongoing(struct game_context *ctx)
 {
-	int ret;
-
-	ctx->player_segment_prev = ctx->player_segment;
-	ctx->player_segment =
-		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
-
-	ret = logic_race_dt(ctx);
-
-	ret = logic_race_control(ctx);
-
-	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
-		if (ctx->nb_frame_anim > FPS * START_ANIM_DURATION) {
-			ctx->nb_frame_anim = 0;
-			ctx->status_cur = GAME_STATE_RACE;
-			ctx->race_time_ms = 0;
-		}
-
-		// TODO: used define values
-		if (ctx->camera_height > CAMERA_HEIGHT_RACE) {
-			ctx->camera_height -=
-				(CAMERA_HEIGHT_START - CAMERA_HEIGHT_RACE) /
-				((START_ANIM_DURATION - 2) * FPS);
-		}
-
-	} else {
-		ret = logic_race_ai_cars(ctx);
-	}
-
-	ret = logic_race_check_collision_with_scene(ctx);
-	ret = logic_race_check_collision_with_cars(ctx);
-
-	ctx->player_lap = logic_get_player_lap_nb(ctx);
-
-	if (ctx->status_cur == GAME_STATE_RACE ||
-	    ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
-	    ctx->status_cur == GAME_STATE_RACE_NITRO)
-		ctx->race_time_ms += (int)ctx->dt;
-
-	return ret;
-}
-
-
-static int logic_race_collision_scene(struct game_context *ctx)
-{
-	// int ret;
-
-	/*
-	ctx->player_segment_prev = ctx->player_segment;
-	ctx->player_segment =
-		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
-	*/
-
-	// TODO: WTF is it called here
-	// ret = logic_race_control(ctx);
-
 	if (ctx->collision_dst_x < 0) {
 		ctx->player_x = ctx->player_x + COLLIONSION_SCENE_SHIFT / 10.f;
 		if (ctx->player_x >= ctx->collision_dst_x)
@@ -543,6 +488,63 @@ static int logic_race_collision_scene(struct game_context *ctx)
 
 	return 0;
 }
+
+
+static int logic_race(struct game_context *ctx)
+{
+	int ret;
+
+	// update player segment
+	ctx->player_segment_prev = ctx->player_segment;
+	ctx->player_segment =
+		inline_get_segment_idx(ctx, ctx->position + ctx->player_z);
+
+	// compute time since last frame
+	ret = logic_race_dt(ctx);
+
+	// manage car movement according control input
+	ret = logic_race_control(ctx);
+
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
+		// some computation specific to start animation
+		if (ctx->nb_frame_anim > FPS * START_ANIM_DURATION) {
+			ctx->nb_frame_anim = 0;
+			ctx->status_cur = GAME_STATE_RACE;
+			ctx->race_time_ms = 0;
+		}
+
+		// TODO: used define values
+		if (ctx->camera_height > CAMERA_HEIGHT_RACE) {
+			ctx->camera_height -=
+				(CAMERA_HEIGHT_START - CAMERA_HEIGHT_RACE) /
+				((START_ANIM_DURATION - 2) * FPS);
+		}
+	} else {
+		// perform ai car logic
+		ret = logic_race_ai_cars(ctx);
+	}
+
+	// Either check collision with scene or manage collision state
+	if (ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE)
+		ret = logic_race_collision_scene_ongoing(ctx);
+	else
+		ret = logic_race_check_collision_with_scene(ctx);
+
+	// check collision with other cars
+	ret = logic_race_check_collision_with_cars(ctx);
+
+	// compute current lap number
+	ctx->player_lap = logic_get_player_lap_nb(ctx);
+
+	// increase clock
+	if (ctx->status_cur == GAME_STATE_RACE ||
+	    ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
+	    ctx->status_cur == GAME_STATE_RACE_NITRO)
+		ctx->race_time_ms += (int)ctx->dt;
+
+	return ret;
+}
+
 
 int logic_project_coord(struct segment_point *p,
 			int first_segments_z_offset,
@@ -646,22 +648,8 @@ int main_logic(struct game_context *ctx)
 	case GAME_STATE_RACE_ANIM_END:
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_NITRO:
-		logic_race(ctx);
-		break;
 	case GAME_STATE_RACE_COLLISION_SCENE:
-		ctx->player_segment_prev = ctx->player_segment;
-		ctx->player_segment = inline_get_segment_idx(
-			ctx, ctx->position + ctx->player_z);
-		ret = logic_race_dt(ctx);
-		ret = logic_race_collision_scene(ctx);
-		ret = logic_race_ai_cars(ctx);
-		ret = logic_race_check_collision_with_cars(ctx);
-		ctx->player_lap = logic_get_player_lap_nb(ctx);
-		// TODO: dirty !!! find a neater and more modular way to do so
-		if (ctx->status_cur == GAME_STATE_RACE ||
-		    ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
-		    ctx->status_cur == GAME_STATE_RACE_NITRO)
-			ctx->race_time_ms += (int)ctx->dt;
+		logic_race(ctx);
 		break;
 	case GAME_STATE_QUIT:
 	case GAME_STATE_PAUSE:
