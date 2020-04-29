@@ -57,18 +57,6 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 		    (ctx->player_sprite_x < ai_max_x &&
 		     ctx->player_sprite_x > ctx->ai_cars[i].hitbox.x)) {
 
-			/*SDL_Log("[%s] player[%d->%d, %d->%d], ai[%d->%d,
-			   %d->%d])\n",
-				__func__,
-				ctx->player_sprite_x,
-				player_max_x,
-				ctx->player_sprite_y,
-				player_max_y,
-				ctx->ai_cars[i].hitbox.x,
-				ai_max_x,
-				ctx->ai_cars[i].hitbox.y,
-				ai_max_y);*/
-
 			// Front collision
 			if (ai_max_y > ctx->player_sprite_y &&
 			    ai_max_y < ctx->player_max_y) {
@@ -91,32 +79,33 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			if (ctx->ai_cars[i].hitbox.y < ctx->player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
 
-				int tmp_player_seg;
+				ctx->ai_cars[i].state =
+					AI_CAR_STATE_SPEED_BEHIND_PLAYER;
+				ctx->ai_cars[i].behind_player_frames = 0;
 
-				if (ctx->player_segment >
-				    ctx->ai_cars[i].segment) {
-					tmp_player_seg = ctx->player_segment;
-				} else {
-					tmp_player_seg = ctx->player_segment +
-							 ctx->nb_segments;
-				}
-
-				if (tmp_player_seg - ctx->ai_cars[i].segment <
-				    NB_SEGMENT_CAR_COLLISION) {
-					ctx->ai_cars[i].state =
-						AI_CAR_STATE_SPEED_BEHIND_PLAYER;
-					ctx->ai_cars[i].behind_player_frames =
-						0;
+				if (ctx->speed) {
 					ctx->ai_cars[i].speed_slow_straight =
-						ctx->speed ? ctx->speed * .9f
-							   : ctx->max_speed;
-					ctx->ai_cars[i].speed_slow_curve =
+						ctx->speed * .5f;
+
+					float speed_boost =
 						ctx->ai_cars[i]
-							.speed_slow_straight;
+							.speed_max_straight *
+						.05f;
+
+					if (ctx->speed + speed_boost <
+					    ctx->max_speed)
+						ctx->speed += speed_boost;
+				} else {
+					ctx->ai_cars[i].speed_slow_straight =
+						0.f;
+					ctx->speed =
+						ctx->ai_cars[i]
+							.speed_max_straight *
+						.05f;
 				}
 
-				/* TODO : maybe give a little temporary
-				 * speed boost */
+				ctx->ai_cars[i].speed_slow_curve =
+					ctx->ai_cars[i].speed_slow_straight;
 			}
 		}
 	}
@@ -530,8 +519,10 @@ static int logic_race(struct game_context *ctx)
 	else
 		ret = logic_race_check_collision_with_scene(ctx);
 
-	// check collision with other cars
-	ret = logic_race_check_collision_with_cars(ctx);
+	if (ctx->status_cur != GAME_STATE_RACE_ANIM_START) {
+		// check collision with other cars
+		ret = logic_race_check_collision_with_cars(ctx);
+	}
 
 	// compute current lap number
 	ctx->player_lap = logic_get_player_lap_nb(ctx);
