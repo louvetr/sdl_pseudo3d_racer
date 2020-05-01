@@ -436,6 +436,7 @@ static int main_build_track_1(struct game_context *ctx)
 }
 #endif
 
+#if 0
 int track_build_try_turns(struct game_context *ctx)
 {
 	int nb_segments_added = 0;
@@ -507,7 +508,7 @@ int track_build_try_turns(struct game_context *ctx)
 
 	return 0;
 }
-
+#endif
 
 // DP track
 int track_build(struct game_context *ctx)
@@ -515,25 +516,28 @@ int track_build(struct game_context *ctx)
 	int nb_segments_added = 0;
 
 	// ctx->nb_segments = 2750;
-	ctx->nb_segments = 2450;
+	//ctx->nb_segments = 2450;
+	ctx->nb_segments = 2510;
+	//ctx->nb_segments = 2600;
 
 	///////////////////////////////////
 	// TODO: put this in a function elsewhere
 	// ctx->player_segment = ctx->nb_segments - 30;
-	
-	//ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+
+	// ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 
 	int player_lane = NB_AI_CARS % ctx->lanes;
 	// ctx->position =
 	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
 
 	ctx->player_segment = ctx->nb_segments -
-			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING - 6;
+			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING -
+			      6;
 	ctx->player_segment_prev = ctx->player_segment;
 	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
 	ctx->player_distance_ran =
-			(ctx->player_segment - ctx->nb_segments) *
-			ROAD_SEGMENT_LENGTH - 1;
+		(ctx->player_segment - ctx->nb_segments) * ROAD_SEGMENT_LENGTH -
+		1;
 
 	SDL_Log("PLAYER player_distance_ran = %d\n", ctx->player_distance_ran);
 
@@ -550,11 +554,24 @@ int track_build(struct game_context *ctx)
 	// A: 300 --- 300 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
 					     nb_segments_added,
-					     SECTOR_LENGTH_LONG,
-					     SECTOR_LENGTH_LONG,
-					     SECTOR_LENGTH_LONG,
+					     SECTOR_LENGTH_MEDIUM,
+					     SECTOR_LENGTH_MEDIUM,
+					     SECTOR_LENGTH_MEDIUM,
 					     HILL_NONE,
-					     CURVE_NONE);
+					     CURVE_NONE,
+					     3,
+					     3);
+
+	// +75
+	nb_segments_added += road_add_sector(ctx->segments,
+					     nb_segments_added,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     HILL_NONE,
+					     CURVE_NONE,
+					     3,
+					     2);
 
 	// B: 175 --- 475 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -563,7 +580,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_MEDIUM,
 					     HILL_NONE,
-					     CURVE_RIGHT_MEDIUM);
+					     CURVE_RIGHT_MEDIUM,
+					     2,
+					     2);
 
 	// C: 200 --- 675 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -572,7 +591,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_MEDIUM,
 					     HILL_UP_LOW,
-					     CURVE_LEFT_EASY);
+					     CURVE_LEFT_EASY,
+					     2,
+					     2);
 
 	// D: 175 --- 825 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -581,7 +602,20 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_MEDIUM,
 					     SECTOR_LENGTH_LONG,
 					     HILL_NONE,
-					     CURVE_LEFT_HARD);
+					     CURVE_LEFT_HARD,
+					     2,
+					     2);
+
+	// +75
+	nb_segments_added += road_add_sector(ctx->segments,
+					     nb_segments_added,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     SECTOR_LENGTH_VERY_SHORT,
+					     HILL_NONE,
+					     CURVE_NONE,
+					     2,
+					     3);
 
 	// E: 300 --- 1125 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -590,7 +624,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_LONG,
 					     HILL_UP_HIGH,
-					     CURVE_NONE);
+					     CURVE_NONE,
+					     3,
+					     3);
 
 	// F: 200 --- 1325 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -599,7 +635,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_MEDIUM,
 					     HILL_NONE,
-					     CURVE_RIGHT_MEDIUM);
+					     CURVE_RIGHT_MEDIUM,
+					     3,
+					     3);
 
 	// G: 300 --- 1625 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -608,7 +646,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_LONG,
 					     HILL_DOWN_HIGH,
-					     CURVE_NONE);
+					     CURVE_NONE,
+					     3,
+					     3);
 
 	// H: 175 --- 1800 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -617,7 +657,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_MEDIUM,
 					     SECTOR_LENGTH_LONG,
 					     HILL_NONE,
-					     CURVE_LEFT_HARD);
+					     CURVE_LEFT_HARD,
+					     3,
+					     3);
 
 	// I: 150 --- 1950 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -626,7 +668,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_MEDIUM,
 					     SECTOR_LENGTH_MEDIUM,
 					     HILL_UP_MEDIUM,
-					     CURVE_RIGHT_MEDIUM);
+					     CURVE_RIGHT_MEDIUM,
+					     3,
+					     3);
 
 	// J: 175 --- 2125 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -635,7 +679,9 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_MEDIUM,
 					     SECTOR_LENGTH_SHORT,
 					     HILL_NONE,
-					     CURVE_RIGHT_MEDIUM);
+					     CURVE_RIGHT_MEDIUM,
+					     3,
+					     3);
 
 	// K: 300 --- 2425 --- y = 0
 	nb_segments_added += road_add_sector(ctx->segments,
@@ -644,7 +690,19 @@ int track_build(struct game_context *ctx)
 					     SECTOR_LENGTH_LONG,
 					     SECTOR_LENGTH_LONG,
 					     HILL_DOWN_HIGH,
-					     CURVE_NONE);
+					     CURVE_NONE,
+					     3,
+					     3);
+
+	nb_segments_added += road_add_sector(ctx->segments,
+					     nb_segments_added,
+					     SECTOR_LENGTH_MEDIUM,
+					     SECTOR_LENGTH_MEDIUM,
+					     SECTOR_LENGTH_MEDIUM,
+					     HILL_NONE,
+					     CURVE_NONE,
+					     3,
+					     3);
 
 	// L: 300 --- 2725 --- y = 0
 	/*nb_segments_added += road_add_sector(ctx->segments,

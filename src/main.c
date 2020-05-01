@@ -105,8 +105,6 @@ static int main_ctx_init(struct game_context *ctx)
 		return -ENOMEM;
 	}
 
-	// ctx->road_width = 4200;
-	ctx->road_width = 2100;
 	// ctx->segment_length = 200;
 	ctx->rumble_length = RUMBLE_LENGTH;
 	ctx->track_length = 0;
@@ -142,9 +140,9 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
 	ctx->same_car_orientation_in_frame = 0;
 
-	//ctx->car_player_model = CAR_MODEL_NSX;
-	//ctx->car_player_model = CAR_MODEL_FALCON;
-	//ctx->car_player_model = CAR_MODEL_VIPER;
+	// ctx->car_player_model = CAR_MODEL_NSX;
+	// ctx->car_player_model = CAR_MODEL_FALCON;
+	// ctx->car_player_model = CAR_MODEL_VIPER;
 	ctx->car_player_model = CAR_MODEL_IMPREZIA;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
@@ -181,8 +179,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->scale_ai_car[CAR_MODEL_LANCER] = AI_CAR_SCALE_LANCER;
 
 
-	ctx->constants.scene_sprite_coef =
-		(float)ctx->road_width * (float)SCREEN_WIDTH / 2.f;
+	ctx->constants.scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
 
 
 	// player sprite constant values

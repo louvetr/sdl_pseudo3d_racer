@@ -37,7 +37,7 @@
 
 //#define PLAYER_Y (SCREEN_HEIGHT - 30)
 
-
+#define LANE_WIDTH 700
 #define ROAD_SEGMENT_LENGTH 200
 
 #define RUMBLE_LENGTH 3
@@ -112,6 +112,11 @@ enum color_road {
 
 };
 
+/*enum road_width_change {
+	ROAD_WIDTH_MINUS = -1,
+	ROAD_WIDTH_NONE = 0,
+	ROAD_WIDTH_PLUS = 1
+};*/
 
 // turn curve level and direction
 enum road_curve {
@@ -139,6 +144,7 @@ enum road_hill {
 
 // length in segment of a road sector
 enum road_sector_length {
+ 	SECTOR_LENGTH_VERY_SHORT = 10,
  	SECTOR_LENGTH_SHORT = 25,
  	SECTOR_LENGTH_MEDIUM = 50,
  	SECTOR_LENGTH_LONG = 100
@@ -307,6 +313,8 @@ struct road_segment {
 	float curve;
 	enum color_road color;
 	struct scene_segment_desc *scene;
+	int nb_lanes;
+	int width;
 	//struct scene_sprite_desc sprite_desc;
 
 };
@@ -394,7 +402,7 @@ struct game_context {
 	// factor to provide resolution independence (computed) actually half
 	// the roads width, easier math if the road spans from -roadWidth to
 	// +roadWidth
-	int road_width;
+	// int road_width;
 	// length of a single segment
 	//int segment_length;
 	// number of segments per red/white rumble strip
@@ -674,12 +682,14 @@ static inline int rand_interval(int min, int max)
 int track_build(struct game_context *ctx);
 
 int road_add_sector(struct road_segment *segments,
-				int start_idx,
-				int sector_enter_lg,
-				int sector_hold_lg,
-				int sector_exit_lg,
-				int y,
-				enum road_curve curve);
+		    int start_idx,
+		    int sector_enter_lg,
+		    int sector_hold_lg,
+		    int sector_exit_lg,
+		    int y,
+		    enum road_curve curve,
+		    int nb_lanes_enter,
+		    int nb_lanes_exit);
 
 int logic_project_coord(struct segment_point *p,
 			int first_segments_z_offset,

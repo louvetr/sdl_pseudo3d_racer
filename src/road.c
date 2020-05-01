@@ -5,7 +5,9 @@ static int road_add_segment(struct road_segment *segment,
 			    int idx,
 			    float y,
 			    float prev_y,
-			    float curve)
+			    float curve,
+			    int width,
+			    int nb_lanes)
 // enum road_curve curve)
 {
 	memset(&segment->p1, 0, sizeof(segment->p1));
@@ -16,6 +18,8 @@ static int road_add_segment(struct road_segment *segment,
 	segment->p1.world.y = prev_y;
 	segment->p2.world.y = y;
 	segment->curve = curve;
+	segment->width = width;
+	segment->nb_lanes = nb_lanes;
 
 
 	/*static float prev_curve;
@@ -52,7 +56,9 @@ int road_add_sector(struct road_segment *segments,
 		    int sector_hold_lg,
 		    int sector_exit_lg,
 		    int y,
-		    enum road_curve curve)
+		    enum road_curve curve,
+		    int nb_lanes_enter,
+		    int nb_lanes_exit)
 {
 	int i, idx, sector_total_lg;
 	int nb_segment_added = 0;
@@ -63,20 +69,15 @@ int road_add_sector(struct road_segment *segments,
 	if (idx == 0)
 		prev_y = 0;
 
+	//int nb_lanes = nb_lanes_enter != nb_lanes_exit ? 0 : nb_lanes_enter;
+	int nb_lanes = nb_lanes_enter < nb_lanes_exit ? nb_lanes_enter : nb_lanes_exit;
+
+	int width_step = ((nb_lanes_exit - nb_lanes_enter) * LANE_WIDTH) /
+			 sector_total_lg;
+	int width = nb_lanes_enter * LANE_WIDTH;
+
 	// TODO: set prev_y properly !
 	start_y = prev_y;
-	/*
-	toInt:
-		function(obj, def)
-		{
-			if (obj != = null) {
-				var x = parseInt(obj, 10);
-				if (!isNaN(x))
-					return x;
-			}
-			return Util.toInt(def, 0);
-		}
-	*/
 
 	end_y = start_y + (float)(y * ROAD_SEGMENT_LENGTH);
 
@@ -93,7 +94,10 @@ int road_add_sector(struct road_segment *segments,
 				(float)i / (float)sector_total_lg), // TODO: BUG
 			prev_y,
 			inline_curve_inout(
-				0, curve, (float)i / (float)sector_enter_lg));
+				0, curve, (float)i / (float)sector_enter_lg),
+			width,
+			nb_lanes);
+		width += width_step;
 		prev_y = segments[idx].p2.world.y;
 		idx++;
 	}
@@ -111,7 +115,10 @@ int road_add_sector(struct road_segment *segments,
 					   (float)(i + sector_enter_lg) /
 						   (float)sector_total_lg),
 			prev_y,
-			curve);
+			curve,
+			width,
+			nb_lanes);
+		width += width_step;
 		prev_y = segments[idx].p2.world.y;
 		idx++;
 	}
@@ -132,7 +139,10 @@ int road_add_sector(struct road_segment *segments,
 					(float)sector_total_lg),
 			prev_y,
 			inline_curve_inout(
-				curve, 0, (float)i / (float)sector_exit_lg));
+				curve, 0, (float)i / (float)sector_exit_lg),
+			width,
+			nb_lanes);
+		width += width_step;
 		prev_y = segments[idx].p2.world.y;
 		idx++;
 	}

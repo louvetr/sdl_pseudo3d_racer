@@ -902,7 +902,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 			sprite_x =
 				seg->p1.screen.x +
 				(int)(car_screen_scale * ctx->ai_cars[i].pos_x *
-				      (float)ctx->road_width *
+				      (float)seg->width *
 				      (float)SCREEN_WIDTH / 2.f) -
 				(int)((float)ctx->gfx
 					      .cars[ctx->ai_cars[i].car_model]
@@ -1044,7 +1044,7 @@ static int display_render_scene_sprites(struct game_context *ctx,
 		seg->scene->sprite[j]->scaled_x =
 			seg->p1.screen.x +
 			(int)(screen_scale * seg->scene->sprite[j]->position *
-			      ctx->constants.scene_sprite_coef);
+			      ctx->constants.scene_sprite_coef * (float) seg->width);
 		if (seg->scene->sprite[j]->position < 0)
 			seg->scene->sprite[j]->scaled_x -=
 				(int)((float)seg->scene->sprite[j]->t->w *
@@ -1207,13 +1207,13 @@ static int display_render_road(struct game_context *ctx)
 				? (int)ctx->segments[ctx->nb_segments - 1]
 					  .p1.world.z
 				: 0,
-			(int)((ctx->player_x * (float)ctx->road_width) - x),
+			(int)((ctx->player_x * (float)ctx->segments[idx].width) - x),
 			ctx->player_y + ctx->camera_height,
 			ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
-			ctx->road_width);
+			ctx->segments[idx].width);
 
 		logic_project_coord(
 			&ctx->segments[idx].p2,
@@ -1221,14 +1221,14 @@ static int display_render_road(struct game_context *ctx)
 				? (int)ctx->segments[ctx->nb_segments - 1]
 					  .p2.world.z
 				: 0,
-			(int)((ctx->player_x * (float)ctx->road_width) - x -
+			(int)((ctx->player_x * (float)ctx->segments[idx].width) - x -
 			      dx),
 			ctx->player_y + ctx->camera_height,
 			ctx->position,
 			ctx->camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
-			ctx->road_width);
+			ctx->segments[idx].width);
 
 		x += dx;
 		dx += ctx->segments[idx].curve;
@@ -1254,7 +1254,7 @@ static int display_render_road(struct game_context *ctx)
 		display_render_segment(ctx,
 				       idx,
 				       SCREEN_WIDTH,
-				       ctx->lanes,
+				       ctx->segments[idx].nb_lanes,
 				       ctx->segments[idx].p1.screen.x,
 				       (int)ctx->segments[idx].p1.screen.y,
 				       ctx->segments[idx].p1.screen.w,
