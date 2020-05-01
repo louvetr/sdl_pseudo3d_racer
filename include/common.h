@@ -187,7 +187,15 @@ enum ai_car_state {
 	AI_CAR_STATE_SWITCHING_LANE_RIGHT
 };
 
+enum track_selection {
+	TRACK_DIJON = 0,
+};
 
+enum track_lane_type {
+	LANE_TYPE_NONE = 0,
+	LANE_TYPE_HALF,
+	LANE_TYPE_FULL
+};
 
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
@@ -385,6 +393,14 @@ struct various_constants {
 	float scene_sprite_coef;
 };
 
+struct track_info {
+
+	enum track_selection track_selected;
+	enum track_lane_type lane_type;
+	struct color_desc lane_color;
+	
+};
+
 // game context, contains all information of the game
 struct game_context {
 
@@ -552,6 +568,8 @@ struct game_context {
 	struct keys_status keys;
 
 	struct ai_car_info ai_cars[NB_AI_CARS];
+
+	struct track_info track;
 
     // quit game when set to 1
     int exit;

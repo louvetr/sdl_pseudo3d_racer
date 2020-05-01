@@ -2,6 +2,23 @@
 
 const Uint32 SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
 
+
+// TODO: move in a separtate file
+struct color_desc color_lane_white = {
+	.r = 255,
+	.g = 255,
+	.b = 255,
+	.a = 255,
+};
+
+struct color_desc color_lane_yellow = {
+	.r = 0xFC,
+	.g = 0xE2,
+	.b = 0x05,
+	.a = 255,
+};
+
+
 /////////////////////////////////////////////////////////////////
 // static function definitions
 ////////////////////////////////////////////////////////////////
@@ -180,6 +197,11 @@ static int main_ctx_init(struct game_context *ctx)
 
 
 	ctx->constants.scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
+
+	// track info init
+	ctx->track.track_selected = TRACK_DIJON;
+	ctx->track.lane_type = LANE_TYPE_HALF;
+	ctx->track.lane_color = color_lane_yellow;
 
 
 	// player sprite constant values

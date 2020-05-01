@@ -84,17 +84,13 @@ struct color_desc color_dark_rumble = {
 	.a = 255,
 };
 
-struct color_desc color_lane = {
+struct color_desc color_white = {
 	.r = 255,
 	.g = 255,
 	.b = 255,
 	.a = 255,
 };
 
-/* TODO: several lanes styles
-		- 1 cental yellow
-		- 2 central yellow
-*/
 
 
 /////////////////////////////////////////////////////////////////
@@ -234,6 +230,8 @@ static int display_render_segment(struct game_context *ctx,
 				  int fog,
 				  int color)
 {
+	int grid_per_lane = 4;
+	int lane_separator;
 	int r1 = inline_rumble_width(w1, lanes);
 	int r2 = inline_rumble_width(w2, lanes);
 	int l1 = inline_lane_marker_width(w1, lanes);
@@ -310,9 +308,24 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    road_color);
 
-	int grid_per_lane = 4;
-	int lane_separator = 1;
-	road_color = &color_lane;
+	switch (ctx->track.lane_type) {
+	case LANE_TYPE_NONE:
+		lane_separator = 0;
+		break;
+	case LANE_TYPE_HALF:
+		if (color == COLOR_DARK)
+			lane_separator = 1;
+		else 
+			lane_separator = 0;
+		break;
+	case LANE_TYPE_FULL:
+		lane_separator = 1;
+		break;
+	default:
+		lane_separator = 0;
+	}
+
+	//road_color = &color_lane;
 
 	if (seg_idx < 7) {
 		int j_offset = (seg_idx) % 2;
@@ -333,12 +346,12 @@ static int display_render_segment(struct game_context *ctx,
 					    y2,
 					    square_x2 + square_w2 * j,
 					    y2,
-					    road_color);
+					    &color_white);
 		}
 	}
 
 	// render lanes
-	if (color == COLOR_DARK && lanes > 0 && lane_separator) {
+	if (lanes > 0 && lane_separator) {
 		int lane_w1 = (w1 * 2) / lanes;
 		int lane_w2 = (w2 * 2) / lanes;
 		int lane_x1 = x1 - w1 + lane_w1;
@@ -355,9 +368,9 @@ static int display_render_segment(struct game_context *ctx,
 				r.w = 2;
 
 				SDL_SetRenderDrawColor(ctx->renderer,
-						       color_lane.r,
-						       color_lane.g,
-						       color_lane.b,
+						       ctx->track.lane_color.r,
+						       ctx->track.lane_color.g,
+						       ctx->track.lane_color.b,
 						       255);
 				SDL_RenderFillRect(ctx->renderer, &r);
 			} else {
@@ -371,7 +384,7 @@ static int display_render_segment(struct game_context *ctx,
 						    y2,
 						    lane_x2 - l2 / 2,
 						    y2,
-						    &color_lane);
+						    &ctx->track.lane_color);
 			}
 		}
 	}
@@ -902,8 +915,8 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 			sprite_x =
 				seg->p1.screen.x +
 				(int)(car_screen_scale * ctx->ai_cars[i].pos_x *
-				      (float)seg->width *
-				      (float)SCREEN_WIDTH / 2.f) -
+				      (float)seg->width * (float)SCREEN_WIDTH /
+				      2.f) -
 				(int)((float)ctx->gfx
 					      .cars[ctx->ai_cars[i].car_model]
 						   [ctx->ai_cars[i].sprite_idx]
@@ -1044,7 +1057,8 @@ static int display_render_scene_sprites(struct game_context *ctx,
 		seg->scene->sprite[j]->scaled_x =
 			seg->p1.screen.x +
 			(int)(screen_scale * seg->scene->sprite[j]->position *
-			      ctx->constants.scene_sprite_coef * (float) seg->width);
+			      ctx->constants.scene_sprite_coef *
+			      (float)seg->width);
 		if (seg->scene->sprite[j]->position < 0)
 			seg->scene->sprite[j]->scaled_x -=
 				(int)((float)seg->scene->sprite[j]->t->w *
@@ -1207,7 +1221,9 @@ static int display_render_road(struct game_context *ctx)
 				? (int)ctx->segments[ctx->nb_segments - 1]
 					  .p1.world.z
 				: 0,
-			(int)((ctx->player_x * (float)ctx->segments[idx].width) - x),
+			(int)((ctx->player_x *
+			       (float)ctx->segments[idx].width) -
+			      x),
 			ctx->player_y + ctx->camera_height,
 			ctx->position,
 			ctx->camera_depth,
@@ -1221,8 +1237,9 @@ static int display_render_road(struct game_context *ctx)
 				? (int)ctx->segments[ctx->nb_segments - 1]
 					  .p2.world.z
 				: 0,
-			(int)((ctx->player_x * (float)ctx->segments[idx].width) - x -
-			      dx),
+			(int)((ctx->player_x *
+			       (float)ctx->segments[idx].width) -
+			      x - dx),
 			ctx->player_y + ctx->camera_height,
 			ctx->position,
 			ctx->camera_depth,
