@@ -56,7 +56,7 @@ int road_add_sector(struct road_segment *segments,
 		    int sector_hold_lg,
 		    int sector_exit_lg,
 		    int y,
-		    enum road_curve curve,
+		    /*enum road_curve*/ /*int*/ float curve,
 		    int nb_lanes_enter,
 		    int nb_lanes_exit)
 {
@@ -81,7 +81,7 @@ int road_add_sector(struct road_segment *segments,
 
 	end_y = start_y + (float)(y * ROAD_SEGMENT_LENGTH);
 
-	SDL_Log("[%s] start_y = %f, end_y = %f\n", __func__, start_y, end_y);
+	//SDL_Log("[%s] start_y = %f, end_y = %f\n", __func__, start_y, end_y);
 
 	for (i = 0; i < sector_enter_lg; i++) {
 		// main_road_add_segment(&segments[idx], idx, y, prev_y, curve);
@@ -103,7 +103,7 @@ int road_add_sector(struct road_segment *segments,
 	}
 	nb_segment_added += i;
 
-	SDL_Log("[%s] ---------------------------------------\n", __func__);
+	//SDL_Log("[%s] ---------------------------------------\n", __func__);
 
 	for (i = 0; i < sector_hold_lg; i++) {
 		// idx = start_idx + nb_segment_added + i;
@@ -124,7 +124,7 @@ int road_add_sector(struct road_segment *segments,
 	}
 	nb_segment_added += i;
 
-	SDL_Log("[%s] ---------------------------------------\n", __func__);
+	//SDL_Log("[%s] ---------------------------------------\n", __func__);
 
 	for (i = 0; i < sector_exit_lg; i++) {
 		// idx = start_idx + nb_segment_added + i;

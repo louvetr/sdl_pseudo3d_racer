@@ -112,43 +112,7 @@ enum color_road {
 
 };
 
-/*enum road_width_change {
-	ROAD_WIDTH_MINUS = -1,
-	ROAD_WIDTH_NONE = 0,
-	ROAD_WIDTH_PLUS = 1
-};*/
 
-// turn curve level and direction
-enum road_curve {
-	CURVE_LEFT_HARD = -6,
-	CURVE_LEFT_MEDIUM = -4,
-	CURVE_LEFT_EASY = -2,
-	CURVE_NONE = 0,
-	CURVE_RIGHT_EASY = 2,
-	CURVE_RIGHT_MEDIUM = 4,
-	CURVE_RIGHT_HARD = 6
-};
-
-// 'altitude' of the road
-enum road_hill {
-	HILL_DOWN_HIGH = -60,
-	HILL_DOWN_MEDIUM = -40,
-	HILL_DOWN_LOW = -20,
-	HILL_DOWN_SLIGHT = -10,
-	HILL_NONE = 0,
-	HILL_UP_SLIGHT = 10,
-	HILL_UP_LOW = 20,
-	HILL_UP_MEDIUM = 40,
-	HILL_UP_HIGH = 60
-};
-
-// length in segment of a road sector
-enum road_sector_length {
- 	SECTOR_LENGTH_VERY_SHORT = 10,
- 	SECTOR_LENGTH_SHORT = 25,
- 	SECTOR_LENGTH_MEDIUM = 50,
- 	SECTOR_LENGTH_LONG = 100
-};
 
 enum player_sprite_orientation {
  	PLAYER_SPRITE_HARD_LEFT,
@@ -699,13 +663,23 @@ static inline int rand_interval(int min, int max)
 
 int track_build(struct game_context *ctx);
 
-int road_add_sector(struct road_segment *segments,
+/*int road_add_sector(struct road_segment *segments,
 		    int start_idx,
 		    int sector_enter_lg,
 		    int sector_hold_lg,
 		    int sector_exit_lg,
 		    int y,
 		    enum road_curve curve,
+		    int nb_lanes_enter,
+		    int nb_lanes_exit);*/
+
+int road_add_sector(struct road_segment *segments,
+		    int start_idx,
+		    int sector_enter_lg,
+		    int sector_hold_lg,
+		    int sector_exit_lg,
+		    int y,
+		    /*int*/ float curve,
 		    int nb_lanes_enter,
 		    int nb_lanes_exit);
 
