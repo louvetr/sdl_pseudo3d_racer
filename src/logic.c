@@ -128,20 +128,23 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		if (!seg->scene)
 			continue;
 
+		// TODO: preset the index of closest scene spite of the road to
+		// avoid this computation
+
 		for (int j = 0; j < seg->scene->nb_sprites; j++) {
-			if (seg->scene->sprite[j]->position > 0) {
-				if (seg->scene->sprite[j]->position <
+			if (seg->scene->sprite[j].position > 0) {
+				if (seg->scene->sprite[j].position <
 				    closest_right_position) {
-					sprite_right = seg->scene->sprite[j];
+					sprite_right = &seg->scene->sprite[j];
 					closest_right_position =
-						seg->scene->sprite[j]->position;
+						seg->scene->sprite[j].position;
 				}
 			} else {
-				if (seg->scene->sprite[j]->position >
+				if (seg->scene->sprite[j].position >
 				    closest_left_position) {
-					sprite_left = seg->scene->sprite[j];
+					sprite_left = &seg->scene->sprite[j];
 					closest_left_position =
-						seg->scene->sprite[j]->position;
+						seg->scene->sprite[j].position;
 				}
 			}
 		}
@@ -149,9 +152,10 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		int sprite_left_hb_x = 0;
 		int sprite_right_hb_x = SCREEN_WIDTH;
 
-		if (sprite_left->hitbox &&
-		    sprite_right->scaled_x < SCREEN_WIDTH &&
-		    sprite_right->scale > 0) {
+		// TODO: recheck hitbox
+		if (sprite_left->collide &&
+		    sprite_left->scaled_x < SCREEN_WIDTH &&
+		    sprite_left->scale > 0) {
 			if (sprite_left->hitbox)
 				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
 					sprite_left_hb_x =
@@ -180,7 +184,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 					      sprite_left->scale);
 		}
 
-		if (sprite_right->hitbox && sprite_right->scaled_x > 0 &&
+		if (sprite_right->collide && sprite_right->scaled_x > 0 &&
 		    sprite_right->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_right->hitbox)
@@ -192,6 +196,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 				 sprite_right->scaled_x < SCREEN_WIDTH)*/
 				sprite_right_hb_x = sprite_right->scaled_x;
 		}
+
 		// check car collision with sprite on left
 		if (ctx->player_sprite_x < sprite_left_hb_x) {
 			SDL_Log("[%s] collision detected on LEFT\n", __func__);

@@ -73,6 +73,10 @@
 #define CAMERA_HEIGHT_RACE 1000
 #define CAMERA_HEIGHT_START 10000
 
+
+#define MAX_SCENE_SPRITE_PER_SEG 30
+ 
+
 /////////////////////////////////////////////////////////////////
 // enums
 /////////////////////////////////////////////////////////////////
@@ -267,6 +271,9 @@ struct scene_sprite_desc {
 	float position;
 	float scale;
 	SDL_RendererFlip flip;
+	// 1 if sprite cause collision, 0 otherwise
+	int collide;
+	// determine the hitbox of the sprite within the texture (eg. trunk of a tree)
 	SDL_Rect *hitbox;
 	int scaled_x;	
 	//int scaled_w;	// TODO: useless ???
@@ -277,6 +284,11 @@ struct scene_segment_desc {
 	struct scene_sprite_desc **sprite;
 };
 
+struct scene_seg_desc {
+	int nb_sprites;
+	struct scene_sprite_desc sprite[MAX_SCENE_SPRITE_PER_SEG];
+};
+
 struct road_segment {
 
 	struct segment_point p1;
@@ -284,7 +296,7 @@ struct road_segment {
 	//enum road_curve curve;
 	float curve;
 	enum color_road color;
-	struct scene_segment_desc *scene;
+	struct scene_seg_desc *scene;
 	int nb_lanes;
 	int width;
 	//struct scene_sprite_desc sprite_desc;

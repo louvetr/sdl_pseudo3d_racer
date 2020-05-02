@@ -1049,27 +1049,27 @@ static int display_render_scene_sprites(struct game_context *ctx,
 	for (int j = 0; j < seg->scene->nb_sprites; j++) {
 
 		// ignore segments without sprite
-		if (!seg->scene->sprite[j]->t)
+		if (!seg->scene->sprite[j].t)
 			continue;
 
-		seg->scene->sprite[j]->scale = x_scale;
+		seg->scene->sprite[j].scale = x_scale;
 
-		seg->scene->sprite[j]->scaled_x =
+		seg->scene->sprite[j].scaled_x =
 			seg->p1.screen.x +
-			(int)(screen_scale * seg->scene->sprite[j]->position *
+			(int)(screen_scale * seg->scene->sprite[j].position *
 			      ctx->constants.scene_sprite_coef *
 			      (float)seg->width);
-		if (seg->scene->sprite[j]->position < 0)
-			seg->scene->sprite[j]->scaled_x -=
-				(int)((float)seg->scene->sprite[j]->t->w *
-				      seg->scene->sprite[j]->scale);
+		if (seg->scene->sprite[j].position < 0)
+			seg->scene->sprite[j].scaled_x -=
+				(int)((float)seg->scene->sprite[j].t->w *
+				      seg->scene->sprite[j].scale);
 
-		if (seg->scene->sprite[j]->scaled_x > SCREEN_WIDTH)
+		if (seg->scene->sprite[j].scaled_x > SCREEN_WIDTH)
 			continue;
 
 		int sprite_y = (int)((float)seg->p1.screen.y -
-				     (float)seg->scene->sprite[j]->t->h *
-					     seg->scene->sprite[j]->scale);
+				     (float)seg->scene->sprite[j].t->h *
+					     seg->scene->sprite[j].scale);
 
 		SDL_Rect *r = NULL;
 
@@ -1082,17 +1082,17 @@ static int display_render_scene_sprites(struct game_context *ctx,
 			}
 
 			r = calloc(1, sizeof(SDL_Rect));
-			r->w = seg->scene->sprite[j]->t->w;
+			r->w = seg->scene->sprite[j].t->w;
 			int clip_h = ctx->max_y - sprite_y;
 			int clip_h_inv_scale =
 				(int)((float)(ctx->max_y - sprite_y) /
-				      seg->scene->sprite[j]->scale);
-			if (clip_h < (int)((float)seg->scene->sprite[j]->t->h *
-					   seg->scene->sprite[j]->scale) &&
+				      seg->scene->sprite[j].scale);
+			if (clip_h < (int)((float)seg->scene->sprite[j].t->h *
+					   seg->scene->sprite[j].scale) &&
 			    clip_h > 0) {
 				r->h = clip_h_inv_scale;
 			} else {
-				r->h = seg->scene->sprite[j]->t->h;
+				r->h = seg->scene->sprite[j].t->h;
 			}
 			// sprite is behind a hill, crop it accodingly
 		} else if (tmp_idx > tmp_max_y_bis_idx) {
@@ -1101,28 +1101,28 @@ static int display_render_scene_sprites(struct game_context *ctx,
 			}
 
 			r = calloc(1, sizeof(SDL_Rect));
-			r->w = seg->scene->sprite[j]->t->w;
+			r->w = seg->scene->sprite[j].t->w;
 			int clip_h = ctx->max_y_bis - sprite_y;
 			int clip_h_inv_scale =
 				(int)((float)(ctx->max_y_bis - sprite_y) /
-				      seg->scene->sprite[j]->scale);
-			if (clip_h < (int)((float)seg->scene->sprite[j]->t->h *
-					   seg->scene->sprite[j]->scale) &&
+				      seg->scene->sprite[j].scale);
+			if (clip_h < (int)((float)seg->scene->sprite[j].t->h *
+					   seg->scene->sprite[j].scale) &&
 			    clip_h > 0) {
 				r->h = clip_h_inv_scale;
 			} else {
-				r->h = seg->scene->sprite[j]->t->h;
+				r->h = seg->scene->sprite[j].t->h;
 			}
 		}
 
 		ret = texture_render(ctx,
-				     seg->scene->sprite[j]->t,
-				     seg->scene->sprite[j]->scaled_x,
+				     seg->scene->sprite[j].t,
+				     seg->scene->sprite[j].scaled_x,
 				     sprite_y,
 				     r,
 				     0.f,
-				     seg->scene->sprite[j]->scale,
-				     seg->scene->sprite[j]->flip,
+				     seg->scene->sprite[j].scale,
+				     seg->scene->sprite[j].flip,
 				     NULL);
 
 		if (r)
