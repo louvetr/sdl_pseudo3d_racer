@@ -149,7 +149,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		int sprite_left_hb_x = 0;
 		int sprite_right_hb_x = SCREEN_WIDTH;
 
-		if (sprite_left->scaled_x < SCREEN_WIDTH &&
+		if (sprite_left->hitbox &&
+		    sprite_right->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_left->hitbox)
 				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
@@ -179,7 +180,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 					      sprite_left->scale);
 		}
 
-		if (sprite_right->scaled_x > 0 &&
+		if (sprite_right->hitbox && sprite_right->scaled_x > 0 &&
 		    sprite_right->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_right->hitbox)
