@@ -36,7 +36,8 @@ int track_build(struct game_context *ctx)
 
 	// ctx->nb_segments = 2750;
 	// ctx->nb_segments = 2450;
-	ctx->nb_segments = 2510;
+	//ctx->nb_segments = 2510;
+	ctx->nb_segments = 2570;
 	// ctx->nb_segments = 2600;
 
 	///////////////////////////////////
@@ -97,20 +98,20 @@ int track_build(struct game_context *ctx)
 
 	/////////////////////////////////////////////////////////////////////
 
-	struct scene_seg_desc *windmill_n_bush =
+	struct scene_seg_desc *windmill_n_grass =
 		calloc(1, sizeof(struct scene_seg_desc));
-	windmill_n_bush->nb_sprites = 20;
-	for (int i = 0; i < 10; i++) {
+	windmill_n_grass->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
 		float position = 1.5f + 1.25f * (float)i;
-		set_scene_sprite_desc(&windmill_n_bush->sprite[2 * i],
+		set_scene_sprite_desc(&windmill_n_grass->sprite[2 * i],
 				      i == 1 ? &ctx->gfx.scene_windmill
-					    : &ctx->gfx.scene_bush,
+					     : &ctx->gfx.scene_grass,
 				      position,
 				      NULL,
 				      1);
-		set_scene_sprite_desc(&windmill_n_bush->sprite[2 * i + 1],
+		set_scene_sprite_desc(&windmill_n_grass->sprite[2 * i + 1],
 				      i == 1 ? &ctx->gfx.scene_windmill
-					    : &ctx->gfx.scene_bush,
+					     : &ctx->gfx.scene_grass,
 				      -position,
 				      NULL,
 				      1);
@@ -118,26 +119,26 @@ int track_build(struct game_context *ctx)
 
 	struct scene_seg_desc *fence_n_bush =
 		calloc(1, sizeof(struct scene_seg_desc));
-	fence_n_bush->nb_sprites = 20;
-	for (int i = 0; i < 10; i++) {
+	fence_n_bush->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
 		float position = 1.5f + 1.25f * (float)i;
 		set_scene_sprite_desc(&fence_n_bush->sprite[2 * i],
 				      i < 1 ? &ctx->gfx.scene_fence
-					    : &ctx->gfx.scene_bush,
+					    : &ctx->gfx.scene_bushes[0],
 				      position,
 				      NULL,
 				      1);
 		set_scene_sprite_desc(&fence_n_bush->sprite[2 * i + 1],
 				      i < 1 ? &ctx->gfx.scene_fence
-					    : &ctx->gfx.scene_bush,
+					    : &ctx->gfx.scene_bushes[0],
 				      -position,
 				      NULL,
 				      1);
 	}
 
 	struct scene_seg_desc *grass = calloc(1, sizeof(struct scene_seg_desc));
-	grass->nb_sprites = 20;
-	for (int i = 0; i < 10; i++) {
+	grass->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
 		float position = 1.5f + 1.25f * (float)i;
 		set_scene_sprite_desc(&grass->sprite[2 * i],
 				      &ctx->gfx.scene_grass,
@@ -153,8 +154,8 @@ int track_build(struct game_context *ctx)
 
 	struct scene_seg_desc *oak_forest_1 =
 		calloc(1, sizeof(struct scene_seg_desc));
-	oak_forest_1->nb_sprites = 20;
-	for (int i = 0; i < 10; i++) {
+	oak_forest_1->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
 		float position = (float)(1 + 2 * i);
 		set_scene_sprite_desc(&oak_forest_1->sprite[2 * i],
 				      &ctx->gfx.scene_tree_oak,
@@ -170,8 +171,8 @@ int track_build(struct game_context *ctx)
 
 	struct scene_seg_desc *oak_forest_2 =
 		calloc(1, sizeof(struct scene_seg_desc));
-	oak_forest_2->nb_sprites = 20;
-	for (int i = 0; i < 10; i++) {
+	oak_forest_2->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
 		float position = (float)(2 + 2 * i);
 		set_scene_sprite_desc(&oak_forest_2->sprite[2 * i],
 				      &ctx->gfx.scene_tree_oak,
@@ -185,10 +186,111 @@ int track_build(struct game_context *ctx)
 				      1);
 	}
 
+	// randomize different bushes set
+	struct scene_seg_desc *bushes_rnd_1 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	bushes_rnd_1->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
+		float position = (float)(1 * i) + 1.5f;
+		set_scene_sprite_desc(
+			&bushes_rnd_1->sprite[2 * i],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			position,
+			NULL,
+			0);
+		set_scene_sprite_desc(
+			&bushes_rnd_1->sprite[2 * i + 1],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			-position,
+			NULL,
+			0);
+	}
+	struct scene_seg_desc *bushes_rnd_2 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	bushes_rnd_2->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
+		float position = (float)(1 * i) + 1.5f;
+		set_scene_sprite_desc(
+			&bushes_rnd_2->sprite[2 * i],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			position,
+			NULL,
+			0);
+		set_scene_sprite_desc(
+			&bushes_rnd_2->sprite[2 * i + 1],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			-position,
+			NULL,
+			0);
+	}
+	struct scene_seg_desc *bushes_rnd_3 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	bushes_rnd_3->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
+		float position = (float)(1 * i) + 1.5f;
+		set_scene_sprite_desc(
+			&bushes_rnd_3->sprite[2 * i],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			position,
+			NULL,
+			0);
+		set_scene_sprite_desc(
+			&bushes_rnd_3->sprite[2 * i + 1],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			-position,
+			NULL,
+			0);
+	}
+	struct scene_seg_desc *bushes_rnd_4 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	bushes_rnd_4->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
+		float position = (float)(1 * i) + 1.5f;
+		set_scene_sprite_desc(
+			&bushes_rnd_4->sprite[2 * i],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			position,
+			NULL,
+			0);
+		set_scene_sprite_desc(
+			&bushes_rnd_4->sprite[2 * i + 1],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			-position,
+			NULL,
+			0);
+	}
+	struct scene_seg_desc *bushes_rnd_5 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	bushes_rnd_5->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG/2; i++) {
+		float position = (float)(1 * i) + 1.5f;
+		set_scene_sprite_desc(
+			&bushes_rnd_5->sprite[2 * i],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			position,
+			NULL,
+			0);
+		set_scene_sprite_desc(
+			&bushes_rnd_5->sprite[2 * i + 1],
+			i < 20 ? &ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH] : &ctx->gfx.scene_tree_oak,
+			-position,
+			NULL,
+			0);
+	}
+
+	struct scene_seg_desc* bushes_rnd_tab[5] = {
+		bushes_rnd_1,
+		bushes_rnd_2,
+		bushes_rnd_3,
+		bushes_rnd_4,
+		bushes_rnd_5
+	};
+
 	/////////////////////////////////////////////////////////////////////
 
 	for (int i = 0; i < nb_segments_added / 8; i += 5)
-		ctx->segments[i].scene = grass;
+		// ctx->segments[i].scene = grass;
+		ctx->segments[i].scene = bushes_rnd_tab[rand() % 5];
 
 	for (int i = nb_segments_added / 8; i < nb_segments_added * 3 / 8;
 	     i += 8)
@@ -202,11 +304,13 @@ int track_build(struct game_context *ctx)
 		ctx->segments[i].scene = fence_n_bush;
 
 	for (int i = nb_segments_added * 5 / 8; i < nb_segments_added * 7 / 8;
-	     i += 5)
-		ctx->segments[i].scene = windmill_n_bush;
+	     i += 16)
+		ctx->segments[i].scene = windmill_n_grass;
 
 	for (int i = nb_segments_added * 7 / 8; i < nb_segments_added; i += 4)
-		ctx->segments[i].scene = grass;
+		//ctx->segments[i].scene = bushes_rnd_1;
+		ctx->segments[i].scene = bushes_rnd_tab[rand() % 5];
+	// ctx->segments[i].scene = grass;
 
 	return 0;
 }

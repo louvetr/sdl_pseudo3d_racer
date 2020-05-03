@@ -24,6 +24,9 @@
 #define MS_PER_SEC 1000
 
 
+#define NB_SPRITE_BUSH 7
+
+
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 #define NB_PARTICLES_SMOKE_AVAILABLE	7
 #define NB_PARTICLES_SMOKE_DISPLAY		10
@@ -74,7 +77,7 @@
 #define CAMERA_HEIGHT_START 10000
 
 
-#define MAX_SCENE_SPRITE_PER_SEG 30
+#define MAX_SCENE_SPRITE_PER_SEG 40
  
 
 /////////////////////////////////////////////////////////////////
@@ -219,9 +222,10 @@ struct game_graphics{
 	
 	struct texture scene_fence;
 	struct texture scene_grass;
-	struct texture scene_bush;
 	struct texture scene_barn;
 	struct texture scene_windmill;
+	
+	struct texture scene_bushes[NB_SPRITE_BUSH];
 	
 	//struct texture font_game_speed_title;
 	struct texture font_game_speed_value;
