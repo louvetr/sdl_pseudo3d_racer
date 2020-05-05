@@ -160,7 +160,8 @@ static int main_ctx_init(struct game_context *ctx)
 	// ctx->car_player_model = CAR_MODEL_NSX;
 	// ctx->car_player_model = CAR_MODEL_FALCON;
 	// ctx->car_player_model = CAR_MODEL_VIPER;
-	ctx->car_player_model = CAR_MODEL_IMPREZIA;
+	//ctx->car_player_model = CAR_MODEL_IMPREZIA;
+	ctx->car_player_model = CAR_MODEL_LANCER;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 

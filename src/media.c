@@ -50,6 +50,7 @@
 #define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
 
+#define PNG_SCENE_START_LANE "./media/scene/scene_start_lane_01.png"
 #define PNG_SCENE_TREE_OAK "./media/scene/scene_tree_oak.png"
 #define PNG_SCENE_TREE_WILLOW "./media/scene/scene_tree_willow.png"
 #define PNG_SCENE_TREE_PINE "./media/scene/scene_tree_pine.png"
@@ -58,6 +59,7 @@
 #define PNG_SCENE_GRASS "./media/scene/scene_grass.png"
 #define PNG_SCENE_WINDMILL "./media/scene/scene_windmill.png"
 #define PNG_SCENE_BARN "./media/scene/scene_barn.png"
+#define PNG_SCENE_WELL "./media/scene/scene_well.png"
 
 #define PNG_SCENE_BUSH_01 "./media/scene/scene_bush_01.png"
 #define PNG_SCENE_BUSH_02 "./media/scene/scene_bush_02.png"
@@ -65,7 +67,7 @@
 #define PNG_SCENE_BUSH_04 "./media/scene/scene_bush_04.png"
 #define PNG_SCENE_BUSH_05 "./media/scene/scene_bush_05.png"
 #define PNG_SCENE_BUSH_06 "./media/scene/scene_bush_06.png"
-#define PNG_SCENE_BUSH_07 "./media/scene/scene_bush_07.png"
+#define PNG_SCENE_BUSH_FLOWER "./media/scene/scene_bush_flower.png"
 
 #define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
 #define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
@@ -280,6 +282,14 @@ static int media_load_scene_sprites(struct game_context *ctx)
 	int ret;
 
 	ret = load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
+
+
+	ret = load_texture_from_file(
 		ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
@@ -300,13 +310,19 @@ static int media_load_scene_sprites(struct game_context *ctx)
 		return ret;
 	}
 
-	ret = load_texture_from_file(
+	/*ret = load_texture_from_file(
 		ctx, PNG_SCENE_CABIN, &ctx->gfx.scene_cabin);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
-	}
+	}*/
 
+	ret = load_texture_from_file(
+		ctx, PNG_SCENE_WELL, &ctx->gfx.scene_well);
+	if (ret < 0) {
+		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
+		return ret;
+	}
 	ret = load_texture_from_file(
 		ctx, PNG_SCENE_FENCE, &ctx->gfx.scene_fence);
 	if (ret < 0) {
@@ -361,7 +377,7 @@ static int media_load_scene_sprites(struct game_context *ctx)
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
-	ret = load_texture_from_file(ctx, PNG_SCENE_BUSH_07, &ctx->gfx.scene_bushes[7]);
+	ret = load_texture_from_file(ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;

@@ -24,7 +24,7 @@
 #define MS_PER_SEC 1000
 
 
-#define NB_SPRITE_BUSH 7
+#define NB_SPRITE_BUSH 6
 
 
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
@@ -220,12 +220,16 @@ struct game_graphics{
 	struct texture scene_tree_pine;
 	struct texture scene_cabin;
 	
+	struct texture scene_start_lane;
+	
 	struct texture scene_fence;
 	struct texture scene_grass;
 	struct texture scene_barn;
 	struct texture scene_windmill;
+	struct texture scene_well;
 	
 	struct texture scene_bushes[NB_SPRITE_BUSH];
+	struct texture scene_bush_flower;
 	
 	//struct texture font_game_speed_title;
 	struct texture font_game_speed_value;

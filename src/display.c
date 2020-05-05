@@ -92,7 +92,6 @@ struct color_desc color_white = {
 };
 
 
-
 /////////////////////////////////////////////////////////////////
 // static functions definition
 /////////////////////////////////////////////////////////////////
@@ -315,7 +314,7 @@ static int display_render_segment(struct game_context *ctx,
 	case LANE_TYPE_HALF:
 		if (color == COLOR_DARK)
 			lane_separator = 1;
-		else 
+		else
 			lane_separator = 0;
 		break;
 	case LANE_TYPE_FULL:
@@ -325,7 +324,7 @@ static int display_render_segment(struct game_context *ctx,
 		lane_separator = 0;
 	}
 
-	//road_color = &color_lane;
+	// road_color = &color_lane;
 
 	if (seg_idx < 7) {
 		int j_offset = (seg_idx) % 2;
@@ -1133,6 +1132,83 @@ static int display_render_scene_sprites(struct game_context *ctx,
 }
 
 
+static int display_render_start_line_sprite(struct game_context *ctx,
+					    struct road_segment *seg,
+					    float screen_scale,
+					    float x_scale,
+					    int tmp_idx,
+					    int tmp_max_y_idx,
+					    int tmp_max_y_bis_idx)
+{
+	int ret = 0;
+	SDL_Rect *r = NULL;
+
+	int scaled_x = seg->p1.screen.x -
+		       (int)((float)ctx->gfx.scene_start_lane.w * x_scale / 2);
+
+	if (scaled_x > SCREEN_WIDTH)
+		return 0;
+
+	int sprite_y = (int)((float)seg->p1.screen.y -
+			     (float)ctx->gfx.scene_start_lane.h * x_scale);
+
+	// if sprite is behind a hill, set a clip to crop its
+	// lower part
+	if (tmp_idx > tmp_max_y_idx) {
+
+		if (sprite_y >= ctx->max_y) {
+			return 0;
+		}
+
+		r = calloc(1, sizeof(SDL_Rect));
+		r->w = ctx->gfx.scene_start_lane.w;
+		int clip_h = ctx->max_y - sprite_y;
+		int clip_h_inv_scale =
+			(int)((float)(ctx->max_y - sprite_y) / x_scale);
+		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
+				   x_scale) &&
+		    clip_h > 0) {
+			r->h = clip_h_inv_scale;
+		} else {
+			r->h = ctx->gfx.scene_start_lane.h;
+		}
+		// sprite is behind a hill, crop it accodingly
+	} else if (tmp_idx > tmp_max_y_bis_idx) {
+		if (sprite_y >= ctx->max_y_bis) {
+			return 0;
+		}
+
+		r = calloc(1, sizeof(SDL_Rect));
+		r->w = ctx->gfx.scene_start_lane.w;
+		int clip_h = ctx->max_y_bis - sprite_y;
+		int clip_h_inv_scale =
+			(int)((float)(ctx->max_y_bis - sprite_y) / x_scale);
+		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
+				   x_scale) &&
+		    clip_h > 0) {
+			r->h = clip_h_inv_scale;
+		} else {
+			r->h = ctx->gfx.scene_start_lane.h;
+		}
+	}
+
+	ret = texture_render(ctx,
+			     &ctx->gfx.scene_start_lane,
+			     scaled_x,
+			     sprite_y,
+			     r,
+			     0.f,
+			     x_scale,
+			     SDL_FLIP_NONE,
+			     NULL);
+
+	if (r)
+		free(r);
+
+	return ret;
+}
+
+
 static int display_render_scaled_sprites(struct game_context *ctx)
 {
 	int ret;
@@ -1171,6 +1247,17 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 							   tmp_idx,
 							   tmp_max_y_idx,
 							   tmp_max_y_bis_idx);
+
+		// display start line on 1st segment
+		if (idx == 0)
+			ret = display_render_start_line_sprite(
+				ctx,
+				seg,
+				screen_scale,
+				x_scale,
+				tmp_idx,
+				tmp_max_y_idx,
+				tmp_max_y_bis_idx);
 
 		ret = display_render_ai_cars_sprites(ctx,
 						     seg,
