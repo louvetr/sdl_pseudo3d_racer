@@ -8,7 +8,8 @@ OBJS = 	./src/main.c	\
 		./src/road.c	\
 		./src/track.c	\
 		./src/cars_ai.c	\
-		./src/media.c
+		./src/media.c	\
+		./src/sound.c
 
 #CC specifies which compiler we're using
 CC = gcc

@@ -64,12 +64,14 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
 				    NB_SEGMENT_CAR_COLLISION) {
+					ctx->collision_detected = 1;
 					if (ctx->speed >= ctx->max_speed / 4)
 						ctx->speed /= 2.f;
 				} else if (ctx->nb_segments -
 						   ctx->player_segment +
 						   ctx->ai_cars[i].segment <
 					   NB_SEGMENT_CAR_COLLISION) {
+					ctx->collision_detected = 1;
 					if (ctx->speed >= ctx->max_speed / 4)
 						ctx->speed /= 2.f;
 				}
@@ -78,6 +80,8 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			// Back collision
 			if (ctx->ai_cars[i].hitbox.y < ctx->player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
+
+				ctx->collision_detected = 1;
 
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SPEED_BEHIND_PLAYER;
@@ -105,7 +109,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				}
 
 				ctx->ai_cars[i].speed_slow_curve =
-					ctx->ai_cars[i].speed_slow_straight;
+					ctx->ai_cars[i].speed_slow_straight;		
 			}
 		}
 	}
@@ -206,6 +210,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			ctx->speed = ctx->speed * 0.75f;
 
+			ctx->collision_detected = 1;
 			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
 
 			break;
@@ -220,6 +225,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			ctx->speed = ctx->speed * 0.75f;
 
+			ctx->collision_detected = 1;
 			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
 			break;
 		}
@@ -338,16 +344,17 @@ static int logic_race_control(struct game_context *ctx)
 	if (ctx->keys.nitro && ctx->nb_nitro > 0 &&
 	    ctx->status_cur != GAME_STATE_RACE_NITRO) {
 		ctx->status_cur = GAME_STATE_RACE_NITRO;
-		ctx->nitro_nb_frame = 0;
+		ctx->nitro_nb_frame = NITRO_DURATION * FPS;
 		ctx->nb_nitro--;
 	}
 
 	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
 		max_speed = ctx->max_speed_nitro;
 		accel = ctx->accel_nitro;
-		ctx->nitro_nb_frame++;
-		if (ctx->nitro_nb_frame > NITRO_DURATION * FPS)
-			ctx->status_cur = GAME_STATE_RACE;
+		ctx->nitro_nb_frame--;
+		if (ctx->nitro_nb_frame == 0) {
+			event_update_game_state(ctx, GAME_STATE_RACE);
+		}
 	} else {
 		max_speed = ctx->max_speed;
 		accel = ctx->accel;
@@ -430,12 +437,12 @@ static int logic_race_control(struct game_context *ctx)
 	}
 
 	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END) {
-		float drift = dx * speed_ratio *
+		ctx->drift = dx * speed_ratio *
 			      ctx->segments[ctx->player_segment].curve *
 			      ctx->centrifugal;
-		ctx->player_x = ctx->player_x - drift;
+		ctx->player_x = ctx->player_x - ctx->drift;
 
-		logic_race_particles(ctx, drift);
+		logic_race_particles(ctx, ctx->drift);
 	}
 
 	///////////////////////////////////////////////////////////////
@@ -474,11 +481,11 @@ static int logic_race_collision_scene_ongoing(struct game_context *ctx)
 	if (ctx->collision_dst_x < 0) {
 		ctx->player_x = ctx->player_x + COLLIONSION_SCENE_SHIFT / 10.f;
 		if (ctx->player_x >= ctx->collision_dst_x)
-			ctx->status_cur = GAME_STATE_RACE;
+			event_update_game_state(ctx, GAME_STATE_RACE);
 	} else {
 		ctx->player_x = ctx->player_x - COLLIONSION_SCENE_SHIFT / 10.f;
 		if (ctx->player_x <= ctx->collision_dst_x)
-			ctx->status_cur = GAME_STATE_RACE;
+			event_update_game_state(ctx, GAME_STATE_RACE);
 	}
 
 	return 0;
@@ -488,6 +495,9 @@ static int logic_race_collision_scene_ongoing(struct game_context *ctx)
 static int logic_race(struct game_context *ctx)
 {
 	int ret;
+
+	ctx->collision_detected = 0;
+	ctx->drift = 0.f;
 
 	// update player segment
 	ctx->player_segment_prev = ctx->player_segment;
@@ -501,10 +511,11 @@ static int logic_race(struct game_context *ctx)
 	ret = logic_race_control(ctx);
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
+		// TODO: change nb_frame_anim into a countdown to 0
 		// some computation specific to start animation
 		if (ctx->nb_frame_anim > FPS * START_ANIM_DURATION) {
 			ctx->nb_frame_anim = 0;
-			ctx->status_cur = GAME_STATE_RACE;
+			event_update_game_state(ctx, GAME_STATE_RACE);
 			ctx->race_time_ms = 0;
 		}
 

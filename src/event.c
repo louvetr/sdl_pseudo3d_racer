@@ -80,6 +80,13 @@ static int event_race(struct game_context *ctx)
 // public functions definition
 /////////////////////////////////////////////////////////////////
 
+int event_update_game_state(struct game_context *ctx, enum game_status state)
+{
+	ctx->status_prev = ctx->status_cur;
+	ctx->status_cur = state;
+	return 0;
+}
+
 int main_event(struct game_context *ctx)
 {
 

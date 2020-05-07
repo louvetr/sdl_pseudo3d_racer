@@ -115,7 +115,7 @@ int track_build(struct game_context *ctx)
 	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
 		float position = 1.5f + 1.25f * (float)i;
 		set_scene_sprite_desc(&barn_n_well->sprite[2 * i],
-				      i == 1 ? &ctx->gfx.scene_barn
+				      i == 0 ? &ctx->gfx.scene_barn
 					     : &ctx->gfx.scene_grass,
 				      position,
 				      NULL,
@@ -328,7 +328,7 @@ int track_build(struct game_context *ctx)
 		ctx->segments[i].scene = oak_forest_2;
 
 	for (int i = nb_segments_added * 3 / 10; i < nb_segments_added * 5 / 10;
-	     i += 16)
+	     i += 32)
 		ctx->segments[i].scene = barn_n_well;
 
 	for (int i = nb_segments_added * 5 / 10; i < nb_segments_added * 7 / 10;

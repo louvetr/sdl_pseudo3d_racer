@@ -168,11 +168,33 @@ enum track_lane_type {
 	LANE_TYPE_FULL
 };
 
+enum sfx_state {
+	SFX_NONE = 0,
+	SFX_IDLE = 1,
+	SFX_NORMAL = 2,
+	SFX_ACCEL = 4,
+	SFX_NITRO = 8,
+	SFX_DRIFT = 16,
+	SFX_SHOCK = 32
+};
+
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
 /////////////////////////////////////////////////////////////////
 // structures
 /////////////////////////////////////////////////////////////////
+
+
+struct sfxs {
+	enum sfx_state state;
+	Mix_Chunk *engine_accel;
+	Mix_Chunk *engine_normal;
+	Mix_Chunk *engine_nitro;
+	Mix_Chunk *engine_idle;
+	Mix_Chunk *impact;
+	Mix_Chunk *drift;
+};
+
 
 struct background_layers_x_offset {
 	int sky_far;
@@ -313,10 +335,12 @@ struct road_segment {
 
 struct keys_status {
 	int accel;
+	int accel_prev;
 	int brake;
 	int left;
 	int right;
 	int nitro;
+	int nitro_prev;
 };
 
 struct ai_car_info {
@@ -573,6 +597,12 @@ struct game_context {
 	// race duration in milli seconds
 	int race_time_ms;
 
+
+	struct sfxs sfx;
+	int collision_detected;
+
+	float drift;
+	float drift_prev;
 };
 
 
@@ -732,6 +762,11 @@ int load_texture_from_file(struct game_context *ctx,
 
 int media_load_resources(struct game_context *ctx);
 
+int sound_load_resources(struct game_context *ctx);
+
+int event_update_game_state(struct game_context *ctx, enum game_status state);
+
+int main_sound(struct game_context *ctx);
 
 int main_display(struct game_context *ctx);
 

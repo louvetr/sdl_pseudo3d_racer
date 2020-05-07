@@ -160,13 +160,13 @@ static int main_ctx_init(struct game_context *ctx)
 	// ctx->car_player_model = CAR_MODEL_NSX;
 	// ctx->car_player_model = CAR_MODEL_FALCON;
 	// ctx->car_player_model = CAR_MODEL_VIPER;
-	//ctx->car_player_model = CAR_MODEL_IMPREZIA;
+	// ctx->car_player_model = CAR_MODEL_IMPREZIA;
 	ctx->car_player_model = CAR_MODEL_LANCER;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
 	ctx->status_cur = GAME_STATE_RACE_ANIM_START;
-	ctx->status_prev = GAME_STATE_RACE_ANIM_START;
+	ctx->status_prev = GAME_STATE_UNKNOWN;
 	/*ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;*/
 
@@ -340,6 +340,7 @@ int main()
 
 	// load media and stuff
 	media_load_resources(ctx);
+	sound_load_resources(ctx);
 
 	main_ctx_init(ctx);
 
@@ -376,10 +377,16 @@ int main()
 		// display on screen
 		main_display(ctx);
 
+		// music and sfx
+		main_sound(ctx);
+
 		// sleep
 		main_sleep(ctx);
 
 		ctx->action = ACTION_NONE;
+		ctx->keys.accel_prev = ctx->keys.accel;
+		ctx->keys.nitro_prev = ctx->keys.nitro;
+		ctx->drift_prev = ctx->drift;
 	}
 
 	// free resources
