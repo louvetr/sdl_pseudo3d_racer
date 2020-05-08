@@ -193,8 +193,18 @@ struct sfxs {
 	Mix_Chunk *engine_idle;
 	Mix_Chunk *impact;
 	Mix_Chunk *drift;
+	Mix_Chunk *lap;
+	Mix_Chunk *one;
+	Mix_Chunk *two;
+	Mix_Chunk *three;
+	Mix_Chunk *go;
+	Mix_Chunk *congratulations;
+
 };
 
+struct musics {
+	Mix_Music *end_race;
+};
 
 struct background_layers_x_offset {
 	int sky_far;
@@ -599,10 +609,13 @@ struct game_context {
 
 
 	struct sfxs sfx;
-	int collision_detected;
+	struct musics music;
 
+	// flags for SFX notifications
+	int collision_detected;
 	float drift;
 	float drift_prev;
+	int lap_sfx;
 };
 
 
