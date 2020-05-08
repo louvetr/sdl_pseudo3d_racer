@@ -145,6 +145,15 @@ int main_sound(struct game_context *ctx)
 				SDL_Log("[%s] NITRO -> ACCEL\n", __func__);
 			}
 		}
+
+
+		if (ctx->collision_detected)
+			Mix_PlayChannel(
+				SFX_CHANNEL_COLLISION, ctx->sfx.impact, 0);
+
+		if ((ctx->drift >= 0.025f && ctx->drift_prev < 0.025f) ||
+		    (ctx->drift <= -0.025f && ctx->drift_prev > -0.025f))
+			Mix_PlayChannel(SFX_CHANNEL_DRIFT, ctx->sfx.drift, -1);
 	}
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START &&
@@ -152,16 +161,13 @@ int main_sound(struct game_context *ctx)
 		Mix_PlayChannel(SFX_CHANNEL_MOTOR, ctx->sfx.engine_idle, -1);
 	}
 
-	if (ctx->collision_detected)
-		Mix_PlayChannel(SFX_CHANNEL_COLLISION, ctx->sfx.impact, 0);
-
-	if ((ctx->drift >= 0.025f && ctx->drift_prev < 0.025f) ||
-	    (ctx->drift <= -0.025f && ctx->drift_prev > -0.025f))
-		Mix_PlayChannel(SFX_CHANNEL_DRIFT, ctx->sfx.drift, -1);
-
 	if ((ctx->drift < 0.025f && ctx->drift_prev >= 0.025f) ||
 	    (ctx->drift > -0.025f && ctx->drift_prev <= -0.025f))
 		Mix_HaltChannel(SFX_CHANNEL_DRIFT);
+
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END &&
+	    ctx->status_prev != GAME_STATE_RACE_ANIM_END)
+		Mix_HaltChannel(SFX_CHANNEL_MOTOR);
 
 	return 0;
 }

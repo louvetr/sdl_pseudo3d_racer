@@ -64,6 +64,8 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				if (ctx->ai_cars[i].segment -
 					    ctx->player_segment <
 				    NB_SEGMENT_CAR_COLLISION) {
+					SDL_Log("[%s] COLLISON CAR FRONT\n",
+						__func__);
 					ctx->collision_detected = 1;
 					if (ctx->speed >= ctx->max_speed / 4)
 						ctx->speed /= 2.f;
@@ -71,17 +73,35 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 						   ctx->player_segment +
 						   ctx->ai_cars[i].segment <
 					   NB_SEGMENT_CAR_COLLISION) {
+					SDL_Log("[%s] COLLISON CAR FRONT\n",
+						__func__);
 					ctx->collision_detected = 1;
 					if (ctx->speed >= ctx->max_speed / 4)
 						ctx->speed /= 2.f;
 				}
 			}
 
-			// Back collision
 			if (ctx->ai_cars[i].hitbox.y < ctx->player_max_y &&
 			    ctx->ai_cars[i].hitbox.y > ctx->player_sprite_y) {
 
+				int back_impact = 0;
+
+				if (ctx->player_segment >
+				    ctx->ai_cars[i].segment) {
+					back_impact = 1;
+				} else if (ctx->nb_segments -
+						   ctx->ai_cars[i].segment +
+						   ctx->player_segment <
+					   NB_SEGMENT_CAR_COLLISION) {
+					back_impact = 1;
+				}
+
+				if (back_impact == 0) {
+					continue;
+				}
+
 				ctx->collision_detected = 1;
+				SDL_Log("[%s] COLLISON CAR BACK\n", __func__);
 
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SPEED_BEHIND_PLAYER;
@@ -109,7 +129,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 				}
 
 				ctx->ai_cars[i].speed_slow_curve =
-					ctx->ai_cars[i].speed_slow_straight;		
+					ctx->ai_cars[i].speed_slow_straight;
 			}
 		}
 	}
@@ -210,6 +230,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			ctx->speed = ctx->speed * 0.75f;
 
+			SDL_Log("[%s] COLLISON CAR SCENE\n", __func__);
 			ctx->collision_detected = 1;
 			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
 
@@ -225,6 +246,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			ctx->speed = ctx->speed * 0.75f;
 
+			SDL_Log("[%s] COLLISON CAR SCENE\n", __func__);
 			ctx->collision_detected = 1;
 			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
 			break;
@@ -346,6 +368,9 @@ static int logic_race_control(struct game_context *ctx)
 		ctx->status_cur = GAME_STATE_RACE_NITRO;
 		ctx->nitro_nb_frame = NITRO_DURATION * FPS;
 		ctx->nb_nitro--;
+	} else {
+		// workaroud to correct a nitro SFX activation issue
+		ctx->keys.nitro = 0;
 	}
 
 	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
@@ -438,8 +463,8 @@ static int logic_race_control(struct game_context *ctx)
 
 	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END) {
 		ctx->drift = dx * speed_ratio *
-			      ctx->segments[ctx->player_segment].curve *
-			      ctx->centrifugal;
+			     ctx->segments[ctx->player_segment].curve *
+			     ctx->centrifugal;
 		ctx->player_x = ctx->player_x - ctx->drift;
 
 		logic_race_particles(ctx, ctx->drift);
@@ -629,7 +654,7 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 	} else if (lap > ctx->nb_lap) {
 		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
 			ctx->nb_frame_anim = 0;
-		ctx->status_cur = GAME_STATE_RACE_ANIM_END;
+		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_END);
 		return ctx->nb_lap;
 	} else {
 		return lap;
