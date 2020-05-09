@@ -202,8 +202,11 @@ struct sfxs {
 
 };
 
+#define NB_BGM 4
+
 struct musics {
 	Mix_Music *end_race;
+	Mix_Music *bgm[NB_BGM];
 };
 
 struct background_layers_x_offset {

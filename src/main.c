@@ -159,9 +159,10 @@ static int main_ctx_init(struct game_context *ctx)
 
 	// ctx->car_player_model = CAR_MODEL_NSX;
 	// ctx->car_player_model = CAR_MODEL_FALCON;
-	// ctx->car_player_model = CAR_MODEL_VIPER;
+	 ctx->car_player_model = CAR_MODEL_VIPER;
 	// ctx->car_player_model = CAR_MODEL_IMPREZIA;
-	ctx->car_player_model = CAR_MODEL_LANCER;
+	// ctx->car_player_model = CAR_MODEL_LANCER;
+	//ctx->car_player_model = CAR_MODEL_DELTA;
 	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->car_player_flip = SDL_FLIP_NONE;
 
@@ -171,6 +172,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->status_prev = GAME_STATE_RACE;*/
 
 	ctx->nb_lap = 3;
+	//ctx->nb_lap = 1;
 	ctx->player_lap = 0;
 	ctx->player_place = NB_AI_CARS + 1;
 
@@ -383,6 +385,7 @@ int main()
 		// sleep
 		main_sleep(ctx);
 
+	    ctx->status_prev = ctx->status_cur;
 		ctx->action = ACTION_NONE;
 		ctx->keys.accel_prev = ctx->keys.accel;
 		ctx->keys.nitro_prev = ctx->keys.nitro;

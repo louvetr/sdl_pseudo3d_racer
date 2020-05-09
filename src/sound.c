@@ -15,6 +15,12 @@
 #define SFX_LAP "./media/sfx/lap_01.wav"
 
 #define MUSIC_END_RACE "./media/music/end_race.ogg"
+#define MUSIC_BGM_1 "./media/music/aries_beats---infinity---128kbps.mp3"
+#define MUSIC_BGM_2                                                            \
+	"./media/music/simon_bichbihler---in_the_1980s---128kbps.mp3"
+#define MUSIC_BGM_3 "./media/music/aries_beats---turbo_rush---128kbps.mp3"
+#define MUSIC_BGM_4                                                            \
+	"./media/music/teknoaxe---sunrise_over_losangeles---128kbps.mp3"
 
 #define MAX_VOLUME 128
 
@@ -62,6 +68,10 @@ int sound_load_resources(struct game_context *ctx)
 	Mix_VolumeMusic(MAX_VOLUME);
 
 	sound_load_music(&ctx->music.end_race, MUSIC_END_RACE);
+	sound_load_music(&ctx->music.bgm[0], MUSIC_BGM_1);
+	sound_load_music(&ctx->music.bgm[1], MUSIC_BGM_2);
+	sound_load_music(&ctx->music.bgm[2], MUSIC_BGM_3);
+	sound_load_music(&ctx->music.bgm[3], MUSIC_BGM_4);
 
 	sound_load_wav(&ctx->sfx.engine_accel, SFX_ENGINE_ACCEL);
 	sound_load_wav(&ctx->sfx.engine_nitro, SFX_ENGINE_NITRO);
@@ -165,7 +175,6 @@ int main_sound(struct game_context *ctx)
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START &&
 	    ctx->status_prev != GAME_STATE_RACE_ANIM_START) {
-		ctx->status_prev = GAME_STATE_RACE_ANIM_START;
 		Mix_PlayChannel(SFX_CHANNEL_MOTOR, ctx->sfx.engine_idle, -1);
 		SDL_Log("[%s] engine IDLE\n", __func__);
 	}
@@ -178,6 +187,7 @@ int main_sound(struct game_context *ctx)
 	// End race animation SFX
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END &&
 	    ctx->status_prev != GAME_STATE_RACE_ANIM_END) {
+		Mix_HaltMusic();
 		Mix_HaltChannel(SFX_CHANNEL_MOTOR);
 		Mix_PlayMusic(ctx->music.end_race, 0);
 		Mix_PlayChannel(-1, ctx->sfx.congratulations, 0);
@@ -194,5 +204,12 @@ int main_sound(struct game_context *ctx)
 		if (ctx->nb_frame_anim == FPS * (START_ANIM_DURATION - 4))
 			Mix_PlayChannel(-1, ctx->sfx.three, 0);
 	}
+
+	if (ctx->status_cur == GAME_STATE_RACE &&
+	    ctx->status_prev == GAME_STATE_RACE_ANIM_START) {
+		Mix_PlayMusic(ctx->music.bgm[rand() % NB_BGM], -1);
+	}
+
+
 	return 0;
 }
