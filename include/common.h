@@ -207,6 +207,7 @@ struct sfxs {
 struct musics {
 	Mix_Music *end_race;
 	Mix_Music *bgm[NB_BGM];
+	char *bgm_name[NB_BGM];
 };
 
 struct background_layers_x_offset {
@@ -600,6 +601,7 @@ struct game_context {
 	// number of frame spent in STATE_RACE_ANIM_START
 	int nb_frame_anim;
 	int finish_placed_frame_nb;
+	int bgm_name_dislayed;
 
 	float scale_player_car[CAR_MODEL_LAST];
 	float scale_ai_car[CAR_MODEL_LAST];
@@ -619,6 +621,8 @@ struct game_context {
 	float drift;
 	float drift_prev;
 	int lap_sfx;
+
+	int bgm_idx;
 };
 
 

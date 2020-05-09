@@ -21,6 +21,10 @@
 #define MUSIC_BGM_3 "./media/music/aries_beats---turbo_rush---128kbps.mp3"
 #define MUSIC_BGM_4                                                            \
 	"./media/music/teknoaxe---sunrise_over_losangeles---128kbps.mp3"
+#define MUSIC_BGM_1_NAME "\"Infinity\" by Aries Beats"
+#define MUSIC_BGM_2_NAME "\"In the 1980s\" by Simon Bichbihler"
+#define MUSIC_BGM_3_NAME "\"Turbo Rush\" by Aries Beats"
+#define MUSIC_BGM_4_NAME "\"Sunrise Over Los Angeles\" by TeknoAXE"                                                           \
 
 #define MAX_VOLUME 128
 
@@ -72,6 +76,11 @@ int sound_load_resources(struct game_context *ctx)
 	sound_load_music(&ctx->music.bgm[1], MUSIC_BGM_2);
 	sound_load_music(&ctx->music.bgm[2], MUSIC_BGM_3);
 	sound_load_music(&ctx->music.bgm[3], MUSIC_BGM_4);
+
+	ctx->music.bgm_name[0] = MUSIC_BGM_1_NAME;	
+	ctx->music.bgm_name[1] = MUSIC_BGM_2_NAME;	
+	ctx->music.bgm_name[2] = MUSIC_BGM_3_NAME;	
+	ctx->music.bgm_name[3] = MUSIC_BGM_4_NAME;	
 
 	sound_load_wav(&ctx->sfx.engine_accel, SFX_ENGINE_ACCEL);
 	sound_load_wav(&ctx->sfx.engine_nitro, SFX_ENGINE_NITRO);
@@ -207,7 +216,7 @@ int main_sound(struct game_context *ctx)
 
 	if (ctx->status_cur == GAME_STATE_RACE &&
 	    ctx->status_prev == GAME_STATE_RACE_ANIM_START) {
-		Mix_PlayMusic(ctx->music.bgm[rand() % NB_BGM], -1);
+		Mix_PlayMusic(ctx->music.bgm[ctx->bgm_idx], -1);
 	}
 
 

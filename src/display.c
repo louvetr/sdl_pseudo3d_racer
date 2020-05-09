@@ -444,6 +444,62 @@ static int display_load_render_text_with_shade(struct game_context *ctx,
 }
 
 
+static int display_render_bgm_name(struct game_context *ctx)
+{
+	if (ctx->bgm_name_dislayed)
+		return 0;
+
+	// SDL_Color text_color_front_2 = {0, 0, 0};
+	SDL_Color text_color_front_2 = {16, 52, 166};
+	SDL_Color text_color_shadow = {0xFF, 0xFF, 0xFF};
+	// SDL_Color text_color_shadow = {0xFF, 0xFF, 0x0};
+
+	/*SDL_Color text_color_front_2 = {0xFF, 0xFF, 0x0};
+	SDL_Color text_color_shadow = {0, 0, 0};*/
+	int font_size_2 = 40;
+	TTF_Font *bgm_font = NULL;
+
+	ctx->nb_frame_anim++;
+
+	bgm_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
+	if (!bgm_font) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	int bgm_pos_x = SCREEN_WIDTH - ctx->nb_frame_anim * 7;
+	if (bgm_pos_x < -ctx->gfx.font_race_anim_3.w) {
+		bgm_pos_x = -ctx->gfx.font_race_anim_3.w;
+		ctx->bgm_name_dislayed = 1;
+	}
+
+	// glitch fix
+	/*if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+		bgm_pos_x = SCREEN_WIDTH;*/
+
+	display_load_render_text_with_shade(
+		ctx,
+		bgm_font,
+		&ctx->gfx.font_race_anim_3,
+		ctx->music.bgm_name[ctx->bgm_idx],
+		&text_color_front_2,
+		&text_color_shadow,
+		bgm_pos_x,
+		SCREEN_HEIGHT * 20 / 100 - ctx->gfx.font_race_anim_3.h / 2,
+		1,
+		200,
+		0.f);
+
+	TTF_CloseFont(bgm_font);
+
+	ctx->nb_frame_anim++;
+
+	return 0;
+}
+
+
 static int display_render_anim_race_end(struct game_context *ctx)
 {
 	int alpha = ctx->nb_frame_anim / 2;
@@ -1607,11 +1663,13 @@ static int display_screen_race(struct game_context *ctx)
 	// render scenery text message
 	ret = display_render_hud(ctx);
 
-	// render start animation
+	// render animations
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START)
 		ret = display_render_anim_race_start(ctx);
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ret = display_render_anim_race_end(ctx);
+	if (ctx->status_cur == GAME_STATE_RACE)
+		ret = display_render_bgm_name(ctx);
 
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);

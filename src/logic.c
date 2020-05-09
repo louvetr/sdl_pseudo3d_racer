@@ -539,9 +539,11 @@ static int logic_race(struct game_context *ctx)
 		// TODO: change nb_frame_anim into a countdown to 0
 		// some computation specific to start animation
 		if (ctx->nb_frame_anim > FPS * START_ANIM_DURATION) {
-			ctx->nb_frame_anim = 0;
 			event_update_game_state(ctx, GAME_STATE_RACE);
+			ctx->nb_frame_anim = 0;
 			ctx->race_time_ms = 0;
+			ctx->bgm_name_dislayed = 0;
+			ctx->bgm_idx = rand() % NB_BGM;
 		}
 
 		// TODO: used define values
