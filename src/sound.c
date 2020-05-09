@@ -159,13 +159,16 @@ int main_sound(struct game_context *ctx)
 			Mix_PlayChannel(SFX_CHANNEL_DRIFT, ctx->sfx.drift, -1);
 
 
-		if(ctx->lap_sfx)
+		if (ctx->lap_sfx)
 			Mix_PlayChannel(-1, ctx->sfx.lap, 0);
 	}
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START &&
-	    ctx->status_prev != GAME_STATE_RACE_ANIM_START)
+	    ctx->status_prev != GAME_STATE_RACE_ANIM_START) {
+		ctx->status_prev = GAME_STATE_RACE_ANIM_START;
 		Mix_PlayChannel(SFX_CHANNEL_MOTOR, ctx->sfx.engine_idle, -1);
+		SDL_Log("[%s] engine IDLE\n", __func__);
+	}
 
 	if ((ctx->drift < 0.025f && ctx->drift_prev >= 0.025f) ||
 	    (ctx->drift > -0.025f && ctx->drift_prev <= -0.025f))
