@@ -1,4 +1,4 @@
-#include "common.h"
+#include "main.h"
 
 const Uint32 SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
 
@@ -32,12 +32,12 @@ static int main_init(struct game_context *ctx)
 	// init SDL
 	ret = SDL_Init(SDL_INIT_VIDEO);
 	if (ret < 0) {
-		printf("[%s] SDL_Init ERROR: %s\n", __func__, SDL_GetError());
+		SDL_Log("[%s] SDL_Init ERROR: %s\n", __func__, SDL_GetError());
 		return ret;
 	}
 
 	if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-		printf("[%s] Warning: Linear texture filtering not enabled!",
+		SDL_Log("[%s] Warning: Linear texture filtering not enabled!",
 		       __func__);
 	}
 
@@ -49,7 +49,7 @@ static int main_init(struct game_context *ctx)
 				       SCREEN_HEIGHT,
 				       SDL_WINDOW_SHOWN);
 	if (!ctx->window) {
-		printf("[%s] SDL_SetVideoMode ERROR: %s\n",
+		SDL_Log("[%s] SDL_SetVideoMode ERROR: %s\n",
 		       SDL_GetError(),
 		       __func__);
 		return -EINVAL;
@@ -58,7 +58,7 @@ static int main_init(struct game_context *ctx)
 	ctx->renderer =
 		SDL_CreateRenderer(ctx->window, -1, SDL_RENDERER_ACCELERATED);
 	if (!ctx->renderer) {
-		printf("[%s] Renderer could not be created! SDL Error: %s\n",
+		SDL_Log("[%s] Renderer could not be created! SDL Error: %s\n",
 		       __func__,
 		       SDL_GetError());
 		return -EINVAL;
@@ -70,7 +70,7 @@ static int main_init(struct game_context *ctx)
 	// init PNG loading
 	int img_flags = IMG_INIT_PNG;
 	if (!(IMG_Init(img_flags) & img_flags)) {
-		printf("[%s] SDL_image could not initialize! SDL_image Error: %s\n",
+		SDL_Log("[%s] SDL_image could not initialize! SDL_image Error: %s\n",
 		       __func__,
 		       IMG_GetError());
 		return -EINVAL;
@@ -78,7 +78,7 @@ static int main_init(struct game_context *ctx)
 
 	// init Fonts management
 	if (TTF_Init() < 0) {
-		printf("[%s] SDL_ttf could not initialize! SDL_ttf Error: %s\n",
+		SDL_Log("[%s] SDL_ttf could not initialize! SDL_ttf Error: %s\n",
 		       __func__,
 		       TTF_GetError());
 		return -EINVAL;
@@ -86,7 +86,7 @@ static int main_init(struct game_context *ctx)
 
 	// init Music and SFX management
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-		printf("[%s] SDL_ttf could not initialize! SDL_Mixer Error: %s\n",
+		SDL_Log("[%s] SDL_ttf could not initialize! SDL_Mixer Error: %s\n",
 		       __func__,
 		       TTF_GetError());
 		return -EINVAL;
@@ -113,68 +113,67 @@ static int main_ctx_init(struct game_context *ctx)
 {
 	ctx->dt = 0;
 	ctx->step = 1000 / FPS;
-	ctx->nb_segments = 0; // to be set later
+	ctx->track.nb_segments = 0; // to be set later
 
-	ctx->segments =
-		calloc((size_t)ctx->nb_segments, sizeof(struct road_segment));
-	if (!ctx->segments) {
+	ctx->track.segments =
+		calloc((size_t)ctx->track.nb_segments, sizeof(struct road_segment));
+	if (!ctx->track.segments) {
 		SDL_Log("[%s:%d] calloc failed\n", __func__, __LINE__);
 		return -ENOMEM;
 	}
 
 	// ctx->segment_length = 200;
-	ctx->rumble_length = RUMBLE_LENGTH;
-	ctx->track_length = 0;
-	ctx->lanes = 3;
-	ctx->field_of_view = 100;
-	// ctx->camera_height = 1000;
-	ctx->camera_height = CAMERA_HEIGHT_START;
-	ctx->camera_depth = 0;
-	ctx->draw_distance = 500;
-	ctx->player_x = 0;
-	ctx->player_z = 0;
-	ctx->fog_density = 5;
-	ctx->position = 0;
-	ctx->speed = 0;
-	ctx->max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) /
+	ctx->track.rumble_length = RUMBLE_LENGTH;
+	ctx->track.track_length = 0;
+	ctx->track.lanes = 3;
+	ctx->race.field_of_view = 100;
+	// ctx->race.camera_height = 1000;
+	ctx->race.camera_height = CAMERA_HEIGHT_START;
+	ctx->race.camera_depth = 0;
+	ctx->race.draw_distance = 500;
+	ctx->pcar.player_x = 0;
+	ctx->pcar.player_z = 0;
+	ctx->pcar.position = 0;
+	ctx->pcar.speed = 0;
+	ctx->pcar.max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) /
 			 (float)ctx->step * (30.f / (float)FPS);
-	// ctx->accel = ctx->max_speed / 5;
-	ctx->accel = ctx->max_speed / 50;
+	// ctx->pcar.accel = ctx->pcar.max_speed / 5;
+	ctx->pcar.accel = ctx->pcar.max_speed / 50;
 
-	ctx->max_speed_nitro = ctx->max_speed * 1.33f;
-	ctx->accel_nitro = ctx->accel * 2.f;
-	ctx->nb_nitro = 3;
-	ctx->breaking = ctx->max_speed * -1 / 20;
-	// ctx->decel = (ctx->max_speed / 5) * -1;
-	ctx->decel = (ctx->max_speed / 50) * -1;
-	// ctx->off_road_decel = (ctx->max_speed / 20) * -1;
-	ctx->off_road_decel = (ctx->max_speed / 30) * -1;
-	// ctx->off_road_limit = (ctx->max_speed / 3);
-	ctx->off_road_limit = (ctx->max_speed / 2);
-	ctx->centrifugal = 0.3f;
+	ctx->pcar.max_speed_nitro = ctx->pcar.max_speed * 1.33f;
+	ctx->pcar.accel_nitro = ctx->pcar.accel * 2.f;
+	ctx->pcar.nb_nitro = 3;
+	ctx->pcar.breaking = ctx->pcar.max_speed * -1 / 20;
+	// ctx->pcar.decel = (ctx->pcar.max_speed / 5) * -1;
+	ctx->pcar.decel = (ctx->pcar.max_speed / 50) * -1;
+	// ctx->pcar.off_road_decel = (ctx->pcar.max_speed / 20) * -1;
+	ctx->pcar.off_road_decel = (ctx->pcar.max_speed / 30) * -1;
+	// ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 3);
+	ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 2);
+	ctx->pcar.centrifugal = 0.3f;
 
-	ctx->car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
-	ctx->car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
-	ctx->same_car_orientation_in_frame = 0;
+	ctx->pcar.car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
+	ctx->pcar.car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
+	ctx->pcar.same_car_orientation_in_frame = 0;
 
-	// ctx->car_player_model = CAR_MODEL_NSX;
-	// ctx->car_player_model = CAR_MODEL_FALCON;
-	 ctx->car_player_model = CAR_MODEL_VIPER;
-	// ctx->car_player_model = CAR_MODEL_IMPREZIA;
-	// ctx->car_player_model = CAR_MODEL_LANCER;
-	//ctx->car_player_model = CAR_MODEL_DELTA;
-	ctx->car_player_sprite_idx = CAR_SPRITE_REAR;
-	ctx->car_player_flip = SDL_FLIP_NONE;
+	// ctx->pcar.car_player_model = CAR_MODEL_NSX;
+	// ctx->pcar.car_player_model = CAR_MODEL_FALCON;
+	 ctx->pcar.car_player_model = CAR_MODEL_VIPER;
+	// ctx->pcar.car_player_model = CAR_MODEL_IMPREZIA;
+	// ctx->pcar.car_player_model = CAR_MODEL_LANCER;
+	//ctx->pcar.car_player_model = CAR_MODEL_DELTA;
+	ctx->pcar.car_player_sprite_idx = CAR_SPRITE_REAR;
+	ctx->pcar.car_player_flip = SDL_FLIP_NONE;
 
 	ctx->status_cur = GAME_STATE_RACE_ANIM_START;
 	ctx->status_prev = GAME_STATE_UNKNOWN;
 	/*ctx->status_cur = GAME_STATE_RACE;
 	ctx->status_prev = GAME_STATE_RACE;*/
 
-	ctx->nb_lap = 3;
-	//ctx->nb_lap = 1;
-	ctx->player_lap = 0;
-	ctx->player_place = NB_AI_CARS + 1;
+	ctx->race.nb_lap = 3;
+	//ctx->race.nb_lap = 1;
+	ctx->race.player_lap = 0;
+	ctx->pcar.player_place = NB_AI_CARS + 1;
 
 	ctx->scale_player_car[CAR_MODEL_IMPREZIA] = PLAYER_CAR_SCALE_IMPREZIA;
 	ctx->scale_player_car[CAR_MODEL_LOTUS] = PLAYER_CAR_SCALE_LOTUS;
@@ -199,7 +198,7 @@ static int main_ctx_init(struct game_context *ctx)
 	ctx->scale_ai_car[CAR_MODEL_LANCER] = AI_CAR_SCALE_LANCER;
 
 
-	ctx->constants.scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
+	ctx->scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
 
 	// track info init
 	ctx->track.track_selected = TRACK_DIJON;
@@ -209,48 +208,48 @@ static int main_ctx_init(struct game_context *ctx)
 
 	// player sprite constant values
 
-	/*ctx->player_sprite_y =
+	/*ctx->pcar.player_sprite_y =
 		SCREEN_HEIGHT -
 		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
+			      .cars[ctx->pcar.car_player_model]
+				   [ctx->pcar.car_player_sprite_idx]
 			      .h *
-		      ctx->scale_player_car[ctx->car_player_model]) -
+		      ctx->scale_player_car[ctx->pcar.car_player_model]) -
 		30; // TODO: Why 30 ??????*/
 
-	ctx->player_sprite_w =
+	ctx->pcar.player_sprite_w =
 		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
+			      .cars[ctx->pcar.car_player_model]
+				   [ctx->pcar.car_player_sprite_idx]
 			      .w *
-		      ctx->scale_player_car[ctx->car_player_model]);
+		      ctx->scale_player_car[ctx->pcar.car_player_model]);
 
-	ctx->player_sprite_h =
+	ctx->pcar.player_sprite_h =
 		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
+			      .cars[ctx->pcar.car_player_model]
+				   [ctx->pcar.car_player_sprite_idx]
 			      .h *
-		      ctx->scale_player_car[ctx->car_player_model]);
+		      ctx->scale_player_car[ctx->pcar.car_player_model]);
 
 
 	// just draw the player in middle of the screen. It doesn't
 	// move, that's
 	// the world around it which moves.
-	ctx->player_sprite_x = SCREEN_WIDTH / 2 - ctx->player_sprite_w / 2;
+	ctx->pcar.player_sprite_x = SCREEN_WIDTH / 2 - ctx->pcar.player_sprite_w / 2;
 
-	ctx->player_sprite_y =
+	ctx->pcar.player_sprite_y =
 		SCREEN_HEIGHT -
 		(int)((float)ctx->gfx
-			      .cars[ctx->car_player_model]
-				   [ctx->car_player_sprite_idx]
+			      .cars[ctx->pcar.car_player_model]
+				   [ctx->pcar.car_player_sprite_idx]
 			      .h *
-		      ctx->scale_player_car[ctx->car_player_model]) -
+		      ctx->scale_player_car[ctx->pcar.car_player_model]) -
 		SCREEN_HEIGHT * 4 / 100;
 	/*- 30*/;
 
 
-	ctx->player_max_x = ctx->player_sprite_x + ctx->player_sprite_w;
-	ctx->player_max_y = ctx->player_sprite_y + ctx->player_sprite_h;
+	ctx->pcar.player_max_x = ctx->pcar.player_sprite_x + ctx->pcar.player_sprite_w;
+	ctx->pcar.player_max_y = ctx->pcar.player_sprite_y + ctx->pcar.player_sprite_h;
 
 	return 0;
 };
@@ -264,10 +263,10 @@ static int main_destroy(struct game_context *ctx)
 	// SDL_DestroyTexture(ctx->gfx.t_bg_title.texture);
 
 	// free music
-	// Mix_FreeMusic(ctx->sfx.music_title);
+	// Mix_FreeMusic(ctx->sound.sfx.music_title);
 
 	// Free the sound effects
-	// Mix_FreeChunk(ctx->sfx.sfx_gameover);
+	// Mix_FreeChunk(ctx->sound.sfx.sfx_gameover);
 
 	// Destroy window
 	// SDL_DestroyRenderer(ctx->gfx.renderer);
@@ -312,7 +311,7 @@ int load_texture_from_file(struct game_context *ctx,
 	new_texture =
 		SDL_CreateTextureFromSurface(ctx->renderer, loaded_surface);
 	if (!new_texture) {
-		printf("[%s] Unable to create texture from %s! SDL Error: %s\n",
+		SDL_Log("[%s] Unable to create texture from %s! SDL Error: %s\n",
 		       __func__,
 		       path,
 		       SDL_GetError());
@@ -357,17 +356,17 @@ int main()
 		// main_build_track(ctx); // TODO: move out of loop !!!!!
 
 		// TODO: MOVE
-		float cam_depth = 1.f / tanf((ctx->field_of_view / 2.f) *
+		float cam_depth = 1.f / tanf((ctx->race.field_of_view / 2.f) *
 					     (float)M_PI / 180.f);
-		ctx->camera_depth = (float)cam_depth;
-		ctx->player_z =
-			(int)((float)ctx->camera_height * ctx->camera_depth);
+		ctx->race.camera_depth = (float)cam_depth;
+		ctx->pcar.player_z =
+			(int)((float)ctx->race.camera_height * ctx->race.camera_depth);
 		/*SDL_Log("[%s] camera_depth: double=%f, float=%f,
 		   player_z=%d\n",
 			__func__,
 			cam_depth,
-			ctx->camera_depth,
-			ctx->player_z);*/
+			ctx->race.camera_depth,
+			ctx->pcar.player_z);*/
 
 
 		// events management
@@ -389,7 +388,7 @@ int main()
 		ctx->action = ACTION_NONE;
 		ctx->keys.accel_prev = ctx->keys.accel;
 		ctx->keys.nitro_prev = ctx->keys.nitro;
-		ctx->drift_prev = ctx->drift;
+		ctx->sound.drift_prev = ctx->sound.drift;
 	}
 
 	// free resources

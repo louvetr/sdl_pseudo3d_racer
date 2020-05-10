@@ -1,8 +1,13 @@
+#ifndef TRACK_H
+#define TRACK_H
 
-//#include "common.h"
+//#include "main.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+
+//#include <SDL2/SDL_stdinc.h>
 
 #define NB_SECTOR_PARAM 7
 #define SECTOR_PARAM_ENTER_LG 0
@@ -14,6 +19,25 @@
 #define SECTOR_PARAM_NB_LANE_EXIT 6
 
 #define NB_SECTOR_DIJON 16
+
+typedef uint8_t Uint8;
+
+enum track_selection {
+	TRACK_DIJON = 0,
+};
+
+enum track_lane_type {
+	LANE_TYPE_NONE = 0,
+	LANE_TYPE_HALF,
+	LANE_TYPE_FULL
+};
+
+struct color_desc {
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
+	Uint8 a;
+};
 
 
 // turn curve level and direction
@@ -48,24 +72,26 @@ enum road_sector_length {
 	LG_LONG = 100
 };
 
-int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
-	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 3, 2},
-	{LG_SHORT, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 2, 2},
-	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_UP_LOW, CURVE_L_EASY, 2, 2},
-	{LG_SHORT, LG_MEDIUM, LG_LONG, HILL_NONE, CURVE_L_HARD, 2, 2},
-	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
-	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH, CURVE_NONE, 3, 3},
-	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
-	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
 
-	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 3, 2},
 
-	{LG_SHORT, LG_MEDIUM, LG_LONG, HILL_NONE, CURVE_L_HARD, 2, 2},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_UP_MEDIUM, CURVE_R_MEDIUM, 2, 2},
-	{LG_LONG, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_MEDIUM, 2, 2},
 
-	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
+struct track_info {
 
-	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
+	enum track_selection track_selected;
+	enum track_lane_type lane_type;
+	struct color_desc lane_color;
+
+    // number of road segments of the track
+    int nb_segments;
+	// array of road segments
+	struct road_segment *segments; // array of road segments
+	// number of segments per red/white rumble strip
+	int rumble_length;
+	// z length of entire track (computed)
+	int track_length;
+	// number of lanes
+	int lanes;
+
+};
+
+#endif

@@ -1,4 +1,4 @@
-#include "common.h"
+#include "main.h"
 
 
 static int road_add_segment(struct road_segment *segment,
@@ -37,12 +37,12 @@ static int road_add_segment(struct road_segment *segment,
 	local_idx++;*/
 
 
-	/* TODO: use ctx->rumble_length */
+	/* TODO: use ctx->track.rumble_length */
 	/*if (idx < 10) {
 		segment->color = COLOR_START;
 	} else {*/
 
-	segment->color = (idx / RUMBLE_LENGTH /*ctx->rumble_length*/) % 2
+	segment->color = (idx / RUMBLE_LENGTH /*ctx->track.rumble_length*/) % 2
 				 ? COLOR_DARK
 				 : COLOR_BRIGHT;
 	//}

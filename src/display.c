@@ -1,4 +1,4 @@
-#include "common.h"
+#include "main.h"
 
 #define BORDER 0
 
@@ -170,7 +170,7 @@ static int texture_render(struct game_context *ctx,
 	// SDL_RenderCopy(ctx->renderer, t->texture, clip, &render_quad);
 
 	// workaround to avoid random blinking AI car sprite in middle of screen
-	if (hitbox && y + render_quad.h < ctx->max_y) {
+	if (hitbox && y + render_quad.h < ctx->race.max_y) {
 		/*SDL_Log("[%s] AI CAR GLITCH
 		   ##################################\n",
 			__func__);*/
@@ -330,12 +330,14 @@ static int display_render_segment(struct game_context *ctx,
 		int j_offset = (seg_idx) % 2;
 		lane_separator = 0;
 
-		for (int j = 0 + j_offset; j < ctx->lanes * grid_per_lane;
+		for (int j = 0 + j_offset; j < ctx->track.lanes * grid_per_lane;
 		     j += 2) {
 			int square_x1 = x1 - w1;
 			int square_x2 = x2 - w2;
-			int square_w1 = 2 * w1 / (grid_per_lane * ctx->lanes);
-			int square_w2 = 2 * w2 / (grid_per_lane * ctx->lanes);
+			int square_w1 =
+				2 * w1 / (grid_per_lane * ctx->track.lanes);
+			int square_w2 =
+				2 * w2 / (grid_per_lane * ctx->track.lanes);
 			display_render_quad(ctx,
 					    square_x1 + square_w1 * j,
 					    y1,
@@ -446,7 +448,7 @@ static int display_load_render_text_with_shade(struct game_context *ctx,
 
 static int display_render_bgm_name(struct game_context *ctx)
 {
-	if (ctx->bgm_name_dislayed)
+	if (ctx->race.bgm_name_dislayed)
 		return 0;
 
 	// SDL_Color text_color_front_2 = {0, 0, 0};
@@ -459,7 +461,7 @@ static int display_render_bgm_name(struct game_context *ctx)
 	int font_size_2 = 40;
 	TTF_Font *bgm_font = NULL;
 
-	ctx->nb_frame_anim++;
+	ctx->race.nb_frame_anim++;
 
 	bgm_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
 	if (!bgm_font) {
@@ -469,21 +471,21 @@ static int display_render_bgm_name(struct game_context *ctx)
 		return -EINVAL;
 	}
 
-	int bgm_pos_x = SCREEN_WIDTH - ctx->nb_frame_anim * 7;
+	int bgm_pos_x = SCREEN_WIDTH - ctx->race.nb_frame_anim * 7;
 	if (bgm_pos_x < -ctx->gfx.font_race_anim_3.w) {
 		bgm_pos_x = -ctx->gfx.font_race_anim_3.w;
-		ctx->bgm_name_dislayed = 1;
+		ctx->race.bgm_name_dislayed = 1;
 	}
 
 	// glitch fix
-	/*if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+	/*if (ctx->race.finish_placed_frame_nb == ctx->race.nb_frame_anim)
 		bgm_pos_x = SCREEN_WIDTH;*/
 
 	display_load_render_text_with_shade(
 		ctx,
 		bgm_font,
 		&ctx->gfx.font_race_anim_3,
-		ctx->music.bgm_name[ctx->bgm_idx],
+		ctx->sound.music.bgm_name[ctx->sound.bgm_idx],
 		&text_color_front_2,
 		&text_color_shadow,
 		bgm_pos_x,
@@ -494,7 +496,7 @@ static int display_render_bgm_name(struct game_context *ctx)
 
 	TTF_CloseFont(bgm_font);
 
-	ctx->nb_frame_anim++;
+	ctx->race.nb_frame_anim++;
 
 	return 0;
 }
@@ -502,7 +504,7 @@ static int display_render_bgm_name(struct game_context *ctx)
 
 static int display_render_anim_race_end(struct game_context *ctx)
 {
-	int alpha = ctx->nb_frame_anim / 2;
+	int alpha = ctx->race.nb_frame_anim / 2;
 	if (alpha > 200)
 		alpha = 200;
 
@@ -527,17 +529,17 @@ static int display_render_anim_race_end(struct game_context *ctx)
 	TTF_Font *place_font = NULL;
 	float angle;
 
-	ctx->nb_frame_anim++;
+	ctx->race.nb_frame_anim++;
 
-	finish_font_size = ctx->nb_frame_anim;
+	finish_font_size = ctx->race.nb_frame_anim;
 	if (finish_font_size > 150)
 		finish_font_size = 150;
 
-	angle = (float)ctx->nb_frame_anim * 4.f;
+	angle = (float)ctx->race.nb_frame_anim * 4.f;
 	if (angle > 360.f) {
 		angle = 0.f;
-		if (ctx->finish_placed_frame_nb == 0) {
-			ctx->finish_placed_frame_nb = ctx->nb_frame_anim;
+		if (ctx->race.finish_placed_frame_nb == 0) {
+			ctx->race.finish_placed_frame_nb = ctx->race.nb_frame_anim;
 		}
 	}
 
@@ -564,13 +566,13 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		angle);
 
 
-	if (ctx->finish_placed_frame_nb) {
+	if (ctx->race.finish_placed_frame_nb) {
 
 		char msg[32];
 		sprintf(msg,
 			"%d%s",
-			ctx->player_place,
-			logic_get_player_place_suffix(ctx->player_place));
+			ctx->pcar.player_place,
+			logic_get_player_place_suffix(ctx->pcar.player_place));
 
 		nb_font = TTF_OpenFont(SOFACHROME_FONT, font_size_2);
 		if (!nb_font) {
@@ -582,7 +584,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 
 		int nb_pos_x =
 			-ctx->gfx.font_race_anim_2.w +
-			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
+			(ctx->race.nb_frame_anim - ctx->race.finish_placed_frame_nb) * 15;
 		/*if (nb_pos_x >
 		    SCREEN_WIDTH * 45 / 100 - ctx->gfx.font_race_anim_2.w)
 			nb_pos_x = SCREEN_WIDTH * 45 / 100 -
@@ -593,7 +595,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 				   ctx->gfx.font_race_anim_2.w / 2;
 
 		// glitch fix
-		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+		if (ctx->race.finish_placed_frame_nb == ctx->race.nb_frame_anim)
 			nb_pos_x = -SCREEN_WIDTH;
 
 		display_load_render_text_with_shade(
@@ -621,7 +623,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 
 		int place_pos_x =
 			SCREEN_WIDTH -
-			(ctx->nb_frame_anim - ctx->finish_placed_frame_nb) * 15;
+			(ctx->race.nb_frame_anim - ctx->race.finish_placed_frame_nb) * 15;
 		/*if (place_pos_x < SCREEN_WIDTH * 45 / 100)
 			place_pos_x = SCREEN_WIDTH * 45 / 100;*/
 		if (place_pos_x <
@@ -630,7 +632,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 				      ctx->gfx.font_race_anim_3.w / 2;
 
 		// glitch fix
-		if (ctx->finish_placed_frame_nb == ctx->nb_frame_anim)
+		if (ctx->race.finish_placed_frame_nb == ctx->race.nb_frame_anim)
 			nb_pos_x = SCREEN_WIDTH;
 
 		display_load_render_text_with_shade(
@@ -652,7 +654,7 @@ static int display_render_anim_race_end(struct game_context *ctx)
 	TTF_CloseFont(nb_font);
 	TTF_CloseFont(place_font);
 
-	ctx->nb_frame_anim++;
+	ctx->race.nb_frame_anim++;
 
 	return 0;
 }
@@ -668,22 +670,22 @@ static int display_render_anim_race_start(struct game_context *ctx)
 	int font_size;
 	TTF_Font *font;
 
-	ctx->nb_frame_anim++;
+	ctx->race.nb_frame_anim++;
 
-	cpt = (START_ANIM_DURATION - 1) - ctx->nb_frame_anim / FPS;
+	cpt = (START_ANIM_DURATION - 1) - ctx->race.nb_frame_anim / FPS;
 
 	if (cpt > 0)
 		sprintf(msg, "%d", cpt);
 	else
 		sprintf(msg, "%s", "GO!");
 
-	font_size = (ctx->nb_frame_anim % FPS) * 5;
+	font_size = (ctx->race.nb_frame_anim % FPS) * 5;
 
 	font = TTF_OpenFont(SOFACHROME_FONT, font_size);
 	if (!font) {
-		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
-		       __func__,
-		       TTF_GetError());
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
 		return -EINVAL;
 	}
 
@@ -727,8 +729,9 @@ static int display_render_hud(struct game_context *ctx)
 	char speed[8];
 	sprintf(speed,
 		"%03d",
-		(int)(ctx->speed * 240.f /
-		      ctx->max_speed)); // TODO: set max_speed in kph per car
+		(int)(ctx->pcar.speed * 240.f /
+		      ctx->pcar.max_speed)); // TODO: set max_speed in kph per
+					     // car
 
 	// Right
 	display_load_render_text_with_shade(
@@ -759,12 +762,12 @@ static int display_render_hud(struct game_context *ctx)
 		0.f);
 
 	// Mid
-	ctx->player_place = logic_get_player_place_nb(ctx);
+	ctx->pcar.player_place = logic_get_player_place_nb(ctx);
 	char place_str[3];
-	if (ctx->player_place < 10)
-		snprintf(place_str, 3, " %d", ctx->player_place);
+	if (ctx->pcar.player_place < 10)
+		snprintf(place_str, 3, " %d", ctx->pcar.player_place);
 	else
-		snprintf(place_str, 3, "%d", ctx->player_place);
+		snprintf(place_str, 3, "%d", ctx->pcar.player_place);
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -783,7 +786,7 @@ static int display_render_hud(struct game_context *ctx)
 		ctx,
 		ctx->sc_font_medium,
 		&ctx->gfx.font_game_position_unit,
-		logic_get_player_place_suffix(ctx->player_place),
+		logic_get_player_place_suffix(ctx->pcar.player_place),
 		&text_color,
 		&text_color_shadow,
 		SCREEN_WIDTH / 2 - ctx->gfx.font_game_position_value.w / 2 +
@@ -795,7 +798,7 @@ static int display_render_hud(struct game_context *ctx)
 
 	// Left
 	char lap_str[8];
-	snprintf(lap_str, 8, "%d/%d", ctx->player_lap, ctx->nb_lap);
+	snprintf(lap_str, 8, "%d/%d", ctx->race.player_lap, ctx->race.nb_lap);
 
 	display_load_render_text_with_shade(ctx,
 					    ctx->sc_font_big,
@@ -834,7 +837,7 @@ static int display_render_hud(struct game_context *ctx)
 					    0.f);
 
 	// display nitro icons
-	for (int i = 0; i < ctx->nb_nitro; i++) {
+	for (int i = 0; i < ctx->pcar.nb_nitro; i++) {
 		filledCircleRGBA(
 			ctx->renderer,
 			(int16_t)(SCREEN_WIDTH * (662 + i * 30) / 1000),
@@ -857,11 +860,12 @@ static int display_render_hud(struct game_context *ctx)
 
 	// blink current nitro
 	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
-		if (ctx->nitro_nb_frame % (FPS / 2) > FPS / 4) {
+		if (ctx->pcar.nitro_nb_frame % (FPS / 2) > FPS / 4) {
 			filledCircleRGBA(
 				ctx->renderer,
 				(int16_t)(SCREEN_WIDTH *
-					  (662 + ctx->nb_nitro * 30) / 1000),
+					  (662 + ctx->pcar.nb_nitro * 30) /
+					  1000),
 				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
 					  100),
 				15,
@@ -873,7 +877,8 @@ static int display_render_hud(struct game_context *ctx)
 			filledCircleRGBA(
 				ctx->renderer,
 				(int16_t)(SCREEN_WIDTH *
-					  (662 + ctx->nb_nitro * 30) / 1000),
+					  (662 + ctx->pcar.nb_nitro * 30) /
+					  1000),
 				(int16_t)(ctx->gfx.font_game_lap_title.h * 135 /
 					  100),
 				11,
@@ -898,10 +903,10 @@ static int display_render_hud(struct game_context *ctx)
 					    0.f);
 
 	char time_str[16];
-	int time_min = ctx->race_time_ms / 60000;
-	int time_sec = (ctx->race_time_ms - time_min * 60000) / 1000;
+	int time_min = ctx->race.race_time_ms / 60000;
+	int time_sec = (ctx->race.race_time_ms - time_min * 60000) / 1000;
 	int time_ms =
-		(ctx->race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
+		(ctx->race.race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
 
 	sprintf(time_str, "%02d:%02d.%02d", time_min, time_sec, time_ms);
 
@@ -938,7 +943,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 
 			memset(&ctx->ai_cars[i].hitbox, 0, sizeof(SDL_Rect));
 
-			struct road_segment *seg = &ctx->segments[idx];
+			struct road_segment *seg = &ctx->track.segments[idx];
 			int sprite_x, sprite_y;
 
 			float car_screen_scale =
@@ -1004,7 +1009,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 			// if sprite is behind a hill, set a clip to
 			// crop its lower part
 			if (tmp_idx > tmp_max_y_idx) {
-				if (sprite_y >= ctx->max_y) {
+				if (sprite_y >= ctx->race.max_y) {
 					continue;
 				}
 
@@ -1012,9 +1017,9 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				r->w = ctx->gfx.cars[ctx->ai_cars[i].car_model]
 						    [ctx->ai_cars[i].sprite_idx]
 							    .w;
-				int clip_h = ctx->max_y - sprite_y;
+				int clip_h = ctx->race.max_y - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)(ctx->max_y - sprite_y) /
+					(int)((float)(ctx->race.max_y - sprite_y) /
 					      car_x_scale);
 				if (clip_h <
 					    (int)((float)ctx->gfx
@@ -1037,7 +1042,7 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				// sprite is behind a hill, crop it
 				// accodingly
 			} else if (tmp_idx > tmp_max_y_bis_idx) {
-				if (sprite_y >= ctx->max_y_bis) {
+				if (sprite_y >= ctx->race.max_y_bis) {
 					continue;
 				}
 
@@ -1045,9 +1050,9 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 				r->w = ctx->gfx.cars[ctx->ai_cars[i].car_model]
 						    [ctx->ai_cars[i].sprite_idx]
 							    .w;
-				int clip_h = ctx->max_y_bis - sprite_y;
+				int clip_h = ctx->race.max_y_bis - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)(ctx->max_y_bis -
+					(int)((float)(ctx->race.max_y_bis -
 						      sprite_y) /
 					      car_x_scale);
 				if (clip_h <
@@ -1112,8 +1117,7 @@ static int display_render_scene_sprites(struct game_context *ctx,
 		seg->scene->sprite[j].scaled_x =
 			seg->p1.screen.x +
 			(int)(screen_scale * seg->scene->sprite[j].position *
-			      ctx->constants.scene_sprite_coef *
-			      (float)seg->width);
+			      ctx->scene_sprite_coef * (float)seg->width);
 		if (seg->scene->sprite[j].position < 0)
 			seg->scene->sprite[j].scaled_x -=
 				(int)((float)seg->scene->sprite[j].t->w *
@@ -1132,15 +1136,15 @@ static int display_render_scene_sprites(struct game_context *ctx,
 		// lower part
 		if (tmp_idx > tmp_max_y_idx) {
 
-			if (sprite_y >= ctx->max_y) {
+			if (sprite_y >= ctx->race.max_y) {
 				continue;
 			}
 
 			r = calloc(1, sizeof(SDL_Rect));
 			r->w = seg->scene->sprite[j].t->w;
-			int clip_h = ctx->max_y - sprite_y;
+			int clip_h = ctx->race.max_y - sprite_y;
 			int clip_h_inv_scale =
-				(int)((float)(ctx->max_y - sprite_y) /
+				(int)((float)(ctx->race.max_y - sprite_y) /
 				      seg->scene->sprite[j].scale);
 			if (clip_h < (int)((float)seg->scene->sprite[j].t->h *
 					   seg->scene->sprite[j].scale) &&
@@ -1151,15 +1155,15 @@ static int display_render_scene_sprites(struct game_context *ctx,
 			}
 			// sprite is behind a hill, crop it accodingly
 		} else if (tmp_idx > tmp_max_y_bis_idx) {
-			if (sprite_y >= ctx->max_y_bis) {
+			if (sprite_y >= ctx->race.max_y_bis) {
 				continue;
 			}
 
 			r = calloc(1, sizeof(SDL_Rect));
 			r->w = seg->scene->sprite[j].t->w;
-			int clip_h = ctx->max_y_bis - sprite_y;
+			int clip_h = ctx->race.max_y_bis - sprite_y;
 			int clip_h_inv_scale =
-				(int)((float)(ctx->max_y_bis - sprite_y) /
+				(int)((float)(ctx->race.max_y_bis - sprite_y) /
 				      seg->scene->sprite[j].scale);
 			if (clip_h < (int)((float)seg->scene->sprite[j].t->h *
 					   seg->scene->sprite[j].scale) &&
@@ -1212,15 +1216,15 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 	// lower part
 	if (tmp_idx > tmp_max_y_idx) {
 
-		if (sprite_y >= ctx->max_y) {
+		if (sprite_y >= ctx->race.max_y) {
 			return 0;
 		}
 
 		r = calloc(1, sizeof(SDL_Rect));
 		r->w = ctx->gfx.scene_start_lane.w;
-		int clip_h = ctx->max_y - sprite_y;
+		int clip_h = ctx->race.max_y - sprite_y;
 		int clip_h_inv_scale =
-			(int)((float)(ctx->max_y - sprite_y) / x_scale);
+			(int)((float)(ctx->race.max_y - sprite_y) / x_scale);
 		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
 				   x_scale) &&
 		    clip_h > 0) {
@@ -1230,15 +1234,15 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 		}
 		// sprite is behind a hill, crop it accodingly
 	} else if (tmp_idx > tmp_max_y_bis_idx) {
-		if (sprite_y >= ctx->max_y_bis) {
+		if (sprite_y >= ctx->race.max_y_bis) {
 			return 0;
 		}
 
 		r = calloc(1, sizeof(SDL_Rect));
 		r->w = ctx->gfx.scene_start_lane.w;
-		int clip_h = ctx->max_y_bis - sprite_y;
+		int clip_h = ctx->race.max_y_bis - sprite_y;
 		int clip_h_inv_scale =
-			(int)((float)(ctx->max_y_bis - sprite_y) / x_scale);
+			(int)((float)(ctx->race.max_y_bis - sprite_y) / x_scale);
 		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
 				   x_scale) &&
 		    clip_h > 0) {
@@ -1268,29 +1272,30 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 static int display_render_scaled_sprites(struct game_context *ctx)
 {
 	int ret;
-	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
+	int base_segment_idx = inline_get_segment_idx(ctx, ctx->pcar.position);
 
-	for (int i = ctx->draw_distance; i >= 0; i--) {
+	for (int i = ctx->race.draw_distance; i >= 0; i--) {
 
-		int idx = (base_segment_idx + i) % ctx->nb_segments;
-		struct road_segment *seg = &ctx->segments[idx];
+		int idx = (base_segment_idx + i) % ctx->track.nb_segments;
+		struct road_segment *seg = &ctx->track.segments[idx];
 
 		/* All this tmp_idx stuff is to detemine the index value of the
 		 * 2 highest segments dsiplayes on screen */
 		int tmp_idx, tmp_max_y_idx, tmp_max_y_bis_idx;
-		if (ctx->max_y_idx > base_segment_idx)
-			tmp_max_y_idx = ctx->max_y_idx;
+		if (ctx->race.max_y_idx > base_segment_idx)
+			tmp_max_y_idx = ctx->race.max_y_idx;
 		else
-			tmp_max_y_idx = (ctx->max_y_idx + ctx->nb_segments);
-		if (ctx->max_y_bis_idx > base_segment_idx)
-			tmp_max_y_bis_idx = ctx->max_y_bis_idx;
+			tmp_max_y_idx =
+				(ctx->race.max_y_idx + ctx->track.nb_segments);
+		if (ctx->race.max_y_bis_idx > base_segment_idx)
+			tmp_max_y_bis_idx = ctx->race.max_y_bis_idx;
 		else
 			tmp_max_y_bis_idx =
-				(ctx->max_y_bis_idx + ctx->nb_segments);
+				(ctx->race.max_y_bis_idx + ctx->track.nb_segments);
 		if (idx > base_segment_idx)
 			tmp_idx = idx;
 		else
-			tmp_idx = idx + ctx->nb_segments;
+			tmp_idx = idx + ctx->track.nb_segments;
 
 		float screen_scale = seg->p1.screen.scale;
 		float x_scale = screen_scale * SCREEN_WIDTH * 2;
@@ -1332,25 +1337,25 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 static int display_render_road(struct game_context *ctx)
 {
 
-	int base_segment_idx = inline_get_segment_idx(ctx, ctx->position);
-	int ratio_modulus =
-		(ctx->position % ROAD_SEGMENT_LENGTH) / ROAD_SEGMENT_LENGTH;
-	float dx =
-		-(ctx->segments[base_segment_idx].curve * (float)ratio_modulus);
+	int base_segment_idx = inline_get_segment_idx(ctx, ctx->pcar.position);
+	int ratio_modulus = (ctx->pcar.position % ROAD_SEGMENT_LENGTH) /
+			    ROAD_SEGMENT_LENGTH;
+	float dx = -(ctx->track.segments[base_segment_idx].curve *
+		     (float)ratio_modulus);
 	float x = 0;
 	int i, idx;
 
-	ctx->max_y = SCREEN_HEIGHT;
-	ctx->max_y_idx = 0;
-	ctx->max_y_bis = SCREEN_HEIGHT;
-	ctx->max_y_bis_idx = 0;
+	ctx->race.max_y = SCREEN_HEIGHT;
+	ctx->race.max_y_idx = 0;
+	ctx->race.max_y_bis = SCREEN_HEIGHT;
+	ctx->race.max_y_bis_idx = 0;
 
 	float highest_world_y = 0;
 
-	for (i = 0; i < ctx->draw_distance; i++) {
+	for (i = 0; i < ctx->race.draw_distance; i++) {
 
 		int add_z_offset_to_first_segments = 0;
-		idx = (base_segment_idx + i) % ctx->nb_segments;
+		idx = (base_segment_idx + i) % ctx->track.nb_segments;
 
 		// fix transition from high to low idx segments.
 		if (idx < base_segment_idx) {
@@ -1359,73 +1364,76 @@ static int display_render_road(struct game_context *ctx)
 
 		// world to screen conversion
 		logic_project_coord(
-			&ctx->segments[idx].p1,
+			&ctx->track.segments[idx].p1,
 			add_z_offset_to_first_segments
-				? (int)ctx->segments[ctx->nb_segments - 1]
+				? (int)ctx->track
+					  .segments[ctx->track.nb_segments - 1]
 					  .p1.world.z
 				: 0,
-			(int)((ctx->player_x *
-			       (float)ctx->segments[idx].width) -
+			(int)((ctx->pcar.player_x *
+			       (float)ctx->track.segments[idx].width) -
 			      x),
-			ctx->player_y + ctx->camera_height,
-			ctx->position,
-			ctx->camera_depth,
+			ctx->pcar.player_y + ctx->race.camera_height,
+			ctx->pcar.position,
+			ctx->race.camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
-			ctx->segments[idx].width);
+			ctx->track.segments[idx].width);
 
 		logic_project_coord(
-			&ctx->segments[idx].p2,
+			&ctx->track.segments[idx].p2,
 			add_z_offset_to_first_segments
-				? (int)ctx->segments[ctx->nb_segments - 1]
+				? (int)ctx->track
+					  .segments[ctx->track.nb_segments - 1]
 					  .p2.world.z
 				: 0,
-			(int)((ctx->player_x *
-			       (float)ctx->segments[idx].width) -
+			(int)((ctx->pcar.player_x *
+			       (float)ctx->track.segments[idx].width) -
 			      x - dx),
-			ctx->player_y + ctx->camera_height,
-			ctx->position,
-			ctx->camera_depth,
+			ctx->pcar.player_y + ctx->race.camera_height,
+			ctx->pcar.position,
+			ctx->race.camera_depth,
 			SCREEN_WIDTH,
 			SCREEN_HEIGHT,
-			ctx->segments[idx].width);
+			ctx->track.segments[idx].width);
 
 		x += dx;
-		dx += ctx->segments[idx].curve;
+		dx += ctx->track.segments[idx].curve;
 
 		// skip segment behind hills
-		if (ctx->segments[idx].p2.screen.y >=
-			    ctx->segments[idx].p1.screen.y ||
-		    ctx->segments[idx].p2.screen.y >= ctx->max_y) {
-			if (!ctx->max_y_bis_idx && ctx->max_y_idx) {
-				ctx->max_y_bis = ctx->max_y;
-				ctx->max_y_bis_idx = idx;
+		if (ctx->track.segments[idx].p2.screen.y >=
+			    ctx->track.segments[idx].p1.screen.y ||
+		    ctx->track.segments[idx].p2.screen.y >= ctx->race.max_y) {
+			if (!ctx->race.max_y_bis_idx && ctx->race.max_y_idx) {
+				ctx->race.max_y_bis = ctx->race.max_y;
+				ctx->race.max_y_bis_idx = idx;
 			}
 			continue;
-		} else if (ctx->segments[idx].p1.camera.z <=
-			   ctx->camera_depth) {
+		} else if (ctx->track.segments[idx].p1.camera.z <=
+			   ctx->race.camera_depth) {
 			// skip segment behind camera and thoses already
 			continue;
 		}
 
-		if (ctx->segments[idx].p2.world.y > highest_world_y)
-			highest_world_y = ctx->segments[idx].p2.world.y;
+		if (ctx->track.segments[idx].p2.world.y > highest_world_y)
+			highest_world_y = ctx->track.segments[idx].p2.world.y;
 
-		display_render_segment(ctx,
-				       idx,
-				       SCREEN_WIDTH,
-				       ctx->segments[idx].nb_lanes,
-				       ctx->segments[idx].p1.screen.x,
-				       (int)ctx->segments[idx].p1.screen.y,
-				       ctx->segments[idx].p1.screen.w,
-				       ctx->segments[idx].p2.screen.x,
-				       (int)ctx->segments[idx].p2.screen.y,
-				       ctx->segments[idx].p2.screen.w,
-				       0, // TODO: fog
-				       ctx->segments[idx].color);
+		display_render_segment(
+			ctx,
+			idx,
+			SCREEN_WIDTH,
+			ctx->track.segments[idx].nb_lanes,
+			ctx->track.segments[idx].p1.screen.x,
+			(int)ctx->track.segments[idx].p1.screen.y,
+			ctx->track.segments[idx].p1.screen.w,
+			ctx->track.segments[idx].p2.screen.x,
+			(int)ctx->track.segments[idx].p2.screen.y,
+			ctx->track.segments[idx].p2.screen.w,
+			0, // TODO: fog
+			ctx->track.segments[idx].color);
 
-		ctx->max_y = (int)ctx->segments[idx].p1.screen.y;
-		ctx->max_y_idx = idx;
+		ctx->race.max_y = (int)ctx->track.segments[idx].p1.screen.y;
+		ctx->race.max_y_idx = idx;
 	}
 
 	return 0;
@@ -1456,8 +1464,8 @@ static int display_render_background_layer(struct game_context *ctx,
 	// TODO : BG rotation % speed, no rotation if speed == 0
 	// TODO : do some modulus to avoid going too far
 	*texture_x_offset +=
-		(int)(ctx->segments[ctx->player_segment].curve *
-		      (float)bg_layer * ctx->speed / ctx->max_speed);
+		(int)(ctx->track.segments[ctx->pcar.player_segment].curve *
+		      (float)bg_layer * ctx->pcar.speed / ctx->pcar.max_speed);
 
 	if (*texture_x_offset > bg_texture->w)
 		*texture_x_offset -= bg_texture->w;
@@ -1527,18 +1535,18 @@ static int display_render_backgrounds(struct game_context *ctx)
 
 	ret = display_render_background_layer(ctx,
 					      BG_LAYER_SKY_FAR,
-					      &ctx->layers_x_offset.sky_far,
+					      &ctx->gfx.layers_x_offset.sky_far,
 					      &ctx->gfx.bg_sky_far);
 
 	ret = display_render_background_layer(
 		ctx,
 		BG_LAYER_LANDSCAPE_FAR,
-		&ctx->layers_x_offset.landscape_far,
+		&ctx->gfx.layers_x_offset.landscape_far,
 		&ctx->gfx.bg_mountains);
 
 	ret = display_render_background_layer(ctx,
 					      BG_LAYER_SKY_NEAR,
-					      &ctx->layers_x_offset.sky_near,
+					      &ctx->gfx.layers_x_offset.sky_near,
 					      &ctx->gfx.bg_sky_near);
 
 	return ret;
@@ -1547,39 +1555,41 @@ static int display_render_backgrounds(struct game_context *ctx)
 static int display_render_player_car(struct game_context *ctx)
 {
 	int ret;
-	int player_sprite_y = ctx->player_sprite_y;
+	int player_sprite_y = ctx->pcar.player_sprite_y;
 
 	// During start animation car y depends camera height
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START) {
-		if (ctx->camera_height > CAMERA_HEIGHT_RACE * 2) {
+		if (ctx->race.camera_height > CAMERA_HEIGHT_RACE * 2) {
 			player_sprite_y = SCREEN_HEIGHT + 1;
 		} else {
 			float percent = (float)(CAMERA_HEIGHT_RACE -
-						(ctx->camera_height -
+						(ctx->race.camera_height -
 						 CAMERA_HEIGHT_RACE)) /
 					(float)CAMERA_HEIGHT_RACE;
-			player_sprite_y = SCREEN_HEIGHT -
-					  (int)((float)(SCREEN_HEIGHT -
-							ctx->player_sprite_y) *
-						percent);
+			player_sprite_y =
+				SCREEN_HEIGHT -
+				(int)((float)(SCREEN_HEIGHT -
+					      ctx->pcar.player_sprite_y) *
+				      percent);
 		}
 	}
 
-	/*SDL_Log("[%s][h=%d] ctx->player_sprite_y = %d, player_sprite_y = %d",
+	/*SDL_Log("[%s][h=%d] ctx->pcar.player_sprite_y = %d, player_sprite_y =
+	   %d",
 		__func__,
-		ctx->camera_height,
-		ctx->player_sprite_y,
+		ctx->race.camera_height,
+		ctx->pcar.player_sprite_y,
 		player_sprite_y);*/
 
 	ret = texture_render(ctx,
-			     &ctx->gfx.cars[ctx->car_player_model]
-					   [ctx->car_player_sprite_idx],
-			     ctx->player_sprite_x,
+			     &ctx->gfx.cars[ctx->pcar.car_player_model]
+					   [ctx->pcar.car_player_sprite_idx],
+			     ctx->pcar.player_sprite_x,
 			     player_sprite_y,
 			     NULL,
 			     0.f,
-			     ctx->scale_player_car[ctx->car_player_model],
-			     ctx->car_player_flip,
+			     ctx->scale_player_car[ctx->pcar.car_player_model],
+			     ctx->pcar.car_player_flip,
 			     NULL);
 
 	return ret;
@@ -1591,46 +1601,47 @@ static int display_render_particles(struct game_context *ctx)
 	// render flame burst when nitro is on
 	if (ctx->status_cur == GAME_STATE_RACE_NITRO && ctx->keys.accel) {
 		for (int k = 0; k < NB_PARTICLES_NITRO_DISPLAY; k++) {
-			if (ctx->part_nitro[k].pos_x != 0) {
-				ctx->part_nitro[k].frame++;
+			if (ctx->gfx.part_nitro[k].pos_x != 0) {
+				ctx->gfx.part_nitro[k].frame++;
 
-				if (ctx->part_nitro[k].frame % 4)
-					texture_render(ctx,
-						       ctx->part_nitro[k].t,
-						       ctx->part_nitro[k].pos_x,
-						       ctx->part_nitro[k].pos_y,
-						       NULL,
-						       0.f,
-						       PARTICLE_NITRO_SCALE,
-						       SDL_FLIP_NONE,
-						       NULL);
+				if (ctx->gfx.part_nitro[k].frame % 4)
+					texture_render(
+						ctx,
+						ctx->gfx.part_nitro[k].t,
+						ctx->gfx.part_nitro[k].pos_x,
+						ctx->gfx.part_nitro[k].pos_y,
+						NULL,
+						0.f,
+						PARTICLE_NITRO_SCALE,
+						SDL_FLIP_NONE,
+						NULL);
 
-				if (ctx->part_nitro[k].frame >
+				if (ctx->gfx.part_nitro[k].frame >
 				    PARTICLE_NITRO_FRAME_DURATION)
-					ctx->part_nitro[k].pos_x = 0;
+					ctx->gfx.part_nitro[k].pos_x = 0;
 			}
 		}
 	}
 
 	// render smoke when drifting
 	for (int k = 0; k < NB_PARTICLES_SMOKE_DISPLAY; k++) {
-		if (ctx->part_smoke[k].pos_x != 0) {
-			ctx->part_smoke[k].frame++;
+		if (ctx->gfx.part_smoke[k].pos_x != 0) {
+			ctx->gfx.part_smoke[k].frame++;
 
-			if (ctx->part_smoke[k].frame % 4)
+			if (ctx->gfx.part_smoke[k].frame % 4)
 				texture_render(ctx,
-					       ctx->part_smoke[k].t,
-					       ctx->part_smoke[k].pos_x,
-					       ctx->part_smoke[k].pos_y,
+					       ctx->gfx.part_smoke[k].t,
+					       ctx->gfx.part_smoke[k].pos_x,
+					       ctx->gfx.part_smoke[k].pos_y,
 					       NULL,
 					       0.f,
 					       PARTICLE_SMOKE_SCALE,
 					       SDL_FLIP_NONE,
 					       NULL);
 
-			if (ctx->part_smoke[k].frame >
+			if (ctx->gfx.part_smoke[k].frame >
 			    PARTICLE_SMOKE_FRAME_DURATION)
-				ctx->part_smoke[k].pos_x = 0;
+				ctx->gfx.part_smoke[k].pos_x = 0;
 		}
 	}
 
@@ -1668,7 +1679,9 @@ static int display_screen_race(struct game_context *ctx)
 		ret = display_render_anim_race_start(ctx);
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ret = display_render_anim_race_end(ctx);
-	if (ctx->status_cur == GAME_STATE_RACE)
+	if (ctx->status_cur == GAME_STATE_RACE ||
+	    ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
+	    ctx->status_cur == GAME_STATE_RACE_NITRO)
 		ret = display_render_bgm_name(ctx);
 
 	if (ret < 0)
@@ -1692,7 +1705,7 @@ int main_display(struct game_context *ctx)
 	// SDL_Log("[%s] ENTER\n", __func__);
 
 	if (!ctx) {
-		printf("invalid parameter\n");
+		SDL_Log("invalid parameter\n");
 		return -EINVAL;
 	}
 

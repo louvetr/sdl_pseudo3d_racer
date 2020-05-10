@@ -1,4 +1,4 @@
-#include "common.h"
+#include "main.h"
 
 #define AHEAD_SEG_DISTANCE 30
 
@@ -51,7 +51,7 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 			int *closest_car_idx)
 {
 	int ret = AI_NO_CAR_AHEAD;
-	int dist_with_closest_car = ctx->nb_segments;
+	int dist_with_closest_car = ctx->track.nb_segments;
 	int car_detected_on_left_lane = 0;
 	int car_detected_on_right_lane = 0;
 	*closest_car_idx = -1;
@@ -59,7 +59,7 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 	// boarder lanes are considered as occupied by an ai car
 	if (ai_car_lane == 0)
 		car_detected_on_left_lane = 1;
-	if (ai_car_lane == ctx->lanes - 1)
+	if (ai_car_lane == ctx->track.lanes - 1)
 		car_detected_on_right_lane = 1;
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
@@ -73,10 +73,10 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 			continue;*/
 
 		/*if (ctx->ai_cars[i].speed_max_straight >=
-		    ctx->max_speed * 0.88f)
+		    ctx->pcar.max_speed * 0.88f)
 			SDL_Log("[%s] idx = %d is first !!!\n", __func__, i);*/
 
-		if (ai_car_seg_idx < ctx->nb_segments - AHEAD_SEG_DISTANCE) {
+		if (ai_car_seg_idx < ctx->track.nb_segments - AHEAD_SEG_DISTANCE) {
 			int dst = ctx->ai_cars[i].segment - ai_car_seg_idx;
 
 			if (dst < 0 || dst > AHEAD_SEG_DISTANCE)
@@ -111,7 +111,7 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 
 		} else {
 			// case if car to check is close before the start lane
-			int nb_seg_to_start = ctx->nb_segments - ai_car_seg_idx;
+			int nb_seg_to_start = ctx->track.nb_segments - ai_car_seg_idx;
 			if (ctx->ai_cars[i].segment > ai_car_seg_idx) {
 
 				int dst = ctx->ai_cars[i].segment -
@@ -243,13 +243,13 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 		    ctx->ai_cars[i].speed_slow_straight <
 			    ctx->ai_cars[i].speed_max_straight) {
 
-			if (ctx->segments[ctx->ai_cars[i].segment].curve != 0)
+			if (ctx->track.segments[ctx->ai_cars[i].segment].curve != 0)
 				max_speed = ctx->ai_cars[i]
 						    .speed_slow_curve /** .9f*/;
 			else
 				max_speed = ctx->ai_cars[i].speed_slow_straight;
 		} else {
-			if (ctx->segments[ctx->ai_cars[i].segment].curve != 0)
+			if (ctx->track.segments[ctx->ai_cars[i].segment].curve != 0)
 				max_speed = ctx->ai_cars[i]
 						    .speed_max_curve /** .9f*/;
 			else
@@ -260,11 +260,11 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 		ctx->ai_cars[i].distance += step;
 
 		ctx->ai_cars[i].pos_z = inline_increase(
-			ctx->ai_cars[i].pos_z, step, ctx->track_length);
+			ctx->ai_cars[i].pos_z, step, ctx->track.track_length);
 
 		ctx->ai_cars[i].segment =
 			((ctx->ai_cars[i].pos_z / ROAD_SEGMENT_LENGTH) %
-			 ctx->nb_segments);
+			 ctx->track.nb_segments);
 
 		ctx->ai_cars[i].pos_z_rest_percent =
 			(float)(ctx->ai_cars[i].pos_z % ROAD_SEGMENT_LENGTH) /
@@ -343,18 +343,18 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 						ai_lane_to_posx(
 							ctx->ai_cars[i].lane -
 								1,
-							ctx->lanes);
+							ctx->track.lanes);
 					ctx->ai_cars[i].dest_lane =
 						ctx->ai_cars[i].lane - 1;
 				} else if (rnd == 2 && ctx->ai_cars[i].lane <
-							       ctx->lanes - 1) {
+							       ctx->track.lanes - 1) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 					ctx->ai_cars[i].dest_x =
 						ai_lane_to_posx(
 							ctx->ai_cars[i].lane +
 								1,
-							ctx->lanes);
+							ctx->track.lanes);
 					ctx->ai_cars[i].dest_lane =
 						ctx->ai_cars[i].lane + 1;
 				}
@@ -374,7 +374,7 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 						ai_lane_to_posx(
 							ctx->ai_cars[i].lane -
 								1,
-							ctx->lanes);
+							ctx->track.lanes);
 					ctx->ai_cars[i].dest_lane =
 						ctx->ai_cars[i].lane - 1;
 				}
@@ -382,18 +382,18 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 			break;
 		case lane__s_:
 			if (rand_interval(0, 1) == 0 &&
-			    ctx->ai_cars[i].lane < ctx->lanes - 1) {
+			    ctx->ai_cars[i].lane < ctx->track.lanes - 1) {
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 				ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-					ctx->ai_cars[i].lane + 1, ctx->lanes);
+					ctx->ai_cars[i].lane + 1, ctx->track.lanes);
 				ctx->ai_cars[i].dest_lane =
 					ctx->ai_cars[i].lane + 1;
 			} else if (ctx->ai_cars[i].lane > 0) {
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SWITCHING_LANE_LEFT;
 				ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-					ctx->ai_cars[i].lane - 1, ctx->lanes);
+					ctx->ai_cars[i].lane - 1, ctx->track.lanes);
 				ctx->ai_cars[i].dest_lane =
 					ctx->ai_cars[i].lane - 1;
 			}
@@ -402,7 +402,7 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 			ctx->ai_cars[i].state =
 				AI_CAR_STATE_SWITCHING_LANE_LEFT;
 			ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-				ctx->ai_cars[i].lane - 1, ctx->lanes);
+				ctx->ai_cars[i].lane - 1, ctx->track.lanes);
 			ctx->ai_cars[i].dest_lane = ctx->ai_cars[i].lane - 1;
 			break;
 		case lane_l__:
@@ -412,14 +412,14 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 				   ctx->ai_cars[i].state ==
 					   AI_CAR_STATE_SPEED_FULL) {
 				if (rand_interval(0, 1) == 0 &&
-				    ctx->ai_cars[i].lane < ctx->lanes - 1) {
+				    ctx->ai_cars[i].lane < ctx->track.lanes - 1) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 					ctx->ai_cars[i].dest_x =
 						ai_lane_to_posx(
 							ctx->ai_cars[i].lane +
 								1,
-							ctx->lanes);
+							ctx->track.lanes);
 					ctx->ai_cars[i].dest_lane =
 						ctx->ai_cars[i].lane + 1;
 				}
@@ -433,7 +433,7 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 			ctx->ai_cars[i].state =
 				AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 			ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-				ctx->ai_cars[i].lane + 1, ctx->lanes);
+				ctx->ai_cars[i].lane + 1, ctx->track.lanes);
 			break;
 		case lane_lsr:
 			ctx->ai_cars[i].state = AI_CAR_STATE_SPEED_SLOW;
@@ -493,26 +493,26 @@ int ai_car_init(struct game_context *ctx)
 
 	for (int i = 0; i < NB_AI_CARS; i++) {
 
-		ctx->ai_cars[i].lane = i % ctx->lanes;
+		ctx->ai_cars[i].lane = i % ctx->track.lanes;
 		ctx->ai_cars[i].pos_x =
-			ai_lane_to_posx(ctx->ai_cars[i].lane, ctx->lanes);
+			ai_lane_to_posx(ctx->ai_cars[i].lane, ctx->track.lanes);
 
 
 		ctx->ai_cars[i].segment =
-			ctx->nb_segments - 1 -
-			(i / ctx->lanes) * AI_SEGMENTS_SPACING;
+			ctx->track.nb_segments - 1 -
+			(i / ctx->track.lanes) * AI_SEGMENTS_SPACING;
 
 		ctx->ai_cars[i].pos_z =
 			ctx->ai_cars[i].segment * ROAD_SEGMENT_LENGTH;
 
 		ctx->ai_cars[i].distance =
-			(ctx->ai_cars[i].segment - ctx->nb_segments) *
+			(ctx->ai_cars[i].segment - ctx->track.nb_segments) *
 			ROAD_SEGMENT_LENGTH;
 
 		ctx->ai_cars[i].speed_max_straight =
-			ctx->max_speed * (.99f - (float)i * 0.01f);
+			ctx->pcar.max_speed * (.99f - (float)i * 0.01f);
 		ctx->ai_cars[i].speed_max_curve =
-			ctx->max_speed * (0.95f - (float)i * 0.01f);
+			ctx->pcar.max_speed * (0.95f - (float)i * 0.01f);
 
 		ctx->ai_cars[i].speed = 0.f;
 		ctx->ai_cars[i].accel = ctx->ai_cars[i].speed_max_straight / 50;

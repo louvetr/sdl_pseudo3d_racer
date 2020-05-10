@@ -1,5 +1,5 @@
 
-#include "common.h"
+#include "main.h"
 
 //#define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 //#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
@@ -391,7 +391,7 @@ static int media_load_font(struct game_context *ctx)
 	// Open the font
 	ctx->sc_font_big = TTF_OpenFont(SOFACHROME_FONT, 72);
 	if (!ctx->sc_font_big) {
-		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 		       __func__,
 		       TTF_GetError());
 		return -EINVAL;
@@ -399,7 +399,7 @@ static int media_load_font(struct game_context *ctx)
 
 	ctx->sc_font_medium = TTF_OpenFont(SOFACHROME_FONT, 36);
 	if (!ctx->sc_font_medium) {
-		printf("[%s] Failed to load font! SDL_ttf Error: %s\n",
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 		       __func__,
 		       TTF_GetError());
 		return -EINVAL;
@@ -414,81 +414,81 @@ static int media_load_particles(struct game_context *ctx)
 	int ret;
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_00, &ctx->gfx.part_smoke[0]);
+		ctx, PNG_SMOKE_00, &ctx->gfx.t_smoke[0]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_01, &ctx->gfx.part_smoke[1]);
+		ctx, PNG_SMOKE_01, &ctx->gfx.t_smoke[1]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_02, &ctx->gfx.part_smoke[2]);
+		ctx, PNG_SMOKE_02, &ctx->gfx.t_smoke[2]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_03, &ctx->gfx.part_smoke[3]);
+		ctx, PNG_SMOKE_03, &ctx->gfx.t_smoke[3]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_04, &ctx->gfx.part_smoke[4]);
+		ctx, PNG_SMOKE_04, &ctx->gfx.t_smoke[4]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_05, &ctx->gfx.part_smoke[5]);
+		ctx, PNG_SMOKE_05, &ctx->gfx.t_smoke[5]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_SMOKE_06, &ctx->gfx.part_smoke[6]);
+		ctx, PNG_SMOKE_06, &ctx->gfx.t_smoke[6]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_NITRO_00, &ctx->gfx.part_nitro[0]);
+		ctx, PNG_NITRO_00, &ctx->gfx.t_nitro[0]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 
 	ret = load_texture_from_file(
-		ctx, PNG_NITRO_01, &ctx->gfx.part_nitro[1]);
+		ctx, PNG_NITRO_01, &ctx->gfx.t_nitro[1]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 	ret = load_texture_from_file(
-		ctx, PNG_NITRO_02, &ctx->gfx.part_nitro[2]);
+		ctx, PNG_NITRO_02, &ctx->gfx.t_nitro[2]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 	ret = load_texture_from_file(
-		ctx, PNG_NITRO_03, &ctx->gfx.part_nitro[3]);
+		ctx, PNG_NITRO_03, &ctx->gfx.t_nitro[3]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
 	}
 	ret = load_texture_from_file(
-		ctx, PNG_NITRO_04, &ctx->gfx.part_nitro[4]);
+		ctx, PNG_NITRO_04, &ctx->gfx.t_nitro[4]);
 	if (ret < 0) {
 		SDL_Log("[%s:%d] Failed to load PNG!\n", __func__, __LINE__);
 		return ret;
@@ -541,26 +541,26 @@ int media_load_resources(struct game_context *ctx)
 
 	/*ret = load_texture_from_file(ctx, PATH_BG_GAME, &ctx->gfx.t_bg_game);
 	if (ret < 0) {
-		printf("[%s] Failed to load game PNG!\n", __func__);
+		SDL_Log("[%s] Failed to load game PNG!\n", __func__);
 		return ret;
 	}*/
 
 	// load music
-	/*ctx->sfx.music_game = Mix_LoadMUS(PATH_MUSIC_GAME);
-	if (!ctx->sfx.music_game) {
-		printf("[%s] Failed to load game music\n", __func__);
+	/*ctx->sound.sfx.music_game = Mix_LoadMUS(PATH_MUSIC_GAME);
+	if (!ctx->sound.sfx.music_game) {
+		SDL_Log("[%s] Failed to load game music\n", __func__);
 		return -EINVAL;
 	}
-	ctx->sfx.music_title = Mix_LoadMUS(PATH_MUSIC_TITLE);
-	if (!ctx->sfx.music_game) {
-		printf("[%s] Failed to load title music\n", __func__);
+	ctx->sound.sfx.music_title = Mix_LoadMUS(PATH_MUSIC_TITLE);
+	if (!ctx->sound.sfx.music_game) {
+		SDL_Log("[%s] Failed to load title music\n", __func__);
 		return -EINVAL;
 	}
 
 	//Load sound effects
-	ctx->sfx.sfx_menu_move = Mix_LoadWAV(PATH_SFX_MENU_MOVE);
-	if (!ctx->sfx.sfx_menu_move) {
-		printf("Failed to load sfx menu move! SDL_mixer Error: %s\n",
+	ctx->sound.sfx.sfx_menu_move = Mix_LoadWAV(PATH_SFX_MENU_MOVE);
+	if (!ctx->sound.sfx.sfx_menu_move) {
+		SDL_Log("Failed to load sfx menu move! SDL_mixer Error: %s\n",
 		       Mix_GetError());
 		return -EINVAL;
 	}*/

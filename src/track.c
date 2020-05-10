@@ -1,5 +1,31 @@
 #include "track.h"
-#include "common.h"
+#include "main.h"
+
+
+
+static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 3, 2},
+	{LG_SHORT, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 2, 2},
+	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_UP_LOW, CURVE_L_EASY, 2, 2},
+	{LG_SHORT, LG_MEDIUM, LG_LONG, HILL_NONE, CURVE_L_HARD, 2, 2},
+	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
+
+	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 3, 2},
+
+	{LG_SHORT, LG_MEDIUM, LG_LONG, HILL_NONE, CURVE_L_HARD, 2, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_UP_MEDIUM, CURVE_R_MEDIUM, 2, 2},
+	{LG_LONG, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_MEDIUM, 2, 2},
+
+	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
+
+
 
 
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
@@ -34,38 +60,38 @@ int track_build(struct game_context *ctx)
 {
 	int nb_segments_added = 0;
 
-	// ctx->nb_segments = 2750;
-	// ctx->nb_segments = 2450;
-	// ctx->nb_segments = 2510;
-	ctx->nb_segments = 2570;
-	// ctx->nb_segments = 2600;
+	// ctx->track.nb_segments = 2750;
+	// ctx->track.nb_segments = 2450;
+	// ctx->track.nb_segments = 2510;
+	ctx->track.nb_segments = 2570;
+	// ctx->track.nb_segments = 2600;
 
 	///////////////////////////////////
 	// TODO: put this in a function elsewhere
-	// ctx->player_segment = ctx->nb_segments - 30;
+	// ctx->pcar.player_segment = ctx->track.nb_segments - 30;
 
-	// ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
+	// ctx->pcar.position = ctx->pcar.player_segment * ROAD_SEGMENT_LENGTH;
 
-	int player_lane = NB_AI_CARS % ctx->lanes;
-	// ctx->position =
-	ctx->player_x = ai_lane_to_posx(player_lane, ctx->lanes);
+	int player_lane = NB_AI_CARS % ctx->track.lanes;
+	// ctx->pcar.position =
+	ctx->pcar.player_x = ai_lane_to_posx(player_lane, ctx->track.lanes);
 
-	ctx->player_segment = ctx->nb_segments -
-			      (NB_AI_CARS / ctx->lanes) * AI_SEGMENTS_SPACING -
+	ctx->pcar.player_segment = ctx->track.nb_segments -
+			      (NB_AI_CARS / ctx->track.lanes) * AI_SEGMENTS_SPACING -
 			      6;
-	ctx->player_segment_prev = ctx->player_segment;
-	ctx->position = ctx->player_segment * ROAD_SEGMENT_LENGTH;
-	ctx->player_distance_ran =
-		(ctx->player_segment - ctx->nb_segments) * ROAD_SEGMENT_LENGTH -
+	ctx->pcar.player_segment_prev = ctx->pcar.player_segment;
+	ctx->pcar.position = ctx->pcar.player_segment * ROAD_SEGMENT_LENGTH;
+	ctx->pcar.player_distance_ran =
+		(ctx->pcar.player_segment - ctx->track.nb_segments) * ROAD_SEGMENT_LENGTH -
 		1;
 
-	SDL_Log("PLAYER player_distance_ran = %d\n", ctx->player_distance_ran);
+	SDL_Log("PLAYER player_distance_ran = %d\n", ctx->pcar.player_distance_ran);
 
 	///////////////////////////////////
 
-	ctx->segments =
-		calloc((size_t)ctx->nb_segments, sizeof(*ctx->segments));
-	if (!ctx->segments) {
+	ctx->track.segments =
+		calloc((size_t)ctx->track.nb_segments, sizeof(*ctx->track.segments));
+	if (!ctx->track.segments) {
 		SDL_Log("[%s] ERROR: calloc failed\n", __func__);
 		return -ENOMEM;
 	}
@@ -73,7 +99,7 @@ int track_build(struct game_context *ctx)
 	// Build the track segments
 	for (int i = 0; i < NB_SECTOR_DIJON; i++) {
 		nb_segments_added += road_add_sector(
-			ctx->segments,
+			ctx->track.segments,
 			nb_segments_added,
 			sector_dijon[i][SECTOR_PARAM_ENTER_LG],
 			sector_dijon[i][SECTOR_PARAM_HOLD_LG],
@@ -92,7 +118,7 @@ int track_build(struct game_context *ctx)
 				sector_dijon[i][SECTOR_PARAM_EXIT_LG]);
 	}
 
-	ctx->track_length = ROAD_SEGMENT_LENGTH * ctx->nb_segments;
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
 
 	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
 
@@ -317,35 +343,35 @@ int track_build(struct game_context *ctx)
 	/////////////////////////////////////////////////////////////////////
 
 	for (int i = 0; i < nb_segments_added / 10; i += 5)
-		// ctx->segments[i].scene = grass;
-		ctx->segments[i].scene = bushes_rnd_tab[rand() % 5];
+		// ctx->track.segments[i].scene = grass;
+		ctx->track.segments[i].scene = bushes_rnd_tab[rand() % 5];
 
 	for (int i = nb_segments_added / 10; i < nb_segments_added * 3 / 10;
 	     i += 8)
-		ctx->segments[i].scene = oak_forest_1;
+		ctx->track.segments[i].scene = oak_forest_1;
 	for (int i = nb_segments_added / 10 + 4; i < nb_segments_added * 3 / 10;
 	     i += 8)
-		ctx->segments[i].scene = oak_forest_2;
+		ctx->track.segments[i].scene = oak_forest_2;
 
 	for (int i = nb_segments_added * 3 / 10; i < nb_segments_added * 5 / 10;
 	     i += 32)
-		ctx->segments[i].scene = barn_n_well;
+		ctx->track.segments[i].scene = barn_n_well;
 
 	for (int i = nb_segments_added * 5 / 10; i < nb_segments_added * 7 / 10;
 	     i += 5)
-		ctx->segments[i].scene = fence_n_bush;
+		ctx->track.segments[i].scene = fence_n_bush;
 
 	for (int i = nb_segments_added * 7 / 10; i < nb_segments_added * 9 / 10;
 	     i += 16)
-		ctx->segments[i].scene = windmill_n_grass;
+		ctx->track.segments[i].scene = windmill_n_grass;
 
 	for (int i = nb_segments_added * 9 / 10; i < nb_segments_added; i += 4)
-		// ctx->segments[i].scene = bushes_rnd_1;
-		ctx->segments[i].scene = bushes_rnd_tab[rand() % 5];
-	// ctx->segments[i].scene = grass;
+		// ctx->track.segments[i].scene = bushes_rnd_1;
+		ctx->track.segments[i].scene = bushes_rnd_tab[rand() % 5];
+	// ctx->track.segments[i].scene = grass;
 
 
-	// ctx->segments[0].scene = start_lane;
+	// ctx->track.segments[0].scene = start_lane;
 
 	return 0;
 }
