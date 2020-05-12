@@ -2,6 +2,9 @@
 #define COMMON_H
 
 
+
+
+
 enum car_sprite_idx {
  	CAR_SPRITE_REAR,
  	CAR_SPRITE_RIGHT1,
