@@ -4,11 +4,13 @@
 OBJS = 	./src/main.c	\
 		./src/event.c 	\
 		./src/display.c	\
+		./src/display_race.c	\
+		./src/display_menu.c	\
 		./src/logic.c	\
 		./src/road.c	\
 		./src/track.c	\
 		./src/cars_ai.c	\
-		./src/media.c	\
+		./src/gfx.c	\
 		./src/sound.c
 
 #CC specifies which compiler we're using

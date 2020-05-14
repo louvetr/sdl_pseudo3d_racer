@@ -43,6 +43,7 @@ struct game_graphics{
 
 	//struct car_model_texture cars[CAR_MODEL_LAST]; 
 	struct texture cars[CAR_MODEL_LAST][CAR_SPRITE_LAST];
+	struct texture cars_side[CAR_MODEL_LAST];
 
 	struct texture bg_mountains;
 	struct texture bg_sky_near;
@@ -89,3 +90,5 @@ struct game_graphics{
 	struct particle part_smoke[NB_PARTICLES_SMOKE_DISPLAY];
 	struct particle part_nitro[NB_PARTICLES_NITRO_DISPLAY];
 };
+
+

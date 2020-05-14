@@ -67,7 +67,8 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 					SDL_Log("[%s] COLLISON CAR FRONT\n",
 						__func__);
 					ctx->sound.collision_detected = 1;
-					if (ctx->pcar.speed >= ctx->pcar.max_speed / 4)
+					if (ctx->pcar.speed >=
+					    ctx->pcar.max_speed / 4)
 						ctx->pcar.speed /= 2.f;
 				} else if (ctx->track.nb_segments -
 						   ctx->pcar.player_segment +
@@ -76,13 +77,15 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 					SDL_Log("[%s] COLLISON CAR FRONT\n",
 						__func__);
 					ctx->sound.collision_detected = 1;
-					if (ctx->pcar.speed >= ctx->pcar.max_speed / 4)
+					if (ctx->pcar.speed >=
+					    ctx->pcar.max_speed / 4)
 						ctx->pcar.speed /= 2.f;
 				}
 			}
 
 			if (ctx->ai_cars[i].hitbox.y < ctx->pcar.player_max_y &&
-			    ctx->ai_cars[i].hitbox.y > ctx->pcar.player_sprite_y) {
+			    ctx->ai_cars[i].hitbox.y >
+				    ctx->pcar.player_sprite_y) {
 
 				int back_impact = 0;
 
@@ -142,7 +145,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 	for (int i = 0; i < 3; i++) {
 
-		int idx = (ctx->pcar.player_segment + i) % ctx->track.nb_segments;
+		int idx =
+			(ctx->pcar.player_segment + i) % ctx->track.nb_segments;
 		struct road_segment *seg = &ctx->track.segments[idx];
 		struct scene_sprite_desc *sprite_left = NULL;
 		struct scene_sprite_desc *sprite_right = NULL;
@@ -281,12 +285,12 @@ static int logic_race_particles(struct game_context *ctx, float drift)
 			ctx->gfx.part_smoke[smoke_idx].frame = rand() % 5;
 
 			ctx->gfx.part_smoke[smoke_idx].t =
-				&ctx->gfx.t_smoke
-					 [rand() %
-					  NB_PARTICLES_SMOKE_AVAILABLE];
+				&ctx->gfx.t_smoke[rand() %
+						  NB_PARTICLES_SMOKE_AVAILABLE];
 
 			int smoke_w =
-				(int)((float)ctx->gfx.part_smoke[smoke_idx].t->w *
+				(int)((float)ctx->gfx.part_smoke[smoke_idx]
+					      .t->w *
 				      PARTICLE_SMOKE_SCALE);
 			int smoke_w_rnd = rand() % (smoke_w * 2);
 
@@ -300,7 +304,8 @@ static int logic_race_particles(struct game_context *ctx, float drift)
 
 			ctx->gfx.part_smoke[smoke_idx].pos_y =
 				ctx->pcar.player_max_y -
-				(int)((float)ctx->gfx.part_smoke[smoke_idx].t->h *
+				(int)((float)ctx->gfx.part_smoke[smoke_idx]
+					      .t->h *
 				      PARTICLE_SMOKE_SCALE);
 		}
 	}
@@ -319,12 +324,12 @@ static int logic_race_particles(struct game_context *ctx, float drift)
 			ctx->gfx.part_nitro[nitro_idx].frame = rand() % 5;
 
 			ctx->gfx.part_nitro[nitro_idx].t =
-				&ctx->gfx.t_nitro
-					 [rand() %
-					  NB_PARTICLES_NITRO_AVAILABLE];
+				&ctx->gfx.t_nitro[rand() %
+						  NB_PARTICLES_NITRO_AVAILABLE];
 
 			int nitro_w =
-				(int)((float)ctx->gfx.part_nitro[nitro_idx].t->w *
+				(int)((float)ctx->gfx.part_nitro[nitro_idx]
+					      .t->w *
 				      PARTICLE_NITRO_SCALE);
 			int nitro_w_rnd =
 				rand() % (ctx->pcar.player_sprite_w - nitro_w);
@@ -334,7 +339,8 @@ static int logic_race_particles(struct game_context *ctx, float drift)
 
 			ctx->gfx.part_nitro[nitro_idx].pos_y =
 				ctx->pcar.player_max_y -
-				(int)((float)ctx->gfx.part_nitro[nitro_idx].t->h *
+				(int)((float)ctx->gfx.part_nitro[nitro_idx]
+					      .t->h *
 				      PARTICLE_NITRO_SCALE * 0.85f);
 		}
 	}
@@ -386,12 +392,13 @@ static int logic_race_control(struct game_context *ctx)
 	}
 
 	float speed_ratio = ctx->pcar.speed / max_speed;
-	float player_ratio =
-		(float)((ctx->pcar.position + ctx->pcar.player_z) % ROAD_SEGMENT_LENGTH) /
-		(float)ROAD_SEGMENT_LENGTH;
+	float player_ratio = (float)((ctx->pcar.position + ctx->pcar.player_z) %
+				     ROAD_SEGMENT_LENGTH) /
+			     (float)ROAD_SEGMENT_LENGTH;
 
 	int step = (int)(ctx->dt * ctx->pcar.speed);
-	ctx->pcar.position = inline_increase(ctx->pcar.position, step, ctx->track.track_length);
+	ctx->pcar.position = inline_increase(
+		ctx->pcar.position, step, ctx->track.track_length);
 	ctx->pcar.player_distance_ran += step;
 
 	// screen crossing should take 1sec at top speed
@@ -411,7 +418,8 @@ static int logic_race_control(struct game_context *ctx)
 				ctx->pcar.same_car_orientation_in_frame = 0;
 			} else if (ctx->pcar.car_orientation_cur ==
 					   PLAYER_SPRITE_LIGHT_LEFT &&
-				   ctx->pcar.same_car_orientation_in_frame > 5) {
+				   ctx->pcar.same_car_orientation_in_frame >
+					   5) {
 				ctx->pcar.car_orientation_cur =
 					PLAYER_SPRITE_HARD_LEFT;
 			}
@@ -428,7 +436,8 @@ static int logic_race_control(struct game_context *ctx)
 				ctx->pcar.same_car_orientation_in_frame = 0;
 			} else if (ctx->pcar.car_orientation_cur ==
 					   PLAYER_SPRITE_LIGHT_RIGHT &&
-				   ctx->pcar.same_car_orientation_in_frame > 5) {
+				   ctx->pcar.same_car_orientation_in_frame >
+					   5) {
 				ctx->pcar.car_orientation_cur =
 					PLAYER_SPRITE_HARD_RIGHT;
 			}
@@ -439,16 +448,20 @@ static int logic_race_control(struct game_context *ctx)
 			ctx->pcar.same_car_orientation_in_frame = 0;
 		}
 	} else {
-		struct road_segment *seg = &ctx->track.segments[ctx->pcar.player_segment];
+		struct road_segment *seg =
+			&ctx->track.segments[ctx->pcar.player_segment];
 		// select sprite to simulate a steering in curves
 		if (seg->curve > 2.f) {
-			ctx->pcar.car_orientation_cur = PLAYER_SPRITE_HARD_RIGHT;
+			ctx->pcar.car_orientation_cur =
+				PLAYER_SPRITE_HARD_RIGHT;
 		} else if (seg->curve > 0.5f) {
-			ctx->pcar.car_orientation_cur = PLAYER_SPRITE_LIGHT_RIGHT;
+			ctx->pcar.car_orientation_cur =
+				PLAYER_SPRITE_LIGHT_RIGHT;
 		} else if (seg->curve < -2.f) {
 			ctx->pcar.car_orientation_cur = PLAYER_SPRITE_HARD_LEFT;
 		} else if (seg->curve < -0.5f) {
-			ctx->pcar.car_orientation_cur = PLAYER_SPRITE_LIGHT_LEFT;
+			ctx->pcar.car_orientation_cur =
+				PLAYER_SPRITE_LIGHT_LEFT;
 		} else {
 			ctx->pcar.car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 		}
@@ -462,9 +475,10 @@ static int logic_race_control(struct game_context *ctx)
 	}
 
 	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END) {
-		ctx->sound.drift = dx * speed_ratio *
-			     ctx->track.segments[ctx->pcar.player_segment].curve *
-			     ctx->pcar.centrifugal;
+		ctx->sound.drift =
+			dx * speed_ratio *
+			ctx->track.segments[ctx->pcar.player_segment].curve *
+			ctx->pcar.centrifugal;
 		ctx->pcar.player_x = ctx->pcar.player_x - ctx->sound.drift;
 
 		logic_race_particles(ctx, ctx->sound.drift);
@@ -473,12 +487,14 @@ static int logic_race_control(struct game_context *ctx)
 	///////////////////////////////////////////////////////////////
 
 	if (ctx->keys.accel || ctx->status_cur == GAME_STATE_RACE_ANIM_END)
-		ctx->pcar.speed = inline_accelerate(ctx->pcar.speed, accel, ctx->dt);
-	else if (ctx->keys.brake)
 		ctx->pcar.speed =
-			inline_accelerate(ctx->pcar.speed, ctx->pcar.breaking, ctx->dt);
+			inline_accelerate(ctx->pcar.speed, accel, ctx->dt);
+	else if (ctx->keys.brake)
+		ctx->pcar.speed = inline_accelerate(
+			ctx->pcar.speed, ctx->pcar.breaking, ctx->dt);
 	else
-		ctx->pcar.speed = inline_accelerate(ctx->pcar.speed, ctx->pcar.decel, ctx->dt);
+		ctx->pcar.speed = inline_accelerate(
+			ctx->pcar.speed, ctx->pcar.decel, ctx->dt);
 
 
 	if ((ctx->pcar.player_x < -1 || ctx->pcar.player_x > 1) &&
@@ -504,11 +520,13 @@ static int logic_race_control(struct game_context *ctx)
 static int logic_race_collision_scene_ongoing(struct game_context *ctx)
 {
 	if (ctx->pcar.collision_dst_x < 0) {
-		ctx->pcar.player_x = ctx->pcar.player_x + COLLIONSION_SCENE_SHIFT / 10.f;
+		ctx->pcar.player_x =
+			ctx->pcar.player_x + COLLIONSION_SCENE_SHIFT / 10.f;
 		if (ctx->pcar.player_x >= ctx->pcar.collision_dst_x)
 			event_update_game_state(ctx, GAME_STATE_RACE);
 	} else {
-		ctx->pcar.player_x = ctx->pcar.player_x - COLLIONSION_SCENE_SHIFT / 10.f;
+		ctx->pcar.player_x =
+			ctx->pcar.player_x - COLLIONSION_SCENE_SHIFT / 10.f;
 		if (ctx->pcar.player_x <= ctx->pcar.collision_dst_x)
 			event_update_game_state(ctx, GAME_STATE_RACE);
 	}
@@ -524,10 +542,29 @@ static int logic_race(struct game_context *ctx)
 	ctx->sound.collision_detected = 0;
 	ctx->sound.drift = 0.f;
 
+	if(ctx->keys.back){
+
+		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
+
+		event_update_game_state(ctx, GAME_STATE_MENU_CAR_SELECT);
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+
+		// load menu ressources
+		gfx_load_resources_menu_car_select(ctx);
+		sound_unload_resources(ctx);
+
+		main_ctx_init_menu_car_select(ctx);
+
+		return 0;
+	}
+
+
 	// update player segment
 	ctx->pcar.player_segment_prev = ctx->pcar.player_segment;
-	ctx->pcar.player_segment =
-		inline_get_segment_idx(ctx, ctx->pcar.position + ctx->pcar.player_z);
+	ctx->pcar.player_segment = inline_get_segment_idx(
+		ctx, ctx->pcar.position + ctx->pcar.player_z);
 
 	// compute time since last frame
 	ret = logic_race_dt(ctx);
@@ -642,30 +679,76 @@ char *logic_get_player_place_suffix(int pos)
 
 int logic_get_player_lap_nb(struct game_context *ctx)
 {
-	static int lap = 0;
-
 	ctx->sound.lap_sfx = 0;
 
 	if ((ctx->status_cur == GAME_STATE_RACE ||
 	     ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
 	     ctx->status_cur == GAME_STATE_RACE_NITRO) &&
 	    ctx->pcar.player_segment_prev > ctx->pcar.player_segment) {
-		lap++;
+		ctx->race.nb_lap_logic++;
 
-		if (lap > 1)
+		if (ctx->race.nb_lap_logic > 1)
 			ctx->sound.lap_sfx = 1;
 	}
 
-	if (lap == 0) {
+	if (ctx->race.nb_lap_logic == 0) {
 		return 1;
-	} else if (lap > ctx->race.nb_lap) {
+	} else if (ctx->race.nb_lap_logic > ctx->race.nb_lap) {
 		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
 			ctx->race.nb_frame_anim = 0;
 		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_END);
 		return ctx->race.nb_lap;
 	} else {
-		return lap;
+		return ctx->race.nb_lap_logic;
 	}
+}
+
+
+static int logic_menu_car_select(struct game_context *ctx)
+{
+
+	/*SDL_Log("[%s] ENTER, ctx->keys.select = %d\n",
+		__func__,
+		ctx->keys.select);*/
+
+	if (ctx->keys.left) {
+		if (ctx->pcar.car_player_model == 0)
+			ctx->pcar.car_player_model = CAR_MODEL_LAST - 1;
+		else
+			ctx->pcar.car_player_model--;
+	}
+
+	if (ctx->keys.right) {
+		ctx->pcar.car_player_model++;
+		if (ctx->pcar.car_player_model == CAR_MODEL_LAST)
+			ctx->pcar.car_player_model = 0;
+	}
+
+
+	if (ctx->keys.select) {
+		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_START);
+
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+
+		// load race ressources
+		/*gfx_load_resources_race(ctx);
+		sound_load_resources_race(ctx);*/
+
+		gfx_load_resources_race(ctx);
+		sound_load_resources /*_race*/ (ctx);
+
+		main_ctx_init_race(ctx);
+
+		// TODO: choose track
+		track_build(ctx);
+
+		// init AI cars
+		ai_car_init(ctx);
+	}
+
+	return 0;
 }
 
 
@@ -680,6 +763,9 @@ int main_logic(struct game_context *ctx)
 
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
+		break;
+	case GAME_STATE_MENU_CAR_SELECT:
+		logic_menu_car_select(ctx);
 		break;
 	case GAME_STATE_RACE_ANIM_START:
 	case GAME_STATE_RACE_ANIM_END:

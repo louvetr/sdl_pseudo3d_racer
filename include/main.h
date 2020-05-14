@@ -88,6 +88,7 @@ enum game_status {
 	GAME_STATE_TITLE,
 	GAME_STATE_CREDIT,
 	GAME_STATE_GAME,
+	GAME_STATE_MENU_CAR_SELECT,
 	GAME_STATE_RACE,
 	GAME_STATE_RACE_ANIM_START,
 	GAME_STATE_RACE_ANIM_END,
@@ -165,6 +166,7 @@ struct race_info {
 	int max_y_bis_idx;
 	// nb of lap of the race
 	int nb_lap;
+	int nb_lap_logic;
 	// nb_lap the player has done
 	int player_lap;
 
@@ -234,6 +236,11 @@ struct keys_status {
 	int right;
 	int nitro;
 	int nitro_prev;
+
+	int up;
+	int down;
+	int select;
+	int back;
 };
 
 struct ai_car_info {
@@ -513,21 +520,62 @@ char* logic_get_player_place_suffix(int pos);
 int logic_get_player_lap_nb(struct game_context *ctx);
 
 
-int load_texture_from_file(struct game_context *ctx,
-			   char *path,
-			   struct texture *in);
 
 
-int media_load_resources(struct game_context *ctx);
+
+int gfx_load_resources_menu_car_select(struct game_context *ctx);
+int gfx_load_resources_race(struct game_context *ctx);
+int gfx_unload_resources(struct game_context *ctx);
 
 int sound_load_resources(struct game_context *ctx);
+int sound_unload_resources(struct game_context *ctx);
 
 int event_update_game_state(struct game_context *ctx, enum game_status state);
 
+// display 
+int display_screen_race(struct game_context *ctx);
+int texture_render(struct game_context *ctx,
+			  struct texture *t,
+			  int x,
+			  int y,
+			  SDL_Rect *clip,
+			  float angle,
+			  float scale,
+			  SDL_RendererFlip flip,
+			  SDL_Rect *hitbox);
+int display_load_render_text_with_shade(struct game_context *ctx,
+					       TTF_Font *font,
+					       struct texture *t,
+					       char *msg,
+					       SDL_Color *color_front,
+					       SDL_Color *color_shadow,
+					       int x_front,
+					       int y_front,
+					       int shadow_num,
+					       int shadow_den,
+					       float angle);
+int display_load_render_text(struct game_context *ctx,
+				    TTF_Font *font,
+				    struct texture *t,
+				    char *msg,
+				    SDL_Color *color,
+				    int x,
+				    int y,
+				    float angle);
+int load_text_message(struct game_context *ctx,
+			     TTF_Font *font,
+			     struct texture *t,
+			     char *string,
+			     SDL_Color text_color);
+
+
+
+int main_ctx_init_menu_car_select(struct game_context *ctx);
+int main_ctx_init_race(struct game_context *ctx);
+int display_screen_menu_car_select(struct game_context *ctx);
+
+// MAINs
 int main_sound(struct game_context *ctx);
-
 int main_display(struct game_context *ctx);
-
 int main_logic(struct game_context *ctx);
-
 int main_event(struct game_context *ctx);

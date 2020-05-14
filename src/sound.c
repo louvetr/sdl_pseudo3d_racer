@@ -101,6 +101,34 @@ int sound_load_resources(struct game_context *ctx)
 	return 0;
 }
 
+
+int sound_unload_resources(struct game_context *ctx)
+{
+	Mix_FreeMusic(ctx->sound.music.end_race);
+	Mix_FreeMusic(ctx->sound.music.bgm[0]);
+	Mix_FreeMusic(ctx->sound.music.bgm[1]);
+	Mix_FreeMusic(ctx->sound.music.bgm[2]);
+	Mix_FreeMusic(ctx->sound.music.bgm[3]);
+
+	Mix_FreeChunk(ctx->sound.sfx.engine_accel);
+	Mix_FreeChunk(ctx->sound.sfx.engine_nitro);
+	Mix_FreeChunk(ctx->sound.sfx.engine_normal);
+	Mix_FreeChunk(ctx->sound.sfx.engine_idle);
+	Mix_FreeChunk(ctx->sound.sfx.impact);
+	Mix_FreeChunk(ctx->sound.sfx.drift);
+	Mix_FreeChunk(ctx->sound.sfx.lap);
+
+	Mix_FreeChunk(ctx->sound.sfx.one);
+	Mix_FreeChunk(ctx->sound.sfx.two);
+	Mix_FreeChunk(ctx->sound.sfx.three);
+	Mix_FreeChunk(ctx->sound.sfx.go);
+	Mix_FreeChunk(ctx->sound.sfx.congratulations);
+
+	return 0;
+}
+
+
+
 int main_sound(struct game_context *ctx)
 {
 
