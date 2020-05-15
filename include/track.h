@@ -24,6 +24,8 @@ typedef uint8_t Uint8;
 
 enum track_selection {
 	TRACK_DIJON = 0,
+	TRACK_2,
+	TRACK_LAST
 };
 
 enum track_lane_type {

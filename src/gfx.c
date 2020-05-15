@@ -94,6 +94,10 @@
 #define PNG_NITRO_04 "./media/particles/explosion07.png"
 
 
+#define PNG_TRACK_DIJON "./media/tracks/dijon.png"
+#define PNG_TRACK_2 "./media/tracks/none.png"
+
+
 static int
 load_texture_from_file(struct game_context *ctx, char *path, struct texture *in)
 {
@@ -334,11 +338,27 @@ static int gfx_load_particles(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_tracks_thumbnail(struct game_context *ctx)
+{
+	gfx_load_texture(ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
+	gfx_load_texture(ctx, PNG_TRACK_2, &ctx->gfx.track_thumbnail[TRACK_2]);
+
+	return 0;
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 // public function
 /////////////////////////////////////////////////////////////////////////////////////
 
-int gfx_load_resources_menu_car_select(struct game_context *ctx)
+int gfx_load_resources_menu_select_track(struct game_context *ctx)
+{
+
+	gfx_load_tracks_thumbnail(ctx);
+
+	return 0;
+}
+
+int gfx_load_resources_menu_select_car(struct game_context *ctx)
 {
 
 	gfx_load_cars_side(ctx);
@@ -390,9 +410,54 @@ int gfx_load_resources_race(struct game_context *ctx)
 
 int gfx_unload_resources(struct game_context *ctx)
 {
+
+	for (int i = 0; i < CAR_MODEL_LAST; i++)
+		for (int j = 0; j < CAR_SPRITE_LAST; j++)
+			SDL_DestroyTexture(ctx->gfx.cars[i][j].texture);
+
 	for (int i = 0; i < CAR_MODEL_LAST; i++)
 		SDL_DestroyTexture(ctx->gfx.cars_side[i].texture);
 
+	SDL_DestroyTexture(ctx->gfx.bg_mountains.texture);
+	SDL_DestroyTexture(ctx->gfx.bg_sky_near.texture);
+	SDL_DestroyTexture(ctx->gfx.bg_sky_far.texture);
+
+	SDL_DestroyTexture(ctx->gfx.scene_start_lane.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tree_oak.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tree_willow.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tree_pine.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_well.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_fence.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_grass.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_windmill.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_barn.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[0].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[2].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[3].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[4].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[5].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bushes[6].texture);
+	SDL_DestroyTexture(ctx->gfx.scene_bush_flower.texture);
+
+	SDL_DestroyTexture(ctx->gfx.t_smoke[0].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[1].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[2].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[3].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[4].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[5].texture);
+	SDL_DestroyTexture(ctx->gfx.t_smoke[6].texture);
+	SDL_DestroyTexture(ctx->gfx.t_nitro[0].texture);
+	SDL_DestroyTexture(ctx->gfx.t_nitro[1].texture);
+	SDL_DestroyTexture(ctx->gfx.t_nitro[2].texture);
+	SDL_DestroyTexture(ctx->gfx.t_nitro[3].texture);
+	SDL_DestroyTexture(ctx->gfx.t_nitro[4].texture);
+
+
+	for (int i = 0; i < TRACK_LAST; i++)
+		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
+
+
+	// unload fonts
 
 	return 0;
 }

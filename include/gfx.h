@@ -85,10 +85,12 @@ struct game_graphics{
 	struct texture t_smoke[NB_PARTICLES_SMOKE_AVAILABLE];
 	struct texture t_nitro[NB_PARTICLES_NITRO_AVAILABLE];
 
-
 	/* particles */
 	struct particle part_smoke[NB_PARTICLES_SMOKE_DISPLAY];
 	struct particle part_nitro[NB_PARTICLES_NITRO_DISPLAY];
+
+	struct texture track_thumbnail[TRACK_LAST];
+
 };
 
 

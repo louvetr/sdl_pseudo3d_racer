@@ -80,7 +80,7 @@ static int event_race(struct game_context *ctx)
 
 
 
-static int event_menu_car_select(struct game_context *ctx)
+static int event_menu_select_car(struct game_context *ctx)
 {
 
 	memset(&ctx->keys, 0, sizeof(struct keys_status));
@@ -115,6 +115,9 @@ static int event_menu_car_select(struct game_context *ctx)
 			case SDLK_RIGHT:
 			case SDLK_d:
 				ctx->keys.right = 1;
+				break;
+			case SDLK_BACKSPACE:
+				ctx->keys.back = 1;
 				break;
 			default:
 				continue;
@@ -234,8 +237,9 @@ int main_event(struct game_context *ctx)
 		break;
 	case GAME_STATE_QUIT:
 		break;
-	case GAME_STATE_MENU_CAR_SELECT:
-		event_menu_car_select(ctx);
+	case GAME_STATE_MENU_SELECT_TRACK:
+	case GAME_STATE_MENU_SELECT_CAR:
+		event_menu_select_car(ctx);
 		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_END:

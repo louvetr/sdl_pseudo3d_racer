@@ -1695,8 +1695,11 @@ int main_display(struct game_context *ctx)
 		break;
 	case GAME_STATE_QUIT:
 		break;
-	case GAME_STATE_MENU_CAR_SELECT:
-		display_screen_menu_car_select(ctx);
+	case GAME_STATE_MENU_SELECT_TRACK:
+		display_screen_menu_select_track(ctx);
+		break;
+	case GAME_STATE_MENU_SELECT_CAR:
+		display_screen_menu_select_car(ctx);
 		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_START:

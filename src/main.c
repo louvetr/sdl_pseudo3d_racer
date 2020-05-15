@@ -269,9 +269,17 @@ int main_ctx_init_race(struct game_context *ctx)
 	return 0;
 };
 
-int main_ctx_init_menu_car_select(struct game_context *ctx)
+int main_ctx_init_menu_select_car(struct game_context *ctx)
 {
-	ctx->status_cur = GAME_STATE_MENU_CAR_SELECT;
+	ctx->status_cur = GAME_STATE_MENU_SELECT_CAR;
+	ctx->status_prev = GAME_STATE_UNKNOWN;
+
+	return 0;
+}
+
+int main_ctx_init_menu_select_track(struct game_context *ctx)
+{
+	ctx->status_cur = GAME_STATE_MENU_SELECT_TRACK;
 	ctx->status_prev = GAME_STATE_UNKNOWN;
 
 	return 0;
@@ -324,8 +332,12 @@ int main()
 
 	// main_ctx_init(ctx);
 	// main_ctx_init_race(ctx);
-	gfx_load_resources_menu_car_select(ctx);
-	main_ctx_init_menu_car_select(ctx);
+
+	//gfx_load_resources_menu_select_car(ctx);
+	//main_ctx_init_menu_select_car(ctx);
+	
+	gfx_load_resources_menu_select_track(ctx);
+	main_ctx_init_menu_select_track(ctx);
 
 	// main_build_track(ctx);
 	// track_build(ctx);
