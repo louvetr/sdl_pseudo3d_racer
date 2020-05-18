@@ -88,6 +88,7 @@ enum game_status {
 	GAME_STATE_TITLE,
 	GAME_STATE_CREDIT,
 	GAME_STATE_GAME,
+	GAME_STATE_MENU_MAIN,
 	GAME_STATE_MENU_SELECT_TRACK,
 	GAME_STATE_MENU_SELECT_CAR,
 	GAME_STATE_RACE,
@@ -523,6 +524,7 @@ int logic_get_player_lap_nb(struct game_context *ctx);
 
 
 
+int gfx_load_resources_menu_main(struct game_context *ctx);
 int gfx_load_resources_menu_select_track(struct game_context *ctx);
 int gfx_load_resources_menu_select_car(struct game_context *ctx);
 int gfx_load_resources_race(struct game_context *ctx);
@@ -571,10 +573,12 @@ int load_text_message(struct game_context *ctx,
 
 
 
+int main_ctx_init_menu_main(struct game_context *ctx);
 int main_ctx_init_menu_select_track(struct game_context *ctx);
 int main_ctx_init_menu_select_car(struct game_context *ctx);
 int main_ctx_init_race(struct game_context *ctx);
 
+int display_screen_menu_main(struct game_context *ctx);
 int display_screen_menu_select_track(struct game_context *ctx);
 int display_screen_menu_select_car(struct game_context *ctx);
 

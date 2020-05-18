@@ -546,7 +546,7 @@ static int logic_race(struct game_context *ctx)
 
 		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
 
-		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_CAR);
+		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
@@ -704,22 +704,9 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 }
 
 
-static int logic_menu_select_track(struct game_context *ctx)
+static int logic_menu_main(struct game_context *ctx)
 {
 	if (ctx->keys.left) {
-		if (ctx->track.track_selected == 0)
-			ctx->track.track_selected = TRACK_LAST - 1;
-		else
-			ctx->track.track_selected--;
-	}
-
-	if (ctx->keys.right) {
-		ctx->track.track_selected++;
-		if (ctx->track.track_selected == TRACK_LAST)
-			ctx->track.track_selected = 0;
-	}
-
-	if (ctx->keys.select) {
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_CAR);
 
 		// unload menu resources
@@ -732,42 +719,17 @@ static int logic_menu_select_track(struct game_context *ctx)
 		main_ctx_init_menu_select_car(ctx);
 	}
 
-	return 0;
-}
-
-
-static int logic_menu_select_car(struct game_context *ctx)
-{
-
-	if(ctx->keys.back){
-
-		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
-
+	if (ctx->keys.right) {
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_TRACK);
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
 
-		// load menu ressources
+		// load race ressources
 		gfx_load_resources_menu_select_track(ctx);
-		sound_unload_resources(ctx);
+		//sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_track(ctx);
-
-		return 0;
-	}
-
-	if (ctx->keys.left) {
-		if (ctx->pcar.car_player_model == 0)
-			ctx->pcar.car_player_model = CAR_MODEL_LAST - 1;
-		else
-			ctx->pcar.car_player_model--;
-	}
-
-	if (ctx->keys.right) {
-		ctx->pcar.car_player_model++;
-		if (ctx->pcar.car_player_model == CAR_MODEL_LAST)
-			ctx->pcar.car_player_model = 0;
 	}
 
 	if (ctx->keys.select) {
@@ -793,6 +755,94 @@ static int logic_menu_select_car(struct game_context *ctx)
 }
 
 
+static int logic_menu_select_track(struct game_context *ctx)
+{
+	if(ctx->keys.back){
+
+		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
+
+		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+
+		// load menu ressources
+		gfx_load_resources_menu_main(ctx);
+		sound_unload_resources(ctx);
+
+		main_ctx_init_menu_main(ctx);
+
+		return 0;
+	}
+
+	if (ctx->keys.down) {
+		if (ctx->track.track_selected == 0)
+			ctx->track.track_selected = TRACK_LAST - 1;
+		else
+			ctx->track.track_selected--;
+	}
+
+	if (ctx->keys.up) {
+		ctx->track.track_selected++;
+		if (ctx->track.track_selected == TRACK_LAST)
+			ctx->track.track_selected = 0;
+	}
+
+	/*if (ctx->keys.select) {
+		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_CAR);
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+
+		// load race ressources
+		gfx_load_resources_menu_select_car(ctx);
+		//sound_load_resources (ctx);
+
+		main_ctx_init_menu_select_car(ctx);
+	}*/
+
+	return 0;
+}
+
+
+static int logic_menu_select_car(struct game_context *ctx)
+{
+
+	if(ctx->keys.back){
+
+		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
+
+		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+
+		// load menu ressources
+		gfx_load_resources_menu_main(ctx);
+		sound_unload_resources(ctx);
+
+		main_ctx_init_menu_main(ctx);
+
+		return 0;
+	}
+
+	if (ctx->keys.down) {
+		if (ctx->pcar.car_player_model == 0)
+			ctx->pcar.car_player_model = CAR_MODEL_LAST - 1;
+		else
+			ctx->pcar.car_player_model--;
+	}
+
+	if (ctx->keys.up) {
+		ctx->pcar.car_player_model++;
+		if (ctx->pcar.car_player_model == CAR_MODEL_LAST)
+			ctx->pcar.car_player_model = 0;
+	}
+
+	return 0;
+}
+
+
 int main_logic(struct game_context *ctx)
 {
 	int ret = 0;
@@ -804,6 +854,9 @@ int main_logic(struct game_context *ctx)
 
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
+		break;
+	case GAME_STATE_MENU_MAIN:
+		logic_menu_main(ctx);
 		break;
 	case GAME_STATE_MENU_SELECT_TRACK:
 		logic_menu_select_track(ctx);

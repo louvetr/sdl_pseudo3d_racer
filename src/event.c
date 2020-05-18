@@ -237,6 +237,7 @@ int main_event(struct game_context *ctx)
 		break;
 	case GAME_STATE_QUIT:
 		break;
+	case GAME_STATE_MENU_MAIN:
 	case GAME_STATE_MENU_SELECT_TRACK:
 	case GAME_STATE_MENU_SELECT_CAR:
 		event_menu_select_car(ctx);

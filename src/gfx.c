@@ -366,6 +366,15 @@ int gfx_load_resources_menu_select_car(struct game_context *ctx)
 	return 0;
 }
 
+int gfx_load_resources_menu_main(struct game_context *ctx)
+{
+
+	gfx_load_cars_side(ctx);
+	gfx_load_tracks_thumbnail(ctx);
+
+	return 0;
+}
+
 int gfx_load_resources_race(struct game_context *ctx)
 {
 	// TODO, use macro for texture loading

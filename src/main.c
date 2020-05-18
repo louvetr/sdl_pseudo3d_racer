@@ -285,6 +285,15 @@ int main_ctx_init_menu_select_track(struct game_context *ctx)
 	return 0;
 }
 
+
+int main_ctx_init_menu_main(struct game_context *ctx)
+{
+	ctx->status_cur = GAME_STATE_MENU_MAIN;
+	ctx->status_prev = GAME_STATE_UNKNOWN;
+
+	return 0;
+}
+
 static int main_destroy(struct game_context *ctx)
 {
 	// TODO
@@ -336,8 +345,11 @@ int main()
 	//gfx_load_resources_menu_select_car(ctx);
 	//main_ctx_init_menu_select_car(ctx);
 	
-	gfx_load_resources_menu_select_track(ctx);
-	main_ctx_init_menu_select_track(ctx);
+	/*gfx_load_resources_menu_select_track(ctx);
+	main_ctx_init_menu_select_track(ctx);*/
+
+	gfx_load_resources_menu_main(ctx);
+	main_ctx_init_menu_main(ctx);
 
 	// main_build_track(ctx);
 	// track_build(ctx);
