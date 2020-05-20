@@ -550,16 +550,16 @@ static int logic_race(struct game_context *ctx)
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
-
-		// load menu ressources
-		gfx_load_resources_menu_select_car(ctx);
 		sound_unload_resources(ctx);
 
-		main_ctx_init_menu_select_car(ctx);
+		// load menu ressources
+		gfx_load_resources_menu_main(ctx);
+		sound_load_resources_menu(ctx);
+
+		main_ctx_init_menu_main(ctx);
 
 		return 0;
 	}
-
 
 	// update player segment
 	ctx->pcar.player_segment_prev = ctx->pcar.player_segment;
@@ -707,40 +707,46 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 static int logic_menu_main(struct game_context *ctx)
 {
 	if (ctx->keys.left) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_CAR);
 
 		// unload menu resources
-		gfx_unload_resources(ctx);
+		//gfx_unload_resources(ctx);
 
 		// load race ressources
-		gfx_load_resources_menu_select_car(ctx);
+		//gfx_load_resources_menu_select_car(ctx);
 		//sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_car(ctx);
 	}
 
 	if (ctx->keys.right) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_TRACK);
 
 		// unload menu resources
-		gfx_unload_resources(ctx);
+		//gfx_unload_resources(ctx);
 
 		// load race ressources
-		gfx_load_resources_menu_select_track(ctx);
+		//gfx_load_resources_menu_select_track(ctx);
 		//sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_track(ctx);
 	}
 
 	if (ctx->keys.select) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+
 		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_START);
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
+		//sound_unload_resources(ctx);
+		Mix_HaltMusic();
 
 		// load race ressources
 		gfx_load_resources_race(ctx);
-		sound_load_resources /*_race*/ (ctx);
+		sound_load_resources_race(ctx);
 
 		main_ctx_init_race(ctx);
 
@@ -759,16 +765,18 @@ static int logic_menu_select_track(struct game_context *ctx)
 {
 	if(ctx->keys.back){
 
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+
 		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
 
-		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
+		/*event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
 
 		// load menu ressources
 		gfx_load_resources_menu_main(ctx);
-		sound_unload_resources(ctx);
+		sound_unload_resources(ctx);*/
 
 		main_ctx_init_menu_main(ctx);
 
@@ -776,6 +784,7 @@ static int logic_menu_select_track(struct game_context *ctx)
 	}
 
 	if (ctx->keys.down) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
 		if (ctx->track.track_selected == 0)
 			ctx->track.track_selected = TRACK_LAST - 1;
 		else
@@ -783,6 +792,7 @@ static int logic_menu_select_track(struct game_context *ctx)
 	}
 
 	if (ctx->keys.up) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
 		ctx->track.track_selected++;
 		if (ctx->track.track_selected == TRACK_LAST)
 			ctx->track.track_selected = 0;
@@ -809,17 +819,18 @@ static int logic_menu_select_car(struct game_context *ctx)
 {
 
 	if(ctx->keys.back){
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 
 		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
 
 		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
 
 		// unload menu resources
-		gfx_unload_resources(ctx);
+		/*gfx_unload_resources(ctx);
 
 		// load menu ressources
 		gfx_load_resources_menu_main(ctx);
-		sound_unload_resources(ctx);
+		sound_unload_resources(ctx);*/
 
 		main_ctx_init_menu_main(ctx);
 
@@ -827,6 +838,7 @@ static int logic_menu_select_car(struct game_context *ctx)
 	}
 
 	if (ctx->keys.down) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
 		if (ctx->pcar.car_player_model == 0)
 			ctx->pcar.car_player_model = CAR_MODEL_LAST - 1;
 		else
@@ -834,6 +846,7 @@ static int logic_menu_select_car(struct game_context *ctx)
 	}
 
 	if (ctx->keys.up) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
 		ctx->pcar.car_player_model++;
 		if (ctx->pcar.car_player_model == CAR_MODEL_LAST)
 			ctx->pcar.car_player_model = 0;

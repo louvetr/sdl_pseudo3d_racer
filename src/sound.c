@@ -2,6 +2,9 @@
 #include "main.h"
 
 
+#define SFX_MENU_A "./media/sfx/MENU A_Select.wav"
+#define SFX_MENU_B "./media/sfx/MENU A - Back.wav"
+
 #define SFX_ENGINE_ACCEL "./media/sfx/engine_accel.wav"
 #define SFX_ENGINE_NORMAL "./media/sfx/engine_normal.wav"
 #define SFX_ENGINE_IDLE "./media/sfx/engine_idle.wav"
@@ -15,6 +18,8 @@
 #define SFX_CONGRATULATIONS "./media/sfx/congratulations.wav"
 #define SFX_LAP "./media/sfx/lap_01.wav"
 
+//#define MUSIC_MENU "./media/music/Racing-Menu_128kbps.mp3"
+#define MUSIC_MENU "./media/music/Starting-Line_128kbps.mp3"
 #define MUSIC_END_RACE "./media/music/end_race.ogg"
 #define MUSIC_BGM_1 "./media/music/aries_beats---infinity---128kbps.mp3"
 #define MUSIC_BGM_2                                                            \
@@ -27,11 +32,9 @@
 #define MUSIC_BGM_3_NAME "\"Turbo Rush\" by Aries Beats"
 #define MUSIC_BGM_4_NAME "\"Sunrise Over Los Angeles\" by TeknoAXE"                                                           \
 
-#define MAX_VOLUME 128
-
 #define SFX_CHANNEL_MOTOR 0
 #define SFX_CHANNEL_COLLISION 1
-#define SFX_CHANNEL_DRIFT 1
+#define SFX_CHANNEL_DRIFT 2
 
 
 static int sound_load_music(Mix_Music **music, const char *path)
@@ -61,17 +64,8 @@ static int sound_load_wav(Mix_Chunk **sfx, const char *path)
 	return 0;
 }
 
-int sound_load_resources(struct game_context *ctx)
+int sound_load_resources_race(struct game_context *ctx)
 {
-	// init Music and SFX management
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-		SDL_Log("SDL_ttf could not initialize! SDL_Mixer Error: %s\n",
-			TTF_GetError());
-		return -EINVAL;
-	}
-
-	Mix_VolumeMusic(MAX_VOLUME);
-
 	sound_load_music(&ctx->sound.music.end_race, MUSIC_END_RACE);
 	sound_load_music(&ctx->sound.music.bgm[0], MUSIC_BGM_1);
 	sound_load_music(&ctx->sound.music.bgm[1], MUSIC_BGM_2);
@@ -97,6 +91,21 @@ int sound_load_resources(struct game_context *ctx)
 	sound_load_wav(&ctx->sound.sfx.go, SFX_GO);
 	sound_load_wav(&ctx->sound.sfx.congratulations, SFX_CONGRATULATIONS);
 
+	sound_load_wav(&ctx->sound.sfx.menu_a, SFX_MENU_A);
+	sound_load_wav(&ctx->sound.sfx.menu_b, SFX_MENU_B);
+
+	return 0;
+}
+
+
+int sound_load_resources_menu(struct game_context *ctx)
+{
+	sound_load_music(&ctx->sound.music.menu, MUSIC_MENU);
+
+	sound_load_wav(&ctx->sound.sfx.menu_a, SFX_MENU_A);
+	sound_load_wav(&ctx->sound.sfx.menu_b, SFX_MENU_B);
+
+
 
 	return 0;
 }
@@ -104,6 +113,13 @@ int sound_load_resources(struct game_context *ctx)
 
 int sound_unload_resources(struct game_context *ctx)
 {
+	Mix_HaltMusic();
+
+	if(ctx->sound.music.menu) {
+		Mix_FreeMusic(ctx->sound.music.menu);
+		ctx->sound.music.menu = NULL;
+	}
+
 	Mix_FreeMusic(ctx->sound.music.end_race);
 	Mix_FreeMusic(ctx->sound.music.bgm[0]);
 	Mix_FreeMusic(ctx->sound.music.bgm[1]);
@@ -123,6 +139,9 @@ int sound_unload_resources(struct game_context *ctx)
 	Mix_FreeChunk(ctx->sound.sfx.three);
 	Mix_FreeChunk(ctx->sound.sfx.go);
 	Mix_FreeChunk(ctx->sound.sfx.congratulations);
+	
+	Mix_FreeChunk(ctx->sound.sfx.menu_a);
+	Mix_FreeChunk(ctx->sound.sfx.menu_b);
 
 	return 0;
 }

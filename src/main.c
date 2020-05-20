@@ -289,7 +289,10 @@ int main_ctx_init_menu_select_track(struct game_context *ctx)
 int main_ctx_init_menu_main(struct game_context *ctx)
 {
 	ctx->status_cur = GAME_STATE_MENU_MAIN;
-	ctx->status_prev = GAME_STATE_UNKNOWN;
+
+	if (ctx->status_prev != GAME_STATE_MENU_SELECT_CAR &&
+	    ctx->status_prev != GAME_STATE_MENU_SELECT_TRACK)
+		Mix_PlayMusic(ctx->sound.music.menu, -1);
 
 	return 0;
 }
@@ -335,6 +338,16 @@ int main()
 	// init
 	main_init(ctx);
 
+	// init Music and SFX management
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		SDL_Log("SDL_ttf could not initialize! SDL_Mixer Error: %s\n",
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	Mix_VolumeMusic(MAX_VOLUME);
+
+
 	// load media and stuff
 	// gfx_load_resources_race(ctx);
 	// sound_load_resources(ctx);
@@ -342,13 +355,14 @@ int main()
 	// main_ctx_init(ctx);
 	// main_ctx_init_race(ctx);
 
-	//gfx_load_resources_menu_select_car(ctx);
-	//main_ctx_init_menu_select_car(ctx);
-	
+	// gfx_load_resources_menu_select_car(ctx);
+	// main_ctx_init_menu_select_car(ctx);
+
 	/*gfx_load_resources_menu_select_track(ctx);
 	main_ctx_init_menu_select_track(ctx);*/
 
 	gfx_load_resources_menu_main(ctx);
+	sound_load_resources_menu(ctx);
 	main_ctx_init_menu_main(ctx);
 
 	// main_build_track(ctx);
@@ -362,7 +376,7 @@ int main()
 		// main_build_track(ctx); // TODO: move out of loop !!!!!
 
 		// TODO: MOVE
-		
+
 		float cam_depth = 1.f / tanf((ctx->race.field_of_view / 2.f) *
 					     (float)M_PI / 180.f);
 		ctx->race.camera_depth = (float)cam_depth;

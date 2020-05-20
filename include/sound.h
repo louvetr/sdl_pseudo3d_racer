@@ -26,9 +26,12 @@ struct sfxs {
 	Mix_Chunk *go;
 	Mix_Chunk *congratulations;
 
+	Mix_Chunk *menu_a;
+	Mix_Chunk *menu_b;
 };
 
 struct musics {
+	Mix_Music *menu;
 	Mix_Music *end_race;
 	Mix_Music *bgm[NB_BGM];
 	char *bgm_name[NB_BGM];

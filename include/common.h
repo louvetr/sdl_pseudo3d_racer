@@ -2,8 +2,9 @@
 #define COMMON_H
 
 
+#define MAX_VOLUME 128
 
-
+#define SFX_CHANNEL_MENU 3
 
 enum car_sprite_idx {
  	CAR_SPRITE_REAR,

@@ -530,7 +530,8 @@ int gfx_load_resources_menu_select_car(struct game_context *ctx);
 int gfx_load_resources_race(struct game_context *ctx);
 int gfx_unload_resources(struct game_context *ctx);
 
-int sound_load_resources(struct game_context *ctx);
+int sound_load_resources_menu(struct game_context *ctx);
+int sound_load_resources_race(struct game_context *ctx);
 int sound_unload_resources(struct game_context *ctx);
 
 int event_update_game_state(struct game_context *ctx, enum game_status state);
