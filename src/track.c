@@ -2,6 +2,11 @@
 #include "main.h"
 
 
+static struct track_build_info track_build_tab[TRACK_LAST] = {
+	{.nb_sector = NB_SECTOR_DIJON, .nb_segment = NB_SEGMENT_DIJON},
+	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY}
+
+};
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -23,9 +28,15 @@ static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
 
 	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}
+
+
+};
+
+static int sector_speedway[NB_SECTOR_SPEEDWAY][NB_SECTOR_PARAM] = {
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
-
-
 
 
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
@@ -54,47 +65,48 @@ static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
 // TODO: use realloc at each sector addition instead counting total nb sectors
 // in advance
 
-
-// DP track
-int track_build(struct game_context *ctx)
+static int track_build_speedway(struct game_context *ctx)
 {
+
+
 	int nb_segments_added = 0;
 
-	// ctx->track.nb_segments = 2750;
-	// ctx->track.nb_segments = 2450;
-	// ctx->track.nb_segments = 2510;
-	ctx->track.nb_segments = 2570;
-	// ctx->track.nb_segments = 2600;
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_SPEEDWAY; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_speedway[i][SECTOR_PARAM_ENTER_LG],
+			sector_speedway[i][SECTOR_PARAM_HOLD_LG],
+			sector_speedway[i][SECTOR_PARAM_EXIT_LG],
+			sector_speedway[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_speedway[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_speedway[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_speedway[i][SECTOR_PARAM_NB_LANE_EXIT]);
 
-	///////////////////////////////////
-	// TODO: put this in a function elsewhere
-	// ctx->pcar.player_segment = ctx->track.nb_segments - 30;
-
-	// ctx->pcar.position = ctx->pcar.player_segment * ROAD_SEGMENT_LENGTH;
-
-	int player_lane = NB_AI_CARS % ctx->track.lanes;
-	// ctx->pcar.position =
-	ctx->pcar.player_x = ai_lane_to_posx(player_lane, ctx->track.lanes);
-
-	ctx->pcar.player_segment = ctx->track.nb_segments -
-			      (NB_AI_CARS / ctx->track.lanes) * AI_SEGMENTS_SPACING -
-			      6;
-	ctx->pcar.player_segment_prev = ctx->pcar.player_segment;
-	ctx->pcar.position = ctx->pcar.player_segment * ROAD_SEGMENT_LENGTH;
-	ctx->pcar.player_distance_ran =
-		(ctx->pcar.player_segment - ctx->track.nb_segments) * ROAD_SEGMENT_LENGTH -
-		1;
-
-	SDL_Log("PLAYER player_distance_ran = %d\n", ctx->pcar.player_distance_ran);
-
-	///////////////////////////////////
-
-	ctx->track.segments =
-		calloc((size_t)ctx->track.nb_segments, sizeof(*ctx->track.segments));
-	if (!ctx->track.segments) {
-		SDL_Log("[%s] ERROR: calloc failed\n", __func__);
-		return -ENOMEM;
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_speedway[i][SECTOR_PARAM_ENTER_LG] +
+				sector_speedway[i][SECTOR_PARAM_HOLD_LG] +
+				sector_speedway[i][SECTOR_PARAM_EXIT_LG]);
 	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+	return 0;
+
+}
+
+
+static int track_build_dijon(struct game_context *ctx)
+{
+
+
+	int nb_segments_added = 0;
 
 	// Build the track segments
 	for (int i = 0; i < NB_SECTOR_DIJON; i++) {
@@ -372,6 +384,50 @@ int track_build(struct game_context *ctx)
 
 
 	// ctx->track.segments[0].scene = start_lane;
+
+	return 0;
+}
+
+int track_build(struct game_context *ctx)
+{
+
+	int tid = ctx->track.track_selected;
+	ctx->track.nb_segments = track_build_tab[tid].nb_segment;
+
+	///////////////////////////////////
+	// TODO: put this in a function elsewhere
+	int player_lane = NB_AI_CARS % ctx->track.lanes;
+	ctx->pcar.player_x = ai_lane_to_posx(player_lane, ctx->track.lanes);
+	ctx->pcar.player_segment =
+		ctx->track.nb_segments -
+		(NB_AI_CARS / ctx->track.lanes) * AI_SEGMENTS_SPACING - 6;
+	ctx->pcar.player_segment_prev = ctx->pcar.player_segment;
+	ctx->pcar.position = ctx->pcar.player_segment * ROAD_SEGMENT_LENGTH;
+	ctx->pcar.player_distance_ran =
+		(ctx->pcar.player_segment - ctx->track.nb_segments) *
+			ROAD_SEGMENT_LENGTH -
+		1;
+
+	SDL_Log("PLAYER player_distance_ran = %d\n",
+		ctx->pcar.player_distance_ran);
+
+	///////////////////////////////////
+
+	ctx->track.segments = calloc((size_t)ctx->track.nb_segments,
+				     sizeof(*ctx->track.segments));
+	if (!ctx->track.segments) {
+		SDL_Log("[%s] ERROR: calloc failed\n", __func__);
+		return -ENOMEM;
+	}
+
+	switch (tid) {
+	case TRACK_DIJON:
+		track_build_dijon(ctx);
+		break;
+	case TRACK_SPEEDWAY:
+		track_build_speedway(ctx);
+		break;
+	}
 
 	return 0;
 }

@@ -19,14 +19,25 @@
 #define SECTOR_PARAM_NB_LANE_EXIT 6
 
 #define NB_SECTOR_DIJON 16
+#define NB_SEGMENT_DIJON 2570
+
+#define NB_SECTOR_SPEEDWAY 3
+#define NB_SEGMENT_SPEEDWAY 450
 
 typedef uint8_t Uint8;
 
 enum track_selection {
 	TRACK_DIJON = 0,
-	TRACK_2,
+	TRACK_SPEEDWAY,
 	TRACK_LAST
 };
+
+struct track_build_info {
+	int nb_sector;
+	int nb_segment;
+};
+
+
 
 enum track_lane_type {
 	LANE_TYPE_NONE = 0,

@@ -341,7 +341,7 @@ static int gfx_load_particles(struct game_context *ctx)
 static int gfx_load_tracks_thumbnail(struct game_context *ctx)
 {
 	gfx_load_texture(ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
-	gfx_load_texture(ctx, PNG_TRACK_2, &ctx->gfx.track_thumbnail[TRACK_2]);
+	gfx_load_texture(ctx, PNG_TRACK_2, &ctx->gfx.track_thumbnail[TRACK_SPEEDWAY]);
 
 	return 0;
 }

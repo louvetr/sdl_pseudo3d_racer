@@ -213,7 +213,7 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
 
 	// track info init
-	ctx->track.track_selected = TRACK_DIJON;
+	//ctx->track.track_selected = TRACK_DIJON;
 	ctx->track.lane_type = LANE_TYPE_HALF;
 	ctx->track.lane_color = color_lane_yellow;
 
