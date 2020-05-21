@@ -1,5 +1,122 @@
 #include "main.h"
 
+
+static int display_menu_sliding_grid(SDL_Renderer *renderer,
+				     int width_num,
+				     int width_den,
+				     int x_gap,
+				     int y_gap,
+				     int *cpt,
+				     int cpt_increment,
+				     int x_dir,
+				     int y_dir,
+				     int R,
+				     int G,
+				     int B)
+{
+
+	// static uint32_t cpt = 0;
+	SDL_Rect r;
+	int width = SCREEN_HEIGHT * width_num / width_den;
+
+	int i = *cpt % (y_gap);
+	int j = *cpt % (x_gap);
+
+	SDL_SetRenderDrawColor(renderer, (Uint8)R, (Uint8)G, (Uint8)B, 255);
+
+	if (y_dir > 0) {
+		int y = i;
+		while (y < SCREEN_HEIGHT + width) {
+			r.x = 0;
+			r.y = y - width;
+			r.w = SCREEN_WIDTH;
+			r.h = width;
+			SDL_RenderFillRect(renderer, &r);
+			y = y + y_gap;
+		}
+	} else {
+		int y = SCREEN_HEIGHT - i + width;
+		while (y > 0 - width) {
+			r.x = 0;
+			r.y = y - width;
+			r.w = SCREEN_WIDTH;
+			r.h = width;
+			SDL_RenderFillRect(renderer, &r);
+			y = y - y_gap;
+		}
+	}
+
+	if (x_dir > 0) {
+		int x = j;
+		while (x < SCREEN_WIDTH + width) {
+			r.x = x - width;
+			r.y = 0;
+			r.w = width;
+			r.h = SCREEN_HEIGHT;
+			SDL_RenderFillRect(renderer, &r);
+			x = x + x_gap;
+		}
+	} else {
+		int x = SCREEN_WIDTH - j + width;
+		while (x > 0 - width) {
+			r.x = x - width;
+			r.y = 0;
+			r.w = width;
+			r.h = SCREEN_HEIGHT;
+			SDL_RenderFillRect(renderer, &r);
+			x = x - x_gap;
+		}
+	}
+
+	*cpt += cpt_increment;
+
+	if (*cpt < 0)
+		*cpt = 0;
+
+	return 0;
+}
+
+
+static int display_menu_animated_background(struct game_context *ctx)
+{
+	static int cpt1 = 0;
+	static int cpt2 = 0;
+
+	/*int y_gap_1 = SCREEN_HEIGHT / 5;
+	int x_gap_1 = SCREEN_WIDTH / 7;*/
+
+	int y_gap_2 = SCREEN_HEIGHT / 2;
+	int x_gap_2 = SCREEN_WIDTH / 3;
+
+	display_menu_sliding_grid(ctx->renderer,
+				  100, // 140,
+				  10000,
+				  x_gap_2,
+				  y_gap_2,
+				  &cpt1,
+				  2,
+				  1,
+				  1,
+				  0,
+				  0,
+				  255);
+
+	display_menu_sliding_grid(ctx->renderer,
+				  100,
+				  10000,
+				  x_gap_2,
+				  y_gap_2,
+				  &cpt2,
+				  2,
+				  -1,
+				  -1,
+				  0 /*220*/,
+				  0 /*220*/,
+				  255 /*0*/);
+
+	return 0;
+};
+
 static int display_screen_rect_border(struct game_context *ctx,
 				      int x0,
 				      int y0,
@@ -64,14 +181,14 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 		      scale_car / 2.f);
 
 	texture_render(ctx,
-			     &ctx->gfx.cars_side[ctx->pcar.car_player_model],
-			     car_x,
-			     car_y,
-			     NULL,
-			     0.f,
-			     scale_car,
-			     0,
-			     NULL);
+		       &ctx->gfx.cars_side[ctx->pcar.car_player_model],
+		       car_x,
+		       car_y,
+		       NULL,
+		       0.f,
+		       scale_car,
+		       0,
+		       NULL);
 
 	display_screen_rect_border(
 		ctx,
@@ -121,16 +238,15 @@ static int display_menu_track_bordered_pict(struct game_context *ctx)
 			      .h *
 		      scale_track / 2.f);
 
-	texture_render(
-		ctx,
-		&ctx->gfx.track_thumbnail[ctx->track.track_selected],
-		track_x,
-		track_y,
-		NULL,
-		0.f,
-		scale_track,
-		0,
-		NULL);
+	texture_render(ctx,
+		       &ctx->gfx.track_thumbnail[ctx->track.track_selected],
+		       track_x,
+		       track_y,
+		       NULL,
+		       0.f,
+		       scale_track,
+		       0,
+		       NULL);
 
 	display_screen_rect_border(
 		ctx,
@@ -174,6 +290,9 @@ int display_screen_menu_select_car(struct game_context *ctx)
 	SDL_SetRenderDrawColor(ctx->renderer, 220, 220, 0, 0xFF);
 	SDL_RenderClear(ctx->renderer);
 
+	// animated background
+	display_menu_animated_background(ctx);
+
 	SDL_Rect r = {.x = SCREEN_WIDTH * 30 / 100 - SCREEN_WIDTH * 10 / 100,
 		      .y = 0,
 		      .w = SCREEN_WIDTH * 20 / 100,
@@ -198,6 +317,9 @@ int display_screen_menu_select_track(struct game_context *ctx)
 	// clear screen
 	SDL_SetRenderDrawColor(ctx->renderer, 220, 220, 0, 0xFF);
 	SDL_RenderClear(ctx->renderer);
+
+	// animated background
+	display_menu_animated_background(ctx);
 
 	SDL_Rect r = {.x = SCREEN_WIDTH * 80 / 100 - SCREEN_WIDTH * 10 / 100,
 		      .y = 0,
@@ -224,6 +346,9 @@ int display_screen_menu_main(struct game_context *ctx)
 	SDL_SetRenderDrawColor(ctx->renderer, 220, 220, 0, 0xFF);
 	SDL_RenderClear(ctx->renderer);
 
+	// animated background
+	display_menu_animated_background(ctx);
+
 	SDL_Rect r = {
 		.x = 0,
 		.y = SCREEN_HEIGHT / 2 - SCREEN_HEIGHT * 10 / 100,
@@ -236,7 +361,7 @@ int display_screen_menu_main(struct game_context *ctx)
 	SDL_RenderFillRect(ctx->renderer, &r);
 
 	display_menu_car_bordered_pict(ctx);
-	
+
 	display_menu_track_bordered_pict(ctx);
 
 	SDL_RenderPresent(ctx->renderer);
