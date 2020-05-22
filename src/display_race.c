@@ -390,7 +390,8 @@ static int display_render_anim_race_end(struct game_context *ctx)
 	if (angle > 360.f) {
 		angle = 0.f;
 		if (ctx->race.finish_placed_frame_nb == 0) {
-			ctx->race.finish_placed_frame_nb = ctx->race.nb_frame_anim;
+			ctx->race.finish_placed_frame_nb =
+				ctx->race.nb_frame_anim;
 		}
 	}
 
@@ -433,9 +434,10 @@ static int display_render_anim_race_end(struct game_context *ctx)
 			return -EINVAL;
 		}
 
-		int nb_pos_x =
-			-ctx->gfx.font_race_anim_2.w +
-			(ctx->race.nb_frame_anim - ctx->race.finish_placed_frame_nb) * 15;
+		int nb_pos_x = -ctx->gfx.font_race_anim_2.w +
+			       (ctx->race.nb_frame_anim -
+				ctx->race.finish_placed_frame_nb) *
+				       15;
 		/*if (nb_pos_x >
 		    SCREEN_WIDTH * 45 / 100 - ctx->gfx.font_race_anim_2.w)
 			nb_pos_x = SCREEN_WIDTH * 45 / 100 -
@@ -473,8 +475,9 @@ static int display_render_anim_race_end(struct game_context *ctx)
 		}
 
 		int place_pos_x =
-			SCREEN_WIDTH -
-			(ctx->race.nb_frame_anim - ctx->race.finish_placed_frame_nb) * 15;
+			SCREEN_WIDTH - (ctx->race.nb_frame_anim -
+					ctx->race.finish_placed_frame_nb) *
+					       15;
 		/*if (place_pos_x < SCREEN_WIDTH * 45 / 100)
 			place_pos_x = SCREEN_WIDTH * 45 / 100;*/
 		if (place_pos_x <
@@ -613,7 +616,8 @@ static int display_render_hud(struct game_context *ctx)
 		0.f);
 
 	// Mid
-	ctx->pcar.player_place = logic_get_player_place_nb(ctx);
+	if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+		ctx->pcar.player_place = logic_get_player_place_nb(ctx);
 	char place_str[3];
 	if (ctx->pcar.player_place < 10)
 		snprintf(place_str, 3, " %d", ctx->pcar.player_place);
@@ -757,7 +761,8 @@ static int display_render_hud(struct game_context *ctx)
 	int time_min = ctx->race.race_time_ms / 60000;
 	int time_sec = (ctx->race.race_time_ms - time_min * 60000) / 1000;
 	int time_ms =
-		(ctx->race.race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
+		(ctx->race.race_time_ms - time_min * 60000 - time_sec * 1000) /
+		10;
 
 	sprintf(time_str, "%02d:%02d.%02d", time_min, time_sec, time_ms);
 
@@ -870,7 +875,8 @@ static int display_render_ai_cars_sprites(struct game_context *ctx,
 							    .w;
 				int clip_h = ctx->race.max_y - sprite_y;
 				int clip_h_inv_scale =
-					(int)((float)(ctx->race.max_y - sprite_y) /
+					(int)((float)(ctx->race.max_y -
+						      sprite_y) /
 					      car_x_scale);
 				if (clip_h <
 					    (int)((float)ctx->gfx
@@ -1093,7 +1099,8 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 		r->w = ctx->gfx.scene_start_lane.w;
 		int clip_h = ctx->race.max_y_bis - sprite_y;
 		int clip_h_inv_scale =
-			(int)((float)(ctx->race.max_y_bis - sprite_y) / x_scale);
+			(int)((float)(ctx->race.max_y_bis - sprite_y) /
+			      x_scale);
 		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
 				   x_scale) &&
 		    clip_h > 0) {
@@ -1141,8 +1148,8 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 		if (ctx->race.max_y_bis_idx > base_segment_idx)
 			tmp_max_y_bis_idx = ctx->race.max_y_bis_idx;
 		else
-			tmp_max_y_bis_idx =
-				(ctx->race.max_y_bis_idx + ctx->track.nb_segments);
+			tmp_max_y_bis_idx = (ctx->race.max_y_bis_idx +
+					     ctx->track.nb_segments);
 		if (idx > base_segment_idx)
 			tmp_idx = idx;
 		else
@@ -1395,10 +1402,11 @@ static int display_render_backgrounds(struct game_context *ctx)
 		&ctx->gfx.layers_x_offset.landscape_far,
 		&ctx->gfx.bg_mountains);
 
-	ret = display_render_background_layer(ctx,
-					      BG_LAYER_SKY_NEAR,
-					      &ctx->gfx.layers_x_offset.sky_near,
-					      &ctx->gfx.bg_sky_near);
+	ret = display_render_background_layer(
+		ctx,
+		BG_LAYER_SKY_NEAR,
+		&ctx->gfx.layers_x_offset.sky_near,
+		&ctx->gfx.bg_sky_near);
 
 	return ret;
 }
