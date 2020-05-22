@@ -98,7 +98,6 @@ static int track_build_speedway(struct game_context *ctx)
 	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
 
 	return 0;
-
 }
 
 
@@ -428,6 +427,37 @@ int track_build(struct game_context *ctx)
 		track_build_speedway(ctx);
 		break;
 	}
+
+	return 0;
+}
+
+int track_unload(struct game_context *ctx)
+{
+
+	struct scene_seg_desc *scene_desc_freed[50] = {};
+	int idx = 0;
+
+
+	for (int i = 0; i < ctx->track.nb_segments; i++) {
+		int desc_found = 0;
+		for (int j = 0; j < 50; j++) {
+			if (ctx->track.segments[i].scene ==
+			    scene_desc_freed[j]) {
+				desc_found = 1;
+				break;
+			}
+		}
+
+		if(!desc_found) {
+			scene_desc_freed[idx] = ctx->track.segments[i].scene;
+			idx++;
+			free(ctx->track.segments[i].scene);
+
+		}
+	}
+
+	free(ctx->track.segments);
+	ctx->track.segments = NULL;
 
 	return 0;
 }

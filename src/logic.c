@@ -551,6 +551,7 @@ static int logic_race(struct game_context *ctx)
 		// unload menu resources
 		gfx_unload_resources(ctx);
 		sound_unload_resources(ctx);
+		track_unload(ctx);
 
 		// load menu ressources
 		gfx_load_resources_menu_main(ctx);

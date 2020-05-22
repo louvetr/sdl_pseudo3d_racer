@@ -104,6 +104,7 @@ struct track_info {
 	int track_length;
 	// number of lanes
 	int lanes;
+	
 
 };
 

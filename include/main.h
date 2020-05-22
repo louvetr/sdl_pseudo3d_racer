@@ -489,6 +489,7 @@ static inline int rand_interval(int min, int max)
 /////////////////////////////////////////////////////////////////
 
 int track_build(struct game_context *ctx);
+int track_unload(struct game_context *ctx);
 
 int road_add_sector(struct road_segment *segments,
 		    int start_idx,
