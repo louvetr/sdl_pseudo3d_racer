@@ -21,8 +21,8 @@
 #define NB_SECTOR_DIJON 16
 #define NB_SEGMENT_DIJON 2570
 
-#define NB_SECTOR_SPEEDWAY 3
-#define NB_SEGMENT_SPEEDWAY 450
+#define NB_SECTOR_SPEEDWAY 9
+#define NB_SEGMENT_SPEEDWAY 2400
 
 typedef uint8_t Uint8;
 

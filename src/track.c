@@ -35,7 +35,17 @@ static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 
 static int sector_speedway[NB_SECTOR_SPEEDWAY][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_MEDIUM, CURVE_NONE, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 4},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 4, 4},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 4, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_MEDIUM, CURVE_NONE, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 3},
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
 
 
@@ -448,11 +458,10 @@ int track_unload(struct game_context *ctx)
 			}
 		}
 
-		if(!desc_found) {
+		if (!desc_found) {
 			scene_desc_freed[idx] = ctx->track.segments[i].scene;
 			idx++;
 			free(ctx->track.segments[i].scene);
-
 		}
 	}
 
