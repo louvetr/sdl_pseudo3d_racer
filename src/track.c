@@ -2,11 +2,24 @@
 #include "main.h"
 
 
+struct color_desc cd_lane_yellow = {.r = 255, .g = 234, .b = 0};
+struct color_desc cd_lane_white = {.r = 255, .g = 255, .b = 255};
+struct color_desc cd_road_asphalt_bright = {.r = 140, .g = 140, .b = 140};
+struct color_desc cd_road_asphalt_dark = {.r = 128, .g = 128, .b = 128};
+struct color_desc cd_grass_bright = {.r = 0, .g = 169, .b = 0};
+struct color_desc cd_grass_dark = {.r = 0, .g = 160, .b = 0};
+struct color_desc cd_rumble_bright = {.r = 255, .g = 255, .b = 255};
+struct color_desc cd_rumble_dark = {.r = 255, .g = 0, .b = 0};
+struct color_desc cd_water_bright = {.r = 38, .g = 75, .b = 106};
+struct color_desc cd_water_dark = {.r = 58, .g = 95, .b = 126};
+struct color_desc cd_foam_bright = {.r = 240, .g = 240, .b = 240};
+struct color_desc cd_foam_dark = {.r = 220, .g = 220, .b = 220};
+struct color_desc cd_sand_bright = {.r = 248, .g = 220, .b = 172};
+struct color_desc cd_sand_dark = {.r = 228, .g = 200, .b = 152};
+
 static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_DIJON, .nb_segment = NB_SEGMENT_DIJON},
-	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY}
-
-};
+	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY}};
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -106,6 +119,39 @@ static int track_build_speedway(struct game_context *ctx)
 	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
 
 	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphalt_bright;
+	ctx->track.cd_road_dark = &cd_road_asphalt_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_dark;
+	ctx->track.cd_lane = &cd_lane_yellow;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 3;
+	ctx->track.cds[0].bright = &cd_water_bright;
+	ctx->track.cds[0].dark = &cd_water_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_WIDTH;
+
+	ctx->track.cds[1].bright = &cd_foam_bright;
+	ctx->track.cds[1].dark = &cd_foam_dark;
+	ctx->track.cds[1].num = 300;
+	ctx->track.cds[1].den = 100;
+	ctx->track.cds[1].side = CDS_BOTH;
+
+	ctx->track.cds[2].bright = &cd_sand_bright;
+	ctx->track.cds[2].dark = &cd_sand_dark;
+	ctx->track.cds[2].num = 250;
+	ctx->track.cds[2].den = 100;
+	ctx->track.cds[2].side = CDS_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+
 
 	return 0;
 }
@@ -393,6 +439,25 @@ static int track_build_dijon(struct game_context *ctx)
 
 
 	// ctx->track.segments[0].scene = start_lane;
+
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphalt_bright;
+	ctx->track.cd_road_dark = &cd_road_asphalt_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_dark;
+	ctx->track.cd_lane = &cd_lane_yellow;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_grass_bright;
+	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_WIDTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
 	return 0;
 }

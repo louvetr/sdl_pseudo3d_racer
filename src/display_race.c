@@ -14,83 +14,6 @@ enum background_layer {
 	BG_LAYER_SKY_NEAR = 6
 };
 
-struct color_desc color_road_yellow = {
-	.r = 255,
-	.g = 234,
-	.b = 0,
-	.a = 255,
-};
-
-/*struct color_desc color_bright_road_asphalt = {
-	.r = 169,
-	.g = 169,
-	.b = 169,
-	.a = 255,
-};*/
-
-struct color_desc color_bright_road_asphalt = {
-	.r = 140,
-	.g = 140,
-	.b = 140,
-	.a = 255,
-};
-
-struct color_desc color_dark_road_asphalt = {
-	.r = 128,
-	.g = 128,
-	.b = 128,
-	.a = 255,
-};
-
-struct color_desc color_bright_grass = {
-	.r = 0,
-	.g = 169,
-	.b = 0,
-	.a = 255,
-};
-
-struct color_desc color_dark_grass = {
-	.r = 0,
-	.g = 160,
-	.b = 0,
-	.a = 255,
-};
-
-/*struct color_desc color_bright_rumble = {
-	.r = 85,
-	.g = 85,
-	.b = 85,
-	.a = 255,
-};
-
-struct color_desc color_dark_rumble = {
-	.r = 187,
-	.g = 187,
-	.b = 187,
-	.a = 255,
-};*/
-
-struct color_desc color_bright_rumble = {
-	.r = 255,
-	.g = 255,
-	.b = 255,
-	.a = 255,
-};
-
-struct color_desc color_dark_rumble = {
-	.r = 255,
-	.g = 0,
-	.b = 0,
-	.a = 255,
-};
-
-struct color_desc color_white = {
-	.r = 255,
-	.g = 255,
-	.b = 255,
-	.a = 255,
-};
-
 
 /////////////////////////////////////////////////////////////////
 // static functions definition
@@ -143,7 +66,7 @@ static int display_render_segment(struct game_context *ctx,
 		.x = 0,
 		.y = y2,
 	};
-	if (color == COLOR_DARK)
+	/*if (color == COLOR_DARK)
 		SDL_SetRenderDrawColor(ctx->renderer,
 				       color_dark_grass.r,
 				       color_dark_grass.g,
@@ -156,12 +79,94 @@ static int display_render_segment(struct game_context *ctx,
 				       color_bright_grass.b,
 				       255);
 	else if (color == COLOR_START)
-		SDL_SetRenderDrawColor(ctx->renderer, 255, 255, 0, 255);
+		SDL_SetRenderDrawColor(ctx->renderer, 255, 255, 0, 255);*/
 
 	// SDL_SetRenderDrawColor(ctx->renderer, 50, 205, 50,
 	// 255);
 
-	SDL_RenderFillRect(ctx->renderer, &r);
+
+	/* NOTE: color descriptor of the scene are expected to be in the right
+	 * order (from the wider to the smaller) */
+	for (int i = 0; i < ctx->track.nb_cds; i++) {
+
+		switch (ctx->track.cds[i].side) {
+		case CDS_FULL_WIDTH:
+			SDL_SetRenderDrawColor(
+				ctx->renderer,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark->r
+					: ctx->track.cds[i].bright->r,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark->g
+					: ctx->track.cds[i].bright->g,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark->b
+					: ctx->track.cds[i].bright->b,
+				255);
+			SDL_RenderFillRect(ctx->renderer, &r);
+			break;
+		case CDS_BOTH:
+			display_render_quad(
+				ctx,
+				x1 - w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y1,
+				x1 + w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y1,
+				x2 + w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y2,
+				x2 - w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y2,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark
+					: ctx->track.cds[i].bright);
+			break;
+		case CDS_LEFT:
+			display_render_quad(
+				ctx,
+				x1 - w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y1,
+				x1 /*+ w1 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
+				y1,
+				x2 /*+ w2 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
+				y2,
+				x2 - w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y2,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark
+					: ctx->track.cds[i].bright);
+			break;
+		case CDS_RIGHT:
+			display_render_quad(
+				ctx,
+				x1 /*- w1 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
+				y1,
+				x1 + w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y1,
+				x2 + w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
+				y2,
+				x2 /*- w2 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
+				y2,
+				color == COLOR_DARK
+					? ctx->track.cds[i].dark
+					: ctx->track.cds[i].bright);
+			break;	
+		}
+	}
+
+
+	////////////////////////////////////
+	/*display_render_quad(ctx,
+			    x1 - w1 * 130 / 100, // or 1.3f in float x_position
+			    y1,
+			    x1 + w1 * 130 / 100,
+			    y1,
+			    x2 + w2 * 130 / 100,
+			    y2,
+			    x2 - w2 * 130 / 100,
+			    y2,
+			    color == COLOR_DARK ? &ctx->track.cd_road_dark
+						: &ctx->track.cd_road_bright);*/
+	////////////////////////////////////
 
 
 	// render rumbles
@@ -174,8 +179,8 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 - w2 - r2,
 			    y2,
-			    color == COLOR_DARK ? &color_dark_rumble
-						: &color_bright_rumble);
+			    color == COLOR_DARK ? ctx->track.cd_rumble_dark
+						: ctx->track.cd_rumble_bright);
 	display_render_quad(ctx,
 			    x1 + w1 + r1,
 			    y1,
@@ -185,15 +190,15 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 + w2 + r2,
 			    y2,
-			    color == COLOR_DARK ? &color_dark_rumble
-						: &color_bright_rumble);
+			    color == COLOR_DARK ? ctx->track.cd_rumble_dark
+						: ctx->track.cd_rumble_bright);
 
 	// render road
-	struct color_desc *road_color;
+	/*struct color_desc *road_color;
 	if (color == COLOR_DARK)
 		road_color = &color_dark_road_asphalt;
 	else
-		road_color = &color_bright_road_asphalt;
+		road_color = &color_bright_road_asphalt;*/
 
 
 	display_render_quad(ctx,
@@ -205,7 +210,8 @@ static int display_render_segment(struct game_context *ctx,
 			    y2,
 			    x2 - w2,
 			    y2,
-			    road_color);
+			    color == COLOR_DARK ? ctx->track.cd_road_dark
+						: ctx->track.cd_road_bright);
 
 	switch (ctx->track.lane_type) {
 	case LANE_TYPE_NONE:
@@ -247,7 +253,7 @@ static int display_render_segment(struct game_context *ctx,
 					    y2,
 					    square_x2 + square_w2 * j,
 					    y2,
-					    &color_white);
+					    ctx->track.cd_start_line);
 		}
 	}
 
@@ -269,9 +275,9 @@ static int display_render_segment(struct game_context *ctx,
 				r.w = 2;
 
 				SDL_SetRenderDrawColor(ctx->renderer,
-						       ctx->track.lane_color.r,
-						       ctx->track.lane_color.g,
-						       ctx->track.lane_color.b,
+						       ctx->track.cd_lane->r,
+						       ctx->track.cd_lane->g,
+						       ctx->track.cd_lane->b,
 						       255);
 				SDL_RenderFillRect(ctx->renderer, &r);
 			} else {
@@ -285,7 +291,7 @@ static int display_render_segment(struct game_context *ctx,
 						    y2,
 						    lane_x2 - l2 / 2,
 						    y2,
-						    &ctx->track.lane_color);
+						    ctx->track.cd_lane);
 			}
 		}
 	}

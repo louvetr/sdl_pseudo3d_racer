@@ -24,6 +24,8 @@
 #define NB_SECTOR_SPEEDWAY 9
 #define NB_SEGMENT_SPEEDWAY 2400
 
+#define NB_CDS 6
+
 typedef uint8_t Uint8;
 
 enum track_selection {
@@ -85,8 +87,20 @@ enum road_sector_length {
 	LG_LONG = 100
 };
 
+enum color_desc_scene_side {
+	CDS_LEFT = -1,
+	CDS_BOTH = 0,
+	CDS_RIGHT = 1,
+	CDS_FULL_WIDTH = 2,
+};
 
-
+struct color_desc_scene{
+	struct color_desc *bright;
+	struct color_desc *dark;
+	int num;
+	int den;
+	enum color_desc_scene_side side;
+};
 
 struct track_info {
 
@@ -105,6 +119,17 @@ struct track_info {
 	// number of lanes
 	int lanes;
 	
+
+	// color info
+	struct color_desc *cd_road_bright;
+	struct color_desc *cd_road_dark;
+	struct color_desc *cd_rumble_bright;
+	struct color_desc *cd_rumble_dark;
+	struct color_desc *cd_lane;
+	struct color_desc *cd_start_line;
+
+	int nb_cds;
+	struct color_desc_scene cds[NB_CDS];
 
 };
 

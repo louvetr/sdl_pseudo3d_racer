@@ -227,6 +227,7 @@ struct road_segment {
 	int nb_lanes;
 	int width;
 	//struct scene_sprite_desc sprite_desc;
+	struct color_desc_scene *cds;
 
 };
 
