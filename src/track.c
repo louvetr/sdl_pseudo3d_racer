@@ -129,24 +129,30 @@ static int track_build_speedway(struct game_context *ctx)
 	ctx->track.cd_rumble_dark = &cd_rumble_dark;
 	ctx->track.cd_lane = &cd_lane_yellow;
 	ctx->track.cd_start_line = &cd_lane_white;
-	ctx->track.nb_cds = 3;
+	ctx->track.nb_cds = 4;
 	ctx->track.cds[0].bright = &cd_water_bright;
 	ctx->track.cds[0].dark = &cd_water_dark;
 	ctx->track.cds[0].num = 0;
 	ctx->track.cds[0].den = 0;
-	ctx->track.cds[0].side = CDS_FULL_WIDTH;
+	ctx->track.cds[0].side = CDS_FULL_RIGHT;
 
 	ctx->track.cds[1].bright = &cd_foam_bright;
 	ctx->track.cds[1].dark = &cd_foam_dark;
 	ctx->track.cds[1].num = 300;
 	ctx->track.cds[1].den = 100;
-	ctx->track.cds[1].side = CDS_BOTH;
+	ctx->track.cds[1].side = CDS_RIGHT;
 
 	ctx->track.cds[2].bright = &cd_sand_bright;
 	ctx->track.cds[2].dark = &cd_sand_dark;
 	ctx->track.cds[2].num = 250;
 	ctx->track.cds[2].den = 100;
-	ctx->track.cds[2].side = CDS_BOTH;
+	ctx->track.cds[2].side = CDS_RIGHT;
+
+	ctx->track.cds[3].bright = &cd_sand_bright;
+	ctx->track.cds[3].dark = &cd_sand_dark;
+	ctx->track.cds[3].num = 250;
+	ctx->track.cds[3].den = 100;
+	ctx->track.cds[3].side = CDS_FULL_LEFT;
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
@@ -454,7 +460,7 @@ static int track_build_dijon(struct game_context *ctx)
 	ctx->track.cds[0].dark = &cd_grass_dark;
 	ctx->track.cds[0].num = 0;
 	ctx->track.cds[0].den = 0;
-	ctx->track.cds[0].side = CDS_FULL_WIDTH;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];

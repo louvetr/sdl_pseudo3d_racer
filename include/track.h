@@ -91,7 +91,9 @@ enum color_desc_scene_side {
 	CDS_LEFT = -1,
 	CDS_BOTH = 0,
 	CDS_RIGHT = 1,
-	CDS_FULL_WIDTH = 2,
+	CDS_FULL_LEFT,
+	CDS_FULL_RIGHT,
+	CDS_FULL_BOTH,
 };
 
 struct color_desc_scene{

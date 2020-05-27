@@ -59,38 +59,89 @@ static int display_render_segment(struct game_context *ctx,
 	int l1 = inline_lane_marker_width(w1, lanes);
 	int l2 = inline_lane_marker_width(w2, lanes);
 
-	// render grass
-	SDL_Rect r = {
-		.w = width,
-		.h = y1 - y2,
-		.x = 0,
-		.y = y2,
-	};
-	/*if (color == COLOR_DARK)
-		SDL_SetRenderDrawColor(ctx->renderer,
-				       color_dark_grass.r,
-				       color_dark_grass.g,
-				       color_dark_grass.b,
-				       255);
-	else if (color == COLOR_BRIGHT)
-		SDL_SetRenderDrawColor(ctx->renderer,
-				       color_bright_grass.r,
-				       color_bright_grass.g,
-				       color_bright_grass.b,
-				       255);
-	else if (color == COLOR_START)
-		SDL_SetRenderDrawColor(ctx->renderer, 255, 255, 0, 255);*/
-
-	// SDL_SetRenderDrawColor(ctx->renderer, 50, 205, 50,
-	// 255);
-
+	SDL_Rect r;
 
 	/* NOTE: color descriptor of the scene are expected to be in the right
 	 * order (from the wider to the smaller) */
 	for (int i = 0; i < ctx->track.nb_cds; i++) {
 
+		int draw_rect = 0;
+
 		switch (ctx->track.cds[i].side) {
-		case CDS_FULL_WIDTH:
+		case CDS_FULL_LEFT:
+			r.w = x1;
+			r.h = y1 - y2;
+			r.x = 0;
+			r.y = y2;
+			draw_rect = 1;
+			break;
+		case CDS_FULL_RIGHT:
+			r.w = SCREEN_WIDTH - x1;
+			r.h = y1 - y2;
+			r.x = x1;
+			r.y = y2;
+			draw_rect = 1;
+			break;
+		case CDS_FULL_BOTH:
+			r.w = width;
+			r.h = y1 - y2;
+			r.x = 0;
+			r.y = y2;
+			draw_rect = 1;
+			break;
+		case CDS_BOTH:
+			display_render_quad(
+				ctx,
+				x1 - w1 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y1,
+				x1 + w1 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y1,
+				x2 + w2 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y2,
+				x2 - w2 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y2,
+				color == COLOR_DARK ? ctx->track.cds[i].dark
+						    : ctx->track.cds[i].bright);
+			break;
+		case CDS_LEFT:
+			display_render_quad(
+				ctx,
+				x1 - w1 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y1,
+				x1,
+				y1,
+				x2,
+				y2,
+				x2 - w2 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y2,
+				color == COLOR_DARK ? ctx->track.cds[i].dark
+						    : ctx->track.cds[i].bright);
+			break;
+		case CDS_RIGHT:
+			display_render_quad(
+				ctx,
+				x1,
+				y1,
+				x1 + w1 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y1,
+				x2 + w2 * ctx->track.cds[i].num /
+						ctx->track.cds[i].den,
+				y2,
+				x2,
+				y2,
+				color == COLOR_DARK ? ctx->track.cds[i].dark
+						    : ctx->track.cds[i].bright);
+			break;
+		}
+
+		if (draw_rect) {
 			SDL_SetRenderDrawColor(
 				ctx->renderer,
 				color == COLOR_DARK
@@ -104,52 +155,6 @@ static int display_render_segment(struct game_context *ctx,
 					: ctx->track.cds[i].bright->b,
 				255);
 			SDL_RenderFillRect(ctx->renderer, &r);
-			break;
-		case CDS_BOTH:
-			display_render_quad(
-				ctx,
-				x1 - w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y1,
-				x1 + w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y1,
-				x2 + w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y2,
-				x2 - w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y2,
-				color == COLOR_DARK
-					? ctx->track.cds[i].dark
-					: ctx->track.cds[i].bright);
-			break;
-		case CDS_LEFT:
-			display_render_quad(
-				ctx,
-				x1 - w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y1,
-				x1 /*+ w1 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
-				y1,
-				x2 /*+ w2 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
-				y2,
-				x2 - w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y2,
-				color == COLOR_DARK
-					? ctx->track.cds[i].dark
-					: ctx->track.cds[i].bright);
-			break;
-		case CDS_RIGHT:
-			display_render_quad(
-				ctx,
-				x1 /*- w1 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
-				y1,
-				x1 + w1 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y1,
-				x2 + w2 * ctx->track.cds[i].num / ctx->track.cds[i].den,
-				y2,
-				x2 /*- w2 * ctx->track.cds[i].num / ctx->track.cds[i].den*/,
-				y2,
-				color == COLOR_DARK
-					? ctx->track.cds[i].dark
-					: ctx->track.cds[i].bright);
-			break;	
 		}
 	}
 
