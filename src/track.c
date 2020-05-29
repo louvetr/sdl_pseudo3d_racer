@@ -6,20 +6,32 @@ struct color_desc cd_lane_yellow = {.r = 255, .g = 234, .b = 0};
 struct color_desc cd_lane_white = {.r = 255, .g = 255, .b = 255};
 struct color_desc cd_road_asphalt_bright = {.r = 140, .g = 140, .b = 140};
 struct color_desc cd_road_asphalt_dark = {.r = 128, .g = 128, .b = 128};
+struct color_desc cd_road_mud_bright = {.r = 149, .g = 69, .b = 53};
+struct color_desc cd_road_mud_dark = {.r = 129, .g= 49, .b = 33};
 struct color_desc cd_grass_bright = {.r = 0, .g = 169, .b = 0};
 struct color_desc cd_grass_dark = {.r = 0, .g = 160, .b = 0};
 struct color_desc cd_rumble_bright = {.r = 255, .g = 255, .b = 255};
 struct color_desc cd_rumble_dark = {.r = 255, .g = 0, .b = 0};
+struct color_desc cd_rumble_mud_bright = {.r = 123, .g = 63, .b = 0};
+struct color_desc cd_rumble_mud_dark = {.r = 103, .g = 43, .b = 0};
+/*struct color_desc cd_rumble_mud_bright = {.r = 138, .g = 51, .b = 36};
+struct color_desc cd_rumble_mud_dark = {.r = 118, .g = 31, .b = 16};*/
+/*struct color_desc cd_rumble_mud_bright = {.r = 130, .g = 102, .b = 68};
+struct color_desc cd_rumble_mud_dark = {.r = 110, .g = 82, .b = 48};*/
 struct color_desc cd_water_bright = {.r = 38, .g = 75, .b = 106};
 struct color_desc cd_water_dark = {.r = 58, .g = 95, .b = 126};
 struct color_desc cd_foam_bright = {.r = 240, .g = 240, .b = 240};
 struct color_desc cd_foam_dark = {.r = 220, .g = 220, .b = 220};
 struct color_desc cd_sand_bright = {.r = 248, .g = 220, .b = 172};
 struct color_desc cd_sand_dark = {.r = 228, .g = 200, .b = 152};
+struct color_desc cd_mud_bright = {.r = 193, .g = 154, .b = 107};
+struct color_desc cd_mud_dark = {.r = 173, .g= 134, .b = 87};
 
 static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_DIJON, .nb_segment = NB_SEGMENT_DIJON},
-	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY}};
+	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY},
+	{.nb_sector = NB_SECTOR_FORK, .nb_segment = NB_SEGMENT_FORK}
+	};
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -62,6 +74,25 @@ static int sector_speedway[NB_SECTOR_SPEEDWAY][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
 
 
+static int sector_fork[NB_SECTOR_FORK][NB_SECTOR_PARAM] = {
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+	
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_MEDIUM, CURVE_R_HARD, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_MEDIUM, CURVE_L_MEDIUM, 3, 2},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_EASY, 2, 2},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_MEDIUM, CURVE_L_MEDIUM, 2, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_MEDIUM, CURVE_R_HARD, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH, CURVE_NONE, 3, 3},
+	
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}
+	};
+
+
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
 
 
@@ -87,6 +118,62 @@ static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
 
 // TODO: use realloc at each sector addition instead counting total nb sectors
 // in advance
+
+
+static int track_build_fork(struct game_context *ctx)
+{
+	int nb_segments_added = 0;
+
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_FORK; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_fork[i][SECTOR_PARAM_ENTER_LG],
+			sector_fork[i][SECTOR_PARAM_HOLD_LG],
+			sector_fork[i][SECTOR_PARAM_EXIT_LG],
+			sector_fork[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_fork[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_fork[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_fork[i][SECTOR_PARAM_NB_LANE_EXIT]);
+
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_fork[i][SECTOR_PARAM_ENTER_LG] +
+				sector_fork[i][SECTOR_PARAM_HOLD_LG] +
+				sector_fork[i][SECTOR_PARAM_EXIT_LG]);
+	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	ctx->track.lane_type = LANE_TYPE_NONE;
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_mud_bright;
+	ctx->track.cd_road_dark = &cd_road_mud_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_mud_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_mud_dark;
+	ctx->track.cd_lane = &cd_lane_yellow;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_mud_bright;
+	ctx->track.cds[0].dark = &cd_mud_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	return 0;
+}
+
 
 static int track_build_speedway(struct game_context *ctx)
 {
@@ -158,6 +245,7 @@ static int track_build_speedway(struct game_context *ctx)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
 
+	ctx->track.lane_type = LANE_TYPE_HALF;
 
 	return 0;
 }
@@ -465,6 +553,8 @@ static int track_build_dijon(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
+	ctx->track.lane_type = LANE_TYPE_HALF;
+
 	return 0;
 }
 
@@ -506,6 +596,9 @@ int track_build(struct game_context *ctx)
 		break;
 	case TRACK_SPEEDWAY:
 		track_build_speedway(ctx);
+		break;
+	case TRACK_FORK:
+		track_build_fork(ctx);
 		break;
 	}
 

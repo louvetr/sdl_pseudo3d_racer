@@ -24,6 +24,9 @@
 #define NB_SECTOR_SPEEDWAY 9
 #define NB_SEGMENT_SPEEDWAY 2400
 
+#define NB_SECTOR_FORK 11
+#define NB_SEGMENT_FORK 2700
+
 #define NB_CDS 6
 
 typedef uint8_t Uint8;
@@ -31,6 +34,7 @@ typedef uint8_t Uint8;
 enum track_selection {
 	TRACK_DIJON = 0,
 	TRACK_SPEEDWAY,
+	TRACK_FORK,
 	TRACK_LAST
 };
 
