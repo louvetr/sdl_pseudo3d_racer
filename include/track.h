@@ -27,6 +27,12 @@
 #define NB_SECTOR_FORK 11
 #define NB_SEGMENT_FORK 2700
 
+#define NB_SECTOR_FROST 25
+#define NB_SEGMENT_FROST 3050
+
+#define NB_SECTOR_STONE 15
+#define NB_SEGMENT_STONE 2525
+
 #define NB_CDS 6
 
 typedef uint8_t Uint8;
@@ -35,6 +41,8 @@ enum track_selection {
 	TRACK_DIJON = 0,
 	TRACK_SPEEDWAY,
 	TRACK_FORK,
+	TRACK_FROST,
+	TRACK_STONE,
 	TRACK_LAST
 };
 

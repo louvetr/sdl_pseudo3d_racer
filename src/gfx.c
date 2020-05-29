@@ -97,6 +97,8 @@
 #define PNG_TRACK_DIJON "./media/tracks/dijon.png"
 #define PNG_TRACK_SPEEDWAY "./media/tracks/speedway.png"
 #define PNG_TRACK_FORK "./media/tracks/fork.png"
+#define PNG_TRACK_FROST "./media/tracks/frost.png"
+#define PNG_TRACK_STONE "./media/tracks/stone.png"
 
 
 static int
@@ -344,6 +346,8 @@ static int gfx_load_tracks_thumbnail(struct game_context *ctx)
 	gfx_load_texture(ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
 	gfx_load_texture(ctx, PNG_TRACK_SPEEDWAY, &ctx->gfx.track_thumbnail[TRACK_SPEEDWAY]);
 	gfx_load_texture(ctx, PNG_TRACK_FORK, &ctx->gfx.track_thumbnail[TRACK_FORK]);
+	gfx_load_texture(ctx, PNG_TRACK_FROST, &ctx->gfx.track_thumbnail[TRACK_FROST]);
+	gfx_load_texture(ctx, PNG_TRACK_STONE, &ctx->gfx.track_thumbnail[TRACK_STONE]);
 
 	return 0;
 }
