@@ -85,7 +85,7 @@ static int main_init(struct game_context *ctx)
 	}
 
 	// init Music and SFX management
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 512) < 0) {
 		SDL_Log("[%s] SDL_ttf could not initialize! SDL_Mixer Error: %s\n",
 			__func__,
 			TTF_GetError());

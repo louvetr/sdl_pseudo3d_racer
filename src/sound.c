@@ -217,9 +217,12 @@ int main_sound(struct game_context *ctx)
 		}
 
 
-		if (ctx->sound.collision_detected)
+		if (ctx->sound.collision_detected){
 			Mix_PlayChannel(
 				SFX_CHANNEL_COLLISION, ctx->sound.sfx.impact, 0);
+			SDL_Log("[%s] --------------------- impact SFX\n", __func__);
+		}
+
 
 		if ((ctx->sound.drift >= 0.025f && ctx->sound.drift_prev < 0.025f) ||
 		    (ctx->sound.drift <= -0.025f && ctx->sound.drift_prev > -0.025f))
