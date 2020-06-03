@@ -181,7 +181,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		int sprite_right_hb_x = SCREEN_WIDTH;
 
 		// TODO: recheck hitbox
-		if (sprite_left->collide &&
+		if (sprite_left && sprite_left->collide &&
 		    sprite_left->scaled_x < SCREEN_WIDTH &&
 		    sprite_left->scale > 0) {
 			if (sprite_left->hitbox)
@@ -212,7 +212,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 					      sprite_left->scale);
 		}
 
-		if (sprite_right->collide && sprite_right->scaled_x > 0 &&
+		if (sprite_right && sprite_right->collide &&
+		    sprite_right->scaled_x > 0 &&
 		    sprite_right->scaled_x < SCREEN_WIDTH &&
 		    sprite_right->scale > 0) {
 			if (sprite_right->hitbox)
@@ -542,7 +543,7 @@ static int logic_race(struct game_context *ctx)
 	ctx->sound.collision_detected = 0;
 	ctx->sound.drift = 0.f;
 
-	if(ctx->keys.back){
+	if (ctx->keys.back) {
 
 		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
 
@@ -712,11 +713,11 @@ static int logic_menu_main(struct game_context *ctx)
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_CAR);
 
 		// unload menu resources
-		//gfx_unload_resources(ctx);
+		// gfx_unload_resources(ctx);
 
 		// load race ressources
-		//gfx_load_resources_menu_select_car(ctx);
-		//sound_load_resources /*_race*/ (ctx);
+		// gfx_load_resources_menu_select_car(ctx);
+		// sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_car(ctx);
 	}
@@ -726,11 +727,11 @@ static int logic_menu_main(struct game_context *ctx)
 		event_update_game_state(ctx, GAME_STATE_MENU_SELECT_TRACK);
 
 		// unload menu resources
-		//gfx_unload_resources(ctx);
+		// gfx_unload_resources(ctx);
 
 		// load race ressources
-		//gfx_load_resources_menu_select_track(ctx);
-		//sound_load_resources /*_race*/ (ctx);
+		// gfx_load_resources_menu_select_track(ctx);
+		// sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_track(ctx);
 	}
@@ -742,7 +743,7 @@ static int logic_menu_main(struct game_context *ctx)
 
 		// unload menu resources
 		gfx_unload_resources(ctx);
-		//sound_unload_resources(ctx);
+		// sound_unload_resources(ctx);
 		Mix_HaltMusic();
 
 		// load race ressources
@@ -764,7 +765,7 @@ static int logic_menu_main(struct game_context *ctx)
 
 static int logic_menu_select_track(struct game_context *ctx)
 {
-	if(ctx->keys.back){
+	if (ctx->keys.back) {
 
 		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 
@@ -819,7 +820,7 @@ static int logic_menu_select_track(struct game_context *ctx)
 static int logic_menu_select_car(struct game_context *ctx)
 {
 
-	if(ctx->keys.back){
+	if (ctx->keys.back) {
 		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 
 		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
