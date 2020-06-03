@@ -71,6 +71,14 @@
 #define PNG_SCENE_BARN "./media/scene/scene_barn.png"
 #define PNG_SCENE_WELL "./media/scene/scene_well.png"
 
+#define PNG_SCENE_MAOI "./media/scene/scene_maoi.png"
+#define PNG_SCENE_BUOY "./media/scene/scene_buoy.png"
+#define PNG_SCENE_TREE_PALM "./media/scene/scene_tree_palm.png"
+#define PNG_SCENE_BOAT_SPEED "./media/scene/scene_boat_speed.png"
+#define PNG_SCENE_BEACH_CABIN "./media/scene/scene_beach_cabin.png"
+#define PNG_SCENE_BEACH_UMBRELLA "./media/scene/scene_beach_umbrella.png"
+#define PNG_SCENE_BILLBOARD_BEACH "./media/scene/scene_billboard_beach.png"
+
 #define PNG_SCENE_BUSH_01 "./media/scene/scene_bush_01.png"
 #define PNG_SCENE_BUSH_02 "./media/scene/scene_bush_02.png"
 #define PNG_SCENE_BUSH_03 "./media/scene/scene_bush_03.png"
@@ -240,8 +248,23 @@ static int gfx_load_background(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+	load_texture_from_file(ctx, PNG_SCENE_MAOI, &ctx->gfx.scene_maoi);
+	load_texture_from_file(ctx, PNG_SCENE_BUOY, &ctx->gfx.scene_buoy);
+	load_texture_from_file(ctx, PNG_SCENE_TREE_PALM, &ctx->gfx.scene_tree_palm);
+	load_texture_from_file(ctx, PNG_SCENE_BOAT_SPEED, &ctx->gfx.scene_boat_speed);
+	load_texture_from_file(ctx, PNG_SCENE_BEACH_CABIN, &ctx->gfx.scene_beach_cabin);
+	load_texture_from_file(ctx, PNG_SCENE_BEACH_UMBRELLA, &ctx->gfx.scene_beach_umbrella);
+	load_texture_from_file(ctx, PNG_SCENE_BILLBOARD_BEACH, &ctx->gfx.scene_billboard_beach);
 
-static int gfx_load_scene_sprites(struct game_context *ctx)
+	return 0;
+}
+
+
+static int gfx_load_scene_sprites_dijon(struct game_context *ctx)
 {
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
@@ -274,6 +297,24 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 
 	return 0;
 }
+
+
+static int gfx_load_scene_sprites(struct game_context *ctx)
+{
+	switch(ctx->track.track_selected) {
+		case TRACK_DIJON:
+		gfx_load_scene_sprites_dijon(ctx);
+		break;
+		case TRACK_SPEEDWAY:
+		gfx_load_scene_sprites_seaside(ctx);
+		break;
+		default:
+			SDL_Log("[%s] invalid track\n", __func__);
+
+	};
+	return 0;
+}
+
 
 static int gfx_load_font(struct game_context *ctx)
 {
@@ -453,6 +494,14 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_bushes[5].texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bushes[6].texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bush_flower.texture);
+	
+	SDL_DestroyTexture(ctx->gfx.scene_maoi.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_buoy.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tree_palm.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_boat_speed.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_beach_cabin.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_beach_umbrella.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_billboard_beach.texture);
 
 	SDL_DestroyTexture(ctx->gfx.t_smoke[0].texture);
 	SDL_DestroyTexture(ctx->gfx.t_smoke[1].texture);

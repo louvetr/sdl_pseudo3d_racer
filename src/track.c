@@ -9,11 +9,11 @@ struct color_desc cd_lane_black = {.r = 0, .g = 0, .b = 0};
 struct color_desc cd_road_asphalt_bright = {.r = 140, .g = 140, .b = 140};
 struct color_desc cd_road_asphalt_dark = {.r = 128, .g = 128, .b = 128};
 struct color_desc cd_road_mud_bright = {.r = 149, .g = 69, .b = 53};
-struct color_desc cd_road_mud_dark = {.r = 129, .g= 49, .b = 33};
+struct color_desc cd_road_mud_dark = {.r = 129, .g = 49, .b = 33};
 struct color_desc cd_road_ice_bright = {.r = 81, .g = 115, .b = 176};
-struct color_desc cd_road_ice_dark = {.r = 61, .g= 95, .b = 156};
+struct color_desc cd_road_ice_dark = {.r = 61, .g = 95, .b = 156};
 struct color_desc cd_road_stone_bright = {.r = 255, .g = 252, .b = 240};
-struct color_desc cd_road_stone_dark = {.r = 235, .g= 232, .b = 220};
+struct color_desc cd_road_stone_dark = {.r = 235, .g = 232, .b = 220};
 
 struct color_desc cd_grass_bright = {.r = 0, .g = 169, .b = 0};
 struct color_desc cd_grass_dark = {.r = 0, .g = 160, .b = 0};
@@ -37,9 +37,9 @@ struct color_desc cd_foam_dark = {.r = 220, .g = 220, .b = 220};
 struct color_desc cd_sand_bright = {.r = 248, .g = 220, .b = 172};
 struct color_desc cd_sand_dark = {.r = 228, .g = 200, .b = 152};
 struct color_desc cd_mud_bright = {.r = 193, .g = 154, .b = 107};
-struct color_desc cd_mud_dark = {.r = 173, .g= 134, .b = 87};
+struct color_desc cd_mud_dark = {.r = 173, .g = 134, .b = 87};
 struct color_desc cd_ice_bright = {.r = 215, .g = 255, .b = 254};
-struct color_desc cd_ice_dark = {.r = 195, .g= 235, .b = 234};
+struct color_desc cd_ice_dark = {.r = 195, .g = 235, .b = 234};
 /*struct color_desc cd_stone_bright = {.r = 202, .g = 191, .b = 191};
 struct color_desc cd_stone_dark = {.r = 182, .g= 171, .b = 171};*/
 struct color_desc cd_stone_bright = {.r = 222, .g = 221, .b = 221};
@@ -50,8 +50,7 @@ static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY},
 	{.nb_sector = NB_SECTOR_FORK, .nb_segment = NB_SEGMENT_FORK},
 	{.nb_sector = NB_SECTOR_FROST, .nb_segment = NB_SEGMENT_FROST},
-	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE}
-	};
+	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE}};
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -97,7 +96,7 @@ static int sector_speedway[NB_SECTOR_SPEEDWAY][NB_SECTOR_PARAM] = {
 static int sector_fork[NB_SECTOR_FORK][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
-	
+
 	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
 
 	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_MEDIUM, CURVE_R_HARD, 3, 3},
@@ -107,10 +106,9 @@ static int sector_fork[NB_SECTOR_FORK][NB_SECTOR_PARAM] = {
 	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_MEDIUM, CURVE_R_HARD, 3, 3},
 
 	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH, CURVE_NONE, 3, 3},
-	
+
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}
-	};
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3}};
 
 static int sector_frost[NB_SECTOR_FROST][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -120,7 +118,7 @@ static int sector_frost[NB_SECTOR_FROST][NB_SECTOR_PARAM] = {
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_DOWN_MEDIUM, CURVE_R_HARD, 3, 3},
 
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
-	
+
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_L_HARD, 3, 3},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_NONE, 3, 3},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_L_HARD, 3, 3},
@@ -150,7 +148,7 @@ static int sector_frost[NB_SECTOR_FROST][NB_SECTOR_PARAM] = {
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_R_HARD, 3, 3},
 
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
-	};
+};
 
 static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -162,10 +160,10 @@ static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH, CURVE_NONE, 4, 4},
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 4, 3},
 	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_NONE, 3, 3},
-	
+
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 2},
-	
+
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_L_MEDIUM, 2, 2},
 	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_NONE, 2, 2},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_DOWN_MEDIUM, CURVE_L_EASY, 2, 2},
@@ -174,7 +172,7 @@ static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 	{LG_SHORT, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
 
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
-	};
+};
 
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
 
@@ -183,18 +181,14 @@ static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
 				 struct texture *t,
 				 float position,
 				 SDL_Rect *hitbox,
-				 int collide)
+				 int collide,
+				 SDL_RendererFlip flip)
 {
 	sprite_desc->position = position;
 	sprite_desc->t = t;
 	sprite_desc->hitbox = hitbox;
 	sprite_desc->collide = collide;
-
-
-	if (position < 0)
-		sprite_desc->flip = SDL_FLIP_HORIZONTAL;
-	else
-		sprite_desc->flip = SDL_FLIP_NONE;
+	sprite_desc->flip = flip;
 
 	return 0;
 }
@@ -436,6 +430,134 @@ static int track_build_speedway(struct game_context *ctx)
 
 	ctx->track.lane_type = LANE_TYPE_HALF;
 
+
+	struct scene_seg_desc *scene_maois =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_maois->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_palms =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_palms->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_speedboat =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_speedboat->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_cabin =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_cabin->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_buoy =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_buoy->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+
+	set_scene_sprite_desc(&scene_maois->sprite[0],
+			      &ctx->gfx.scene_maoi,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)i * 1.5f;
+		set_scene_sprite_desc(&scene_maois->sprite[i],
+				      &ctx->gfx.scene_maoi,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(i + 1) * 1.5f;
+		set_scene_sprite_desc(&scene_palms->sprite[i],
+				      &ctx->gfx.scene_tree_palm,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	set_scene_sprite_desc(
+		&scene_buoy->sprite[0],
+		&ctx->gfx.scene_buoy,
+		5.f,
+		NULL,
+		1,
+		SDL_FLIP_NONE);
+
+
+	set_scene_sprite_desc(&scene_speedboat->sprite[0],
+			      &ctx->gfx.scene_boat_speed,
+			      7.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_speedboat->sprite[1],
+			      &ctx->gfx.scene_beach_umbrella,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+	set_scene_sprite_desc(&scene_speedboat->sprite[2],
+			      &ctx->gfx.scene_billboard_beach,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	for (int i = 3; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(i + 1) * 1.5f;
+		set_scene_sprite_desc(&scene_speedboat->sprite[i],
+				      &ctx->gfx.scene_tree_palm,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	set_scene_sprite_desc(&scene_cabin->sprite[0],
+			      &ctx->gfx.scene_beach_cabin,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(i + 1) * 1.5f;
+		set_scene_sprite_desc(&scene_cabin->sprite[i],
+				      &ctx->gfx.scene_tree_palm,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	for (int i = 0; i < nb_segments_added * 3 / 16; i += 40)
+		ctx->track.segments[i].scene = scene_speedboat;
+
+	for (int i = nb_segments_added * 3 / 16; i < nb_segments_added * 7 / 16;
+	     i += 20)
+		ctx->track.segments[i].scene = scene_maois;
+
+	for (int i = nb_segments_added * 7 / 16;
+	     i < nb_segments_added * 11 / 16;
+	     i += 12)
+		ctx->track.segments[i].scene = scene_palms;
+	for (int i = (nb_segments_added * 7 / 16) + 6;
+	     i < nb_segments_added * 11 / 16;
+	     i += 24)
+		ctx->track.segments[i].scene = scene_buoy;
+
+	for (int i = nb_segments_added * 11 / 16;
+	     i < nb_segments_added * 15 / 16;
+	     i += 20)
+		ctx->track.segments[i].scene = scene_cabin;
+
+	for (int i = nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += 40)
+		ctx->track.segments[i].scene = scene_speedboat;
+
 	return 0;
 }
 
@@ -474,16 +596,17 @@ static int track_build_dijon(struct game_context *ctx)
 
 	/////////////////////////////////////////////////////////////////////
 
-
-	struct scene_seg_desc *start_lane =
-		calloc(1, sizeof(struct scene_seg_desc));
-	start_lane->nb_sprites = 1;
-	float position = -0.9000001f;
-	set_scene_sprite_desc(&start_lane->sprite[0],
-			      &ctx->gfx.scene_start_lane,
-			      position,
-			      NULL,
-			      1);
+	/*
+		struct scene_seg_desc *start_lane =
+			calloc(1, sizeof(struct scene_seg_desc));
+		start_lane->nb_sprites = 1;
+		float position = -0.9000001f;
+		set_scene_sprite_desc(&start_lane->sprite[0],
+				      &ctx->gfx.scene_start_lane,
+				      position,
+				      NULL,
+				      1);
+	*/
 
 	struct scene_seg_desc *barn_n_well =
 		calloc(1, sizeof(struct scene_seg_desc));
@@ -495,13 +618,15 @@ static int track_build_dijon(struct game_context *ctx)
 					     : &ctx->gfx.scene_grass,
 				      position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&barn_n_well->sprite[2 * i + 1],
 				      i == 0 ? &ctx->gfx.scene_well
 					     : &ctx->gfx.scene_bush_flower,
 				      -position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *windmill_n_grass =
@@ -514,13 +639,15 @@ static int track_build_dijon(struct game_context *ctx)
 					     : &ctx->gfx.scene_grass,
 				      position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&windmill_n_grass->sprite[2 * i + 1],
 				      i == 1 ? &ctx->gfx.scene_windmill
 					     : &ctx->gfx.scene_grass,
 				      -position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *fence_n_bush =
@@ -533,13 +660,15 @@ static int track_build_dijon(struct game_context *ctx)
 					    : &ctx->gfx.scene_bush_flower,
 				      position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&fence_n_bush->sprite[2 * i + 1],
 				      i < 1 ? &ctx->gfx.scene_fence
 					    : &ctx->gfx.scene_bush_flower,
 				      -position,
 				      NULL,
-				      1);
+				      1,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *grass = calloc(1, sizeof(struct scene_seg_desc));
@@ -550,12 +679,14 @@ static int track_build_dijon(struct game_context *ctx)
 				      &ctx->gfx.scene_grass,
 				      position,
 				      NULL,
-				      0);
+				      0,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&grass->sprite[2 * i + 1],
 				      &ctx->gfx.scene_grass,
 				      -position,
 				      NULL,
-				      0);
+				      0,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *oak_forest_1 =
@@ -567,12 +698,14 @@ static int track_build_dijon(struct game_context *ctx)
 				      &ctx->gfx.scene_tree_oak,
 				      position,
 				      &hitbox_oak,
-				      1);
+				      1,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&oak_forest_1->sprite[2 * i + 1],
 				      &ctx->gfx.scene_tree_oak,
 				      -position,
 				      &hitbox_oak,
-				      1);
+				      1,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *oak_forest_2 =
@@ -584,12 +717,14 @@ static int track_build_dijon(struct game_context *ctx)
 				      &ctx->gfx.scene_tree_oak,
 				      position,
 				      &hitbox_oak,
-				      1);
+				      1,
+				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&oak_forest_2->sprite[2 * i + 1],
 				      &ctx->gfx.scene_tree_oak,
 				      -position,
 				      &hitbox_oak,
-				      1);
+				      1,
+				      SDL_FLIP_HORIZONTAL);
 	}
 
 	// randomize different bushes set
@@ -603,13 +738,15 @@ static int track_build_dijon(struct game_context *ctx)
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_NONE);
 		set_scene_sprite_desc(
 			&bushes_rnd_1->sprite[2 * i + 1],
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			-position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_HORIZONTAL);
 	}
 	struct scene_seg_desc *bushes_rnd_2 =
 		calloc(1, sizeof(struct scene_seg_desc));
@@ -621,13 +758,15 @@ static int track_build_dijon(struct game_context *ctx)
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_NONE);
 		set_scene_sprite_desc(
 			&bushes_rnd_2->sprite[2 * i + 1],
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			-position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_HORIZONTAL);
 	}
 	struct scene_seg_desc *bushes_rnd_3 =
 		calloc(1, sizeof(struct scene_seg_desc));
@@ -639,13 +778,15 @@ static int track_build_dijon(struct game_context *ctx)
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_NONE);
 		set_scene_sprite_desc(
 			&bushes_rnd_3->sprite[2 * i + 1],
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			-position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_HORIZONTAL);
 	}
 	struct scene_seg_desc *bushes_rnd_4 =
 		calloc(1, sizeof(struct scene_seg_desc));
@@ -657,13 +798,15 @@ static int track_build_dijon(struct game_context *ctx)
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_NONE);
 		set_scene_sprite_desc(
 			&bushes_rnd_4->sprite[2 * i + 1],
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			-position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_HORIZONTAL);
 	}
 	struct scene_seg_desc *bushes_rnd_5 =
 		calloc(1, sizeof(struct scene_seg_desc));
@@ -675,13 +818,15 @@ static int track_build_dijon(struct game_context *ctx)
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_NONE);
 		set_scene_sprite_desc(
 			&bushes_rnd_5->sprite[2 * i + 1],
 			&ctx->gfx.scene_bushes[rand() % NB_SPRITE_BUSH],
 			-position,
 			NULL,
-			0);
+			0,
+			SDL_FLIP_HORIZONTAL);
 	}
 
 	struct scene_seg_desc *bushes_rnd_tab[5] = {bushes_rnd_1,

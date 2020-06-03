@@ -66,6 +66,18 @@ struct game_graphics{
 	struct texture scene_bushes[NB_SPRITE_BUSH];
 	struct texture scene_bush_flower;
 	
+	
+	// scene seaside
+	struct texture scene_maoi;
+	struct texture scene_buoy;
+	struct texture scene_tree_palm;
+	struct texture scene_boat_speed;
+	struct texture scene_beach_cabin;
+	struct texture scene_beach_umbrella;
+	struct texture scene_billboard_beach;
+	
+
+
 	//struct texture font_game_speed_title;
 	struct texture font_game_speed_value;
 	struct texture font_game_speed_unit;
