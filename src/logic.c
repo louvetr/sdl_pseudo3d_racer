@@ -160,6 +160,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		// avoid this computation
 
 		for (int j = 0; j < seg->scene->nb_sprites; j++) {
+			if (seg->scene->sprite[j].t == NULL)
+				continue;
 			if (seg->scene->sprite[j].position > 0) {
 				if (seg->scene->sprite[j].position <
 				    closest_right_position) {
