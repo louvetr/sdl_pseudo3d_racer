@@ -1060,25 +1060,25 @@ static int display_render_scene_sprites(struct game_context *ctx,
 }
 
 
-static int display_render_start_line_sprite(struct game_context *ctx,
-					    struct road_segment *seg,
-					    float screen_scale,
-					    float x_scale,
-					    int tmp_idx,
-					    int tmp_max_y_idx,
-					    int tmp_max_y_bis_idx)
+static int display_render_centered_scene_sprite(struct game_context *ctx,
+						struct road_segment *seg,
+						struct texture *sprite,
+						float screen_scale,
+						float x_scale,
+						int tmp_idx,
+						int tmp_max_y_idx,
+						int tmp_max_y_bis_idx)
 {
 	int ret = 0;
 	SDL_Rect *r = NULL;
 
-	int scaled_x = seg->p1.screen.x -
-		       (int)((float)ctx->gfx.scene_start_lane.w * x_scale / 2);
+	int scaled_x = seg->p1.screen.x - (int)((float)sprite->w * x_scale / 2);
 
 	if (scaled_x > SCREEN_WIDTH)
 		return 0;
 
-	int sprite_y = (int)((float)seg->p1.screen.y -
-			     (float)ctx->gfx.scene_start_lane.h * x_scale);
+	int sprite_y =
+		(int)((float)seg->p1.screen.y - (float)sprite->h * x_scale);
 
 	// if sprite is behind a hill, set a clip to crop its
 	// lower part
@@ -1089,16 +1089,14 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 		}
 
 		r = calloc(1, sizeof(SDL_Rect));
-		r->w = ctx->gfx.scene_start_lane.w;
+		r->w = sprite->w;
 		int clip_h = ctx->race.max_y - sprite_y;
 		int clip_h_inv_scale =
 			(int)((float)(ctx->race.max_y - sprite_y) / x_scale);
-		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
-				   x_scale) &&
-		    clip_h > 0) {
+		if (clip_h < (int)((float)sprite->h * x_scale) && clip_h > 0) {
 			r->h = clip_h_inv_scale;
 		} else {
-			r->h = ctx->gfx.scene_start_lane.h;
+			r->h = sprite->h;
 		}
 		// sprite is behind a hill, crop it accodingly
 	} else if (tmp_idx > tmp_max_y_bis_idx) {
@@ -1107,22 +1105,20 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 		}
 
 		r = calloc(1, sizeof(SDL_Rect));
-		r->w = ctx->gfx.scene_start_lane.w;
+		r->w = sprite->w;
 		int clip_h = ctx->race.max_y_bis - sprite_y;
 		int clip_h_inv_scale =
 			(int)((float)(ctx->race.max_y_bis - sprite_y) /
 			      x_scale);
-		if (clip_h < (int)((float)ctx->gfx.scene_start_lane.h *
-				   x_scale) &&
-		    clip_h > 0) {
+		if (clip_h < (int)((float)sprite->h * x_scale) && clip_h > 0) {
 			r->h = clip_h_inv_scale;
 		} else {
-			r->h = ctx->gfx.scene_start_lane.h;
+			r->h = sprite->h;
 		}
 	}
 
 	ret = texture_render(ctx,
-			     &ctx->gfx.scene_start_lane,
+			     sprite,
 			     scaled_x,
 			     sprite_y,
 			     r,
@@ -1136,7 +1132,6 @@ static int display_render_start_line_sprite(struct game_context *ctx,
 
 	return ret;
 }
-
 
 static int display_render_scaled_sprites(struct game_context *ctx)
 {
@@ -1169,25 +1164,40 @@ static int display_render_scaled_sprites(struct game_context *ctx)
 		float screen_scale = seg->p1.screen.scale;
 		float x_scale = screen_scale * SCREEN_WIDTH * 2;
 
-		if (seg->scene)
-			ret = display_render_scene_sprites(ctx,
-							   seg,
-							   screen_scale,
-							   x_scale,
-							   tmp_idx,
-							   tmp_max_y_idx,
-							   tmp_max_y_bis_idx);
+		if (seg->scene) {
+			if (seg->scene->type == SCENE_SPRITE_CENTERED)
+				ret = display_render_centered_scene_sprite(
+					ctx,
+					seg,
+					seg->scene->sprite[0].t,
+					screen_scale,
+					x_scale,
+					tmp_idx,
+					tmp_max_y_idx,
+					tmp_max_y_bis_idx);
+			else
+				ret = display_render_scene_sprites(
+					ctx,
+					seg,
+					screen_scale,
+					x_scale,
+					tmp_idx,
+					tmp_max_y_idx,
+					tmp_max_y_bis_idx);
+		}
 
 		// display start line on 1st segment
 		if (idx == 0)
-			ret = display_render_start_line_sprite(
+			ret = display_render_centered_scene_sprite(
 				ctx,
 				seg,
+				&ctx->gfx.scene_start_lane,
 				screen_scale,
 				x_scale,
 				tmp_idx,
 				tmp_max_y_idx,
 				tmp_max_y_bis_idx);
+
 
 		ret = display_render_ai_cars_sprites(ctx,
 						     seg,

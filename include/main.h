@@ -128,6 +128,11 @@ enum ai_car_state {
 };
 
 
+enum scene_sprite_type {
+	SCENE_SPRITE_NORMAL = 0,
+	SCENE_SPRITE_CENTERED
+};
+
 //static float SPRITES_SCALE = 0.3 * (1.f / 80.f);
 
 /////////////////////////////////////////////////////////////////
@@ -206,14 +211,10 @@ struct scene_sprite_desc {
 	//int scaled_w;	// TODO: useless ???
 };
 
-struct scene_segment_desc {
-	int nb_sprites;
-	struct scene_sprite_desc **sprite;
-};
-
 struct scene_seg_desc {
 	int nb_sprites;
 	struct scene_sprite_desc sprite[MAX_SCENE_SPRITE_PER_SEG];
+	enum scene_sprite_type type;
 };
 
 struct road_segment {
