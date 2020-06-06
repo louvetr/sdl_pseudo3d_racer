@@ -114,10 +114,17 @@ static int sector_frost[NB_SECTOR_FROST][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_DOWN_MEDIUM, CURVE_R_HARD, 3, 3},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_DOWN_MEDIUM, CURVE_NONE, 3, 3},
+	{LG_MEDIUM,
+	 LG_MEDIUM,
+	 LG_MEDIUM,
+	 HILL_NONE /*HILL_DOWN_MEDIUM*/,
+	 CURVE_NONE,
+	 3,
+	 3},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_DOWN_MEDIUM, CURVE_R_HARD, 3, 3},
 
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+	//{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_L_HARD, 3, 3},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_NONE, 3, 3},
@@ -126,7 +133,13 @@ static int sector_frost[NB_SECTOR_FROST][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 2},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 2, 2},
+	{LG_MEDIUM,
+	 LG_MEDIUM,
+	 LG_MEDIUM,
+	 /*HILL_UP_MEDIUM*/ HILL_DOWN_MEDIUM /*HILL_NONE*/,
+	 CURVE_NONE,
+	 2,
+	 2},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 2, 3},
 
 	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
@@ -301,6 +314,133 @@ static int track_build_frost(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
+
+	struct scene_seg_desc *scene_igloo =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_igloo->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_inn =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_inn->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_pine =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_pine->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	struct scene_seg_desc *scene_snowmen_1 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_snowmen_1->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_igloo->sprite[0],
+			      &ctx->gfx.scene_igloo,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_igloo->sprite[1],
+			      &ctx->gfx.scene_igloo,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+
+	set_scene_sprite_desc(&scene_inn->sprite[0],
+			      &ctx->gfx.scene_lantern,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_inn->sprite[1],
+			      &ctx->gfx.scene_snow_inn,
+			      -3.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_inn->sprite[2],
+			      &ctx->gfx.scene_bench,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_inn->sprite[3],
+			      &ctx->gfx.scene_lantern,
+			      3.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+
+	for (int i = 1; i < (MAX_SCENE_SPRITE_PER_SEG - 4) / 2; i++) {
+		float position = (float)i * 1.5f;
+		set_scene_sprite_desc(&scene_inn->sprite[2 * i + 4],
+				      &ctx->gfx.scene_tree_pine_snow,
+				      position + 3.5f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_inn->sprite[2 * i + 5],
+				      &ctx->gfx.scene_tree_pine_snow,
+				      -position - 5.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)i * 1.5f;
+		set_scene_sprite_desc(&scene_pine->sprite[2 * i],
+				      &ctx->gfx.scene_tree_pine_snow,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_pine->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_pine_snow,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)i * 2.f;
+		set_scene_sprite_desc(&scene_snowmen_1->sprite[2 * i],
+				      i == 1 ? &ctx->gfx.scene_snowman : &ctx->gfx.scene_tree_dead_snow,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_snowmen_1->sprite[2 * i + 1],
+				      i == 1 ? &ctx->gfx.scene_snowman : &ctx->gfx.scene_tree_dead_snow,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE); 
+	}
+
+	for (int i = 0; i < nb_segments_added * 2 / 16;
+	     i += 50)
+		ctx->track.segments[i].scene = scene_inn;
+
+	for (int i = nb_segments_added * 2 / 16;
+	     i < nb_segments_added * 6 / 16;
+	     i += 15)
+		ctx->track.segments[i].scene = scene_pine;
+
+	for (int i = nb_segments_added * 6 / 16;
+	     i < nb_segments_added * 10 / 16;
+	     i += 15)
+		ctx->track.segments[i].scene = scene_snowmen_1;
+
+	for (int i = nb_segments_added * 10 / 16;
+	     i < nb_segments_added * 14 / 16;
+	     i += 30)
+		ctx->track.segments[i].scene = scene_igloo;
+
+	for (int i = nb_segments_added * 14 / 16; i < nb_segments_added;
+	     i += 50)
+		ctx->track.segments[i].scene = scene_inn;
+
 	return 0;
 }
 
@@ -355,6 +495,37 @@ static int track_build_fork(struct game_context *ctx)
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+
+	struct scene_seg_desc *scene_tunnel_bright =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_tunnel_bright->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	scene_tunnel_bright->type = SCENE_SPRITE_CENTERED;
+	set_scene_sprite_desc(&scene_tunnel_bright->sprite[0],
+			      &ctx->gfx.scene_tunnel_a_bright,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+
+	struct scene_seg_desc *scene_tunnel_dark =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_tunnel_dark->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	scene_tunnel_dark->type = SCENE_SPRITE_CENTERED;
+	set_scene_sprite_desc(&scene_tunnel_dark->sprite[0],
+			      &ctx->gfx.scene_tunnel_a_dark,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+
+	for (int i = nb_segments_added * 0 / 16 + 20;
+	     i < nb_segments_added * 15 / 16;
+	     i += 3) {
+		ctx->track.segments[i].scene =
+			i % 2 == 0 ? scene_tunnel_bright : scene_tunnel_dark;
+	}
+
 
 	return 0;
 }
@@ -480,13 +651,12 @@ static int track_build_speedway(struct game_context *ctx)
 				      SDL_FLIP_NONE);
 	}
 
-	set_scene_sprite_desc(
-		&scene_buoy->sprite[0],
-		&ctx->gfx.scene_buoy,
-		5.f,
-		NULL,
-		1,
-		SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buoy->sprite[0],
+			      &ctx->gfx.scene_buoy,
+			      5.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
 
 
 	set_scene_sprite_desc(&scene_speedboat->sprite[0],

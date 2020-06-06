@@ -65,7 +65,10 @@ struct game_graphics{
 	
 	struct texture scene_bushes[NB_SPRITE_BUSH];
 	struct texture scene_bush_flower;
-	
+
+	// scene city
+	struct texture scene_tunnel_a_bright;	
+	struct texture scene_tunnel_a_dark;	
 	
 	// scene seaside
 	struct texture scene_maoi;
@@ -76,7 +79,14 @@ struct game_graphics{
 	struct texture scene_beach_umbrella;
 	struct texture scene_billboard_beach;
 	
-
+	// scene frost
+	struct texture scene_igloo;
+	struct texture scene_snow_inn;
+	struct texture scene_snowman;
+	struct texture scene_lantern;
+	struct texture scene_bench;
+	struct texture scene_tree_pine_snow;
+	struct texture scene_tree_dead_snow;
 
 	//struct texture font_game_speed_title;
 	struct texture font_game_speed_value;
