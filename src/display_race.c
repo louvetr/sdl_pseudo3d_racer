@@ -1074,6 +1074,11 @@ static int display_render_centered_scene_sprite(struct game_context *ctx,
 
 	int scaled_x = seg->p1.screen.x - (int)((float)sprite->w * x_scale / 2);
 
+	if(seg->scene) {
+		seg->scene->sprite[0].scale = x_scale;
+		seg->scene->sprite[0].scaled_x = scaled_x;
+	}
+
 	if (scaled_x > SCREEN_WIDTH)
 		return 0;
 

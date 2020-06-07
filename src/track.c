@@ -188,6 +188,7 @@ static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 };
 
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
+static SDL_Rect hitbox_tunnel_a = {.x = 292, .y = 0, .w = 1700, .h = 0};
 
 
 static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
@@ -504,7 +505,7 @@ static int track_build_fork(struct game_context *ctx)
 	set_scene_sprite_desc(&scene_tunnel_bright->sprite[0],
 			      &ctx->gfx.scene_tunnel_a_bright,
 			      1.5f,
-			      NULL,
+			      &hitbox_tunnel_a,
 			      1,
 			      SDL_FLIP_NONE);
 
@@ -515,7 +516,7 @@ static int track_build_fork(struct game_context *ctx)
 	set_scene_sprite_desc(&scene_tunnel_dark->sprite[0],
 			      &ctx->gfx.scene_tunnel_a_dark,
 			      1.5f,
-			      NULL,
+			      &hitbox_tunnel_a,
 			      1,
 			      SDL_FLIP_NONE);
 

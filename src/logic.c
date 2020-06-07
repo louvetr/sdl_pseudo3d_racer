@@ -159,113 +159,182 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 		// TODO: preset the index of closest scene spite of the road to
 		// avoid this computation
 
-		for (int j = 0; j < seg->scene->nb_sprites; j++) {
-			if (seg->scene->sprite[j].t == NULL)
-				continue;
-			if (seg->scene->sprite[j].position > 0) {
-				if (seg->scene->sprite[j].position <
-				    closest_right_position) {
-					sprite_right = &seg->scene->sprite[j];
-					closest_right_position =
-						seg->scene->sprite[j].position;
+		if (seg->scene->type == SCENE_SPRITE_NORMAL) {
+
+			for (int j = 0; j < seg->scene->nb_sprites; j++) {
+				if (seg->scene->sprite[j].t == NULL)
+					continue;
+				if (seg->scene->sprite[j].position > 0) {
+					if (seg->scene->sprite[j].position <
+					    closest_right_position) {
+						sprite_right =
+							&seg->scene->sprite[j];
+						closest_right_position =
+							seg->scene->sprite[j]
+								.position;
+					}
+				} else {
+					if (seg->scene->sprite[j].position >
+					    closest_left_position) {
+						sprite_left =
+							&seg->scene->sprite[j];
+						closest_left_position =
+							seg->scene->sprite[j]
+								.position;
+					}
 				}
-			} else {
-				if (seg->scene->sprite[j].position >
-				    closest_left_position) {
-					sprite_left = &seg->scene->sprite[j];
-					closest_left_position =
-						seg->scene->sprite[j].position;
+			}
+
+			int sprite_left_hb_x = 0;
+			int sprite_right_hb_x = SCREEN_WIDTH;
+
+			// TODO: recheck hitbox
+			if (sprite_left && sprite_left->collide &&
+			    sprite_left->scaled_x < SCREEN_WIDTH &&
+			    sprite_left->scale > 0) {
+				if (sprite_left->hitbox)
+					if (sprite_left->flip ==
+					    SDL_FLIP_HORIZONTAL)
+						sprite_left_hb_x =
+							sprite_left->scaled_x +
+							(int)((float)(sprite_left
+									      ->t
+									      ->w -
+								      sprite_left
+									      ->hitbox
+									      ->x) *
+							      sprite_left
+								      ->scale);
+					else /* SDL_FLIP_NONE */
+						sprite_left_hb_x =
+							sprite_left->scaled_x +
+							(int)((float)(sprite_left
+									      ->hitbox
+									      ->x +
+								      sprite_left
+									      ->hitbox
+									      ->w) *
+							      sprite_left
+								      ->scale);
+				else
+					// if (sprite_left->scaled_x <
+					// SCREEN_WIDTH)
+					sprite_left_hb_x =
+						sprite_left->scaled_x +
+						(int)((float)sprite_left->t->w *
+						      sprite_left->scale);
+			}
+
+			if (sprite_right && sprite_right->collide &&
+			    sprite_right->scaled_x > 0 &&
+			    sprite_right->scaled_x < SCREEN_WIDTH &&
+			    sprite_right->scale > 0) {
+				if (sprite_right->hitbox)
+					sprite_right_hb_x =
+						sprite_right->scaled_x +
+						(int)((float)sprite_right
+							      ->hitbox->x *
+						      sprite_right->scale);
+				else /*if (sprite_right->scaled_x > 0 &&
+					 sprite_right->scaled_x <
+					SCREEN_WIDTH)*/
+					sprite_right_hb_x =
+						sprite_right->scaled_x;
+			}
+
+			// check car collision with sprite on left
+			if (ctx->pcar.player_sprite_x < sprite_left_hb_x) {
+				SDL_Log("[%s] collision detected on LEFT\n",
+					__func__);
+
+				ctx->pcar.collision_dst_x =
+					ctx->pcar.player_x +
+					COLLIONSION_SCENE_SHIFT;
+
+				ctx->pcar.speed = ctx->pcar.speed * 0.75f;
+
+				ctx->sound.collision_detected = 1;
+				ctx->status_cur =
+					GAME_STATE_RACE_COLLISION_SCENE;
+
+				break;
+
+			} else if (ctx->pcar.player_max_y
+				   > sprite_right_hb_x) {
+				SDL_Log("[%s] collision detected on RIGHT\n",
+					__func__);
+
+				ctx->pcar.collision_dst_x =
+					ctx->pcar.player_x -
+					COLLIONSION_SCENE_SHIFT;
+
+				ctx->pcar.speed = ctx->pcar.speed * 0.75f;
+
+				ctx->sound.collision_detected = 1;
+				ctx->status_cur =
+					GAME_STATE_RACE_COLLISION_SCENE;
+				break;
+			}
+
+		} else if (seg->scene->type == SCENE_SPRITE_CENTERED) {
+			struct scene_sprite_desc *sprite_center =
+				&seg->scene->sprite[0];
+			int sprite_center_hb_x_left = 0;
+			int sprite_center_hb_x_right = 0;
+
+			if (sprite_center && sprite_center->collide &&
+			    sprite_center->scaled_x < SCREEN_WIDTH &&
+			    sprite_center->scale > 0 && sprite_center->hitbox) {
+				sprite_center_hb_x_left =
+					sprite_center->scaled_x +
+					(int)((float)(sprite_center->hitbox
+							      ->x) *
+					      sprite_center->scale);
+				sprite_center_hb_x_right =
+					sprite_center->scaled_x +
+					(int)((float)(sprite_center->hitbox
+							      ->w) *
+					      sprite_center->scale);
+
+
+				// check car collision with sprite on left
+				if (ctx->pcar.player_sprite_x <
+				    sprite_center_hb_x_left) {
+
+					ctx->pcar.collision_dst_x =
+						ctx->pcar.player_x +
+						COLLIONSION_SCENE_SHIFT;
+
+					ctx->pcar.speed =
+						ctx->pcar.speed * 0.75f;
+
+					SDL_Log("[%s][center] COLLISON CAR SCENE left\n",
+						__func__);
+					ctx->sound.collision_detected = 1;
+					ctx->status_cur =
+						GAME_STATE_RACE_COLLISION_SCENE;
+					break;
+
+				} else if (ctx->pcar.player_max_y >
+					   sprite_center_hb_x_right) {
+
+					ctx->pcar.collision_dst_x =
+						ctx->pcar.player_x -
+						COLLIONSION_SCENE_SHIFT;
+
+					ctx->pcar.speed =
+						ctx->pcar.speed * 0.75f;
+
+					SDL_Log("[%s][center] COLLISON CAR SCENE right\n",
+						__func__);
+					ctx->sound.collision_detected = 1;
+					ctx->status_cur =
+						GAME_STATE_RACE_COLLISION_SCENE;
+
+					break;
 				}
 			}
 		}
-
-		int sprite_left_hb_x = 0;
-		int sprite_right_hb_x = SCREEN_WIDTH;
-
-		// TODO: recheck hitbox
-		if (sprite_left && sprite_left->collide &&
-		    sprite_left->scaled_x < SCREEN_WIDTH &&
-		    sprite_left->scale > 0) {
-			if (sprite_left->hitbox)
-				if (sprite_left->flip == SDL_FLIP_HORIZONTAL)
-					sprite_left_hb_x =
-						sprite_left->scaled_x +
-						(int)((float)(sprite_left->t
-								      ->w -
-							      sprite_left
-								      ->hitbox
-								      ->x) *
-						      sprite_left->scale);
-				else /* SDL_FLIP_NONE */
-					sprite_left_hb_x =
-						sprite_left->scaled_x +
-						(int)((float)(sprite_left
-								      ->hitbox
-								      ->x +
-							      sprite_left
-								      ->hitbox
-								      ->w) *
-						      sprite_left->scale);
-			else
-				// if (sprite_left->scaled_x < SCREEN_WIDTH)
-				sprite_left_hb_x =
-					sprite_left->scaled_x +
-					(int)((float)sprite_left->t->w *
-					      sprite_left->scale);
-		}
-
-		if (sprite_right && sprite_right->collide &&
-		    sprite_right->scaled_x > 0 &&
-		    sprite_right->scaled_x < SCREEN_WIDTH &&
-		    sprite_right->scale > 0) {
-			if (sprite_right->hitbox)
-				sprite_right_hb_x =
-					sprite_right->scaled_x +
-					(int)((float)sprite_right->hitbox->x *
-					      sprite_right->scale);
-			else /*if (sprite_right->scaled_x > 0 &&
-				 sprite_right->scaled_x < SCREEN_WIDTH)*/
-				sprite_right_hb_x = sprite_right->scaled_x;
-		}
-
-		// check car collision with sprite on left
-		if (ctx->pcar.player_sprite_x < sprite_left_hb_x) {
-			SDL_Log("[%s] collision detected on LEFT\n", __func__);
-
-			ctx->pcar.collision_dst_x =
-				ctx->pcar.player_x + COLLIONSION_SCENE_SHIFT;
-
-			ctx->pcar.speed = ctx->pcar.speed * 0.75f;
-
-			SDL_Log("[%s] COLLISON CAR SCENE\n", __func__);
-			ctx->sound.collision_detected = 1;
-			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
-
-			break;
-
-		} else if (ctx->pcar.player_max_y
-			   /* TODO : CHECK this coef is rightly used !!!! */
-			   > sprite_right_hb_x) {
-			SDL_Log("[%s] collision detected on RIGHT\n", __func__);
-
-			ctx->pcar.collision_dst_x =
-				ctx->pcar.player_x - COLLIONSION_SCENE_SHIFT;
-
-			ctx->pcar.speed = ctx->pcar.speed * 0.75f;
-
-			SDL_Log("[%s] COLLISON CAR SCENE\n", __func__);
-			ctx->sound.collision_detected = 1;
-			ctx->status_cur = GAME_STATE_RACE_COLLISION_SCENE;
-			break;
-		}
-		/*if (sprite_right_hb_x < SCREEN_WIDTH)
-			SDL_Log("[%s] car_x (%d) + car_w (%d) = %d,
-		   sprite_right_hb_x = %d\n",
-				__func__,
-				ctx->pcar.player_sprite_x,
-				ctx->gfx.car_player.w / 2,
-				ctx->pcar.player_sprite_x +
-		   ctx->gfx.car_player.w / 2, sprite_right_hb_x);*/
 	}
 
 	return 0;
