@@ -776,6 +776,26 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 	}
 }
 
+static int logic_title(struct game_context *ctx)
+{
+	if (ctx->keys.select) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
+
+		// unload menu resources
+		gfx_unload_resources(ctx);
+		// sound_unload_resources(ctx);
+		Mix_HaltMusic();
+
+		// load race ressources
+		gfx_load_resources_menu_main(ctx);
+		sound_load_resources_menu(ctx);
+
+		main_ctx_init_menu_main(ctx);
+	}
+
+	return 0;
+}
 
 static int logic_menu_main(struct game_context *ctx)
 {
@@ -940,6 +960,7 @@ int main_logic(struct game_context *ctx)
 
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
+		logic_title(ctx);
 		break;
 	case GAME_STATE_MENU_MAIN:
 		logic_menu_main(ctx);

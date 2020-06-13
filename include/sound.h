@@ -31,6 +31,7 @@ struct sfxs {
 };
 
 struct musics {
+	Mix_Music *title;
 	Mix_Music *menu;
 	Mix_Music *end_race;
 	Mix_Music *bgm[NB_BGM];

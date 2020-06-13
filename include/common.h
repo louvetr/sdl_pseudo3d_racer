@@ -27,4 +27,13 @@ enum car_model_type {
  	CAR_MODEL_LAST
 };
 
+/* identifies the different layers. Their value is the coefficient to which
+ * they scroll */
+enum background_layer {
+	BG_LAYER_SKY_FAR = 2,
+	BG_LAYER_LANDSCAPE_FAR = 4,
+	BG_LAYER_LANDSCAPE_NEAR = 5,
+	BG_LAYER_SKY_NEAR = 6
+};
+
 #endif

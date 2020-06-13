@@ -368,3 +368,215 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	return ret;
 }
+
+
+int display_screen_title(struct game_context *ctx)
+{
+	int ret = 0;
+	static int clkcpt = 0;
+	static int invcolors = 0;
+	int nb_seg = 10;
+	int segw = SCREEN_WIDTH / nb_seg;
+	SDL_Rect r;
+
+	// clear screen
+	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
+	SDL_RenderClear(ctx->renderer);
+
+	filledCircleRGBA(ctx->renderer,
+			 (int16_t)(SCREEN_WIDTH * 85 / 100),
+			 (int16_t)(SCREEN_HEIGHT * 15 / 100),
+			 SCREEN_HEIGHT * 10 / 100,
+			 250,
+			 253,
+			 15,
+			 255);
+
+
+	// draw grass
+	r.x = 0;
+	r.y = SCREEN_HEIGHT * 50 / 100;
+	r.w = segw;
+	r.h = SCREEN_HEIGHT * 7 / 100;
+
+	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
+		if (i % 2 == invcolors)
+			SDL_SetRenderDrawColor(ctx->renderer, 0, 160, 0, 255);
+		else
+			SDL_SetRenderDrawColor(ctx->renderer, 0, 169, 0, 255);
+
+		r.x = i * segw - clkcpt;
+		SDL_RenderFillRect(ctx->renderer, &r);
+	}
+
+	// draw rumble
+	r.x = 0;
+	r.y = SCREEN_HEIGHT * 57 / 100;
+	r.w = segw;
+	r.h = SCREEN_HEIGHT * 4 / 100;
+	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
+
+		if (i % 2 == invcolors)
+			SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
+		else
+			SDL_SetRenderDrawColor(
+				ctx->renderer, 255, 255, 255, 255);
+
+		r.x = i * segw - clkcpt;
+		SDL_RenderFillRect(ctx->renderer, &r);
+	}
+
+	// draw road
+	r.x = 0;
+	r.y = SCREEN_HEIGHT * 60 / 100;
+	r.w = segw;
+	r.h = SCREEN_HEIGHT * 40 / 100;
+
+	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
+		if (i % 2 == invcolors)
+			SDL_SetRenderDrawColor(
+				ctx->renderer, 125, 125, 125, 255);
+		else
+			SDL_SetRenderDrawColor(
+				ctx->renderer, 140, 140, 140, 255);
+
+		r.x = i * segw - clkcpt;
+		SDL_RenderFillRect(ctx->renderer, &r);
+	}
+
+	// draw clouds
+	static int cloud_x_offset = 0;
+
+	display_render_background_layer(
+		ctx, BG_LAYER_SKY_FAR, &cloud_x_offset, &ctx->gfx.bg_sky_far);
+
+	cloud_x_offset += 4;
+
+	// draw trees
+	float scale_oak = 0.5f;
+	int nb_oak = 4;
+	int segw_oak =
+		(int)((float)ctx->gfx.scene_tree_oak.h * scale_oak) * 3 / 2;
+
+	for (int i = 0; i < nb_oak; i++) {
+		r.x = i * segw_oak - clkcpt;
+		ret = texture_render(
+			ctx,
+			&ctx->gfx.scene_tree_oak,
+			r.x,
+			SCREEN_HEIGHT * 53 / 100 -
+				(int)((float)ctx->gfx.scene_tree_oak.h *
+				      scale_oak),
+			NULL,
+			0.f,
+			scale_oak,
+			SDL_FLIP_NONE,
+			NULL);
+	}
+
+	// draw cars
+	static int x_car_cpt = 0;
+	float scale_car = 0.33f;
+	static int car_model = CAR_MODEL_DELTA;
+	static int y_car = 70;
+	int x_car =
+		-1 * (int)((float)ctx->gfx.cars_side[car_model].w * scale_car);
+	x_car += x_car_cpt;
+
+	ret = texture_render(
+		ctx,
+		&ctx->gfx.cars_side[car_model],
+		x_car,
+		SCREEN_HEIGHT * y_car / 100 -
+			(int)((float)ctx->gfx.cars_side[car_model].h *
+			      scale_car),
+		NULL,
+		0.f,
+		scale_car,
+		SDL_FLIP_NONE,
+		NULL);
+
+
+	clkcpt += 20;
+	if (clkcpt > segw_oak) {
+		clkcpt = 0;
+		invcolors = invcolors ? 0 : 1;
+	}
+	if (clkcpt % segw == 0)
+		invcolors = invcolors ? 0 : 1;
+
+	x_car_cpt += 80;
+	if (x_car_cpt >
+	    SCREEN_WIDTH +
+		    (int)((float)ctx->gfx.cars_side[car_model].w * scale_car)) {
+		x_car_cpt = 0;
+		car_model = car_model == CAR_MODEL_IMPREZIA
+				    ? CAR_MODEL_DELTA
+				    : CAR_MODEL_IMPREZIA;
+
+		y_car = 69 + (rand() % 6) * 5;
+	}
+
+
+	// Title /////////////////////////////////////////
+
+	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0x0};
+	SDL_Color text_color_shadow = {0, 0, 0};
+	int finish_font_size;
+	TTF_Font *finish_font = NULL;
+	float angle;
+
+	ctx->race.nb_frame_anim++;
+
+	finish_font_size = ctx->race.nb_frame_anim * 2;
+	if (finish_font_size > 150)
+		finish_font_size = 150;
+
+	angle = (float)ctx->race.nb_frame_anim * 8.f;
+	if (angle > 360.f) {
+		angle = 0.f;
+		if (ctx->race.finish_placed_frame_nb == 0) {
+			ctx->race.finish_placed_frame_nb =
+				ctx->race.nb_frame_anim;
+		}
+	}
+
+	finish_font = TTF_OpenFont(SOFACHROME_FONT, finish_font_size);
+	if (!finish_font) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		"Bala ",
+		&text_color_front_1,
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+		SCREEN_HEIGHT * 40 / 100 - ctx->gfx.font_race_anim.h / 2,
+		4,
+		200,
+		angle);
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		" Race",
+		&text_color_front_1,
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+		SCREEN_HEIGHT * 40 / 100 + ctx->gfx.font_race_anim.h / 2,
+		4,
+		200,
+		angle);
+
+	SDL_RenderPresent(ctx->renderer);
+	TTF_CloseFont(finish_font);
+
+	return ret;
+}

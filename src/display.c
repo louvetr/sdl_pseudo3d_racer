@@ -3,75 +3,6 @@
 #define BORDER 0
 
 
-//enum another_bg_type { ANOTHER_BG_NONE, ANOTHER_BG_LEFT, ANOTHER_BG_RIGHT };
-
-/* identifies the different layers. Their value is the coefficient to which
- * they scroll */
-enum background_layer {
-	BG_LAYER_SKY_FAR = 2,
-	BG_LAYER_LANDSCAPE_FAR = 4,
-	BG_LAYER_LANDSCAPE_NEAR = 5,
-	BG_LAYER_SKY_NEAR = 6
-};
-
-/*struct color_desc color_road_yellow = {
-	.r = 255,
-	.g = 234,
-	.b = 0,
-	.a = 255,
-};
-
-struct color_desc color_bright_road_asphalt = {
-	.r = 140,
-	.g = 140,
-	.b = 140,
-	.a = 255,
-};
-
-struct color_desc color_dark_road_asphalt = {
-	.r = 128,
-	.g = 128,
-	.b = 128,
-	.a = 255,
-};
-
-struct color_desc color_bright_grass = {
-	.r = 0,
-	.g = 169,
-	.b = 0,
-	.a = 255,
-};
-
-struct color_desc color_dark_grass = {
-	.r = 0,
-	.g = 160,
-	.b = 0,
-	.a = 255,
-};
-
-
-
-struct color_desc color_bright_rumble = {
-	.r = 255,
-	.g = 255,
-	.b = 255,
-	.a = 255,
-};
-
-struct color_desc color_dark_rumble = {
-	.r = 255,
-	.g = 0,
-	.b = 0,
-	.a = 255,
-};
-
-struct color_desc color_white = {
-	.r = 255,
-	.g = 255,
-	.b = 255,
-	.a = 255,
-};*/
-
 
 /////////////////////////////////////////////////////////////////
 // static functions definition
@@ -242,6 +173,7 @@ int main_display(struct game_context *ctx)
 
 	switch (ctx->status_cur) {
 	case GAME_STATE_TITLE:
+		display_screen_title(ctx);
 		break;
 	case GAME_STATE_QUIT:
 		break;

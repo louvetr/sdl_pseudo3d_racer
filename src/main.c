@@ -297,6 +297,17 @@ int main_ctx_init_menu_main(struct game_context *ctx)
 	return 0;
 }
 
+
+int main_ctx_init_title(struct game_context *ctx)
+{
+	ctx->status_cur = GAME_STATE_TITLE;
+	ctx->status_prev = GAME_STATE_UNKNOWN;
+	Mix_PlayMusic(ctx->sound.music.title, -1);
+
+	return 0;
+}
+
+
 static int main_destroy(struct game_context *ctx)
 {
 	// TODO
@@ -347,23 +358,9 @@ int main()
 
 	Mix_VolumeMusic(MAX_VOLUME);
 
-
-	// load media and stuff
-	// gfx_load_resources_race(ctx);
-	// sound_load_resources(ctx);
-
-	// main_ctx_init(ctx);
-	// main_ctx_init_race(ctx);
-
-	// gfx_load_resources_menu_select_car(ctx);
-	// main_ctx_init_menu_select_car(ctx);
-
-	/*gfx_load_resources_menu_select_track(ctx);
-	main_ctx_init_menu_select_track(ctx);*/
-
-	gfx_load_resources_menu_main(ctx);
-	sound_load_resources_menu(ctx);
-	main_ctx_init_menu_main(ctx);
+	gfx_load_resources_title(ctx);
+	sound_load_resources_title(ctx);
+	main_ctx_init_title(ctx);
 
 	// main_build_track(ctx);
 	// track_build(ctx);

@@ -18,7 +18,7 @@
 #define SFX_CONGRATULATIONS "./media/sfx/congratulations.wav"
 #define SFX_LAP "./media/sfx/lap_01.wav"
 
-//#define MUSIC_MENU "./media/music/Racing-Menu_128kbps.mp3"
+#define MUSIC_TITLE "./media/music/Racing-Menu_128kbps.mp3"
 #define MUSIC_MENU "./media/music/Starting-Line_128kbps.mp3"
 #define MUSIC_END_RACE "./media/music/end_race.ogg"
 #define MUSIC_BGM_1 "./media/music/aries_beats---infinity---128kbps.mp3"
@@ -105,7 +105,14 @@ int sound_load_resources_menu(struct game_context *ctx)
 	sound_load_wav(&ctx->sound.sfx.menu_a, SFX_MENU_A);
 	sound_load_wav(&ctx->sound.sfx.menu_b, SFX_MENU_B);
 
+	return 0;
+}
 
+int sound_load_resources_title(struct game_context *ctx)
+{
+	sound_load_music(&ctx->sound.music.title, MUSIC_TITLE);
+
+	sound_load_wav(&ctx->sound.sfx.menu_a, SFX_MENU_A);
 
 	return 0;
 }
@@ -114,6 +121,11 @@ int sound_load_resources_menu(struct game_context *ctx)
 int sound_unload_resources(struct game_context *ctx)
 {
 	Mix_HaltMusic();
+
+	if(ctx->sound.music.title) {
+		Mix_FreeMusic(ctx->sound.music.title);
+		ctx->sound.music.title = NULL;
+	}
 
 	if(ctx->sound.music.menu) {
 		Mix_FreeMusic(ctx->sound.music.menu);

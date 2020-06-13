@@ -527,12 +527,14 @@ int logic_get_player_lap_nb(struct game_context *ctx);
 
 
 
+int gfx_load_resources_title(struct game_context *ctx);
 int gfx_load_resources_menu_main(struct game_context *ctx);
 int gfx_load_resources_menu_select_track(struct game_context *ctx);
 int gfx_load_resources_menu_select_car(struct game_context *ctx);
 int gfx_load_resources_race(struct game_context *ctx);
 int gfx_unload_resources(struct game_context *ctx);
 
+int sound_load_resources_title(struct game_context *ctx);
 int sound_load_resources_menu(struct game_context *ctx);
 int sound_load_resources_race(struct game_context *ctx);
 int sound_unload_resources(struct game_context *ctx);
@@ -585,6 +587,14 @@ int main_ctx_init_race(struct game_context *ctx);
 int display_screen_menu_main(struct game_context *ctx);
 int display_screen_menu_select_track(struct game_context *ctx);
 int display_screen_menu_select_car(struct game_context *ctx);
+
+int display_screen_title(struct game_context *ctx);
+
+int display_render_background_layer(struct game_context *ctx,
+					   enum background_layer bg_layer,
+					   int *texture_x_offset,
+					   struct texture *bg_texture);
+
 
 // MAINs
 int main_sound(struct game_context *ctx);

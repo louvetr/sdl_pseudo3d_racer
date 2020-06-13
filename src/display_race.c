@@ -5,15 +5,6 @@
 
 enum another_bg_type { ANOTHER_BG_NONE, ANOTHER_BG_LEFT, ANOTHER_BG_RIGHT };
 
-/* identifies the different layers. Their value is the coefficient to which
- * they scroll */
-enum background_layer {
-	BG_LAYER_SKY_FAR = 2,
-	BG_LAYER_LANDSCAPE_FAR = 4,
-	BG_LAYER_LANDSCAPE_NEAR = 5,
-	BG_LAYER_SKY_NEAR = 6
-};
-
 
 /////////////////////////////////////////////////////////////////
 // static functions definition
@@ -1074,7 +1065,7 @@ static int display_render_centered_scene_sprite(struct game_context *ctx,
 
 	int scaled_x = seg->p1.screen.x - (int)((float)sprite->w * x_scale / 2);
 
-	if(seg->scene) {
+	if (seg->scene) {
 		seg->scene->sprite[0].scale = x_scale;
 		seg->scene->sprite[0].scaled_x = scaled_x;
 	}
@@ -1325,10 +1316,10 @@ static int display_render_road(struct game_context *ctx)
 
 
 // render a background layer
-static int display_render_background_layer(struct game_context *ctx,
-					   enum background_layer bg_layer,
-					   int *texture_x_offset,
-					   struct texture *bg_texture)
+int display_render_background_layer(struct game_context *ctx,
+				    enum background_layer bg_layer,
+				    int *texture_x_offset,
+				    struct texture *bg_texture)
 {
 	int ret;
 	int bg_y_offset_num = 50;
@@ -1347,9 +1338,12 @@ static int display_render_background_layer(struct game_context *ctx,
 
 	// TODO : BG rotation % speed, no rotation if speed == 0
 	// TODO : do some modulus to avoid going too far
-	*texture_x_offset +=
-		(int)(ctx->track.segments[ctx->pcar.player_segment].curve *
-		      (float)bg_layer * ctx->pcar.speed / ctx->pcar.max_speed);
+	if (ctx->track.nb_segments)
+		*texture_x_offset +=
+			(int)(ctx->track.segments[ctx->pcar.player_segment]
+				      .curve *
+			      (float)bg_layer * ctx->pcar.speed /
+			      ctx->pcar.max_speed);
 
 	if (*texture_x_offset > bg_texture->w)
 		*texture_x_offset -= bg_texture->w;

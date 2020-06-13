@@ -264,9 +264,12 @@ static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(ctx, PNG_SCENE_IGLOO, &ctx->gfx.scene_igloo);
-	load_texture_from_file(ctx, PNG_SCENE_SNOW_INN, &ctx->gfx.scene_snow_inn);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_PINE_SNOW, &ctx->gfx.scene_tree_pine_snow);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_DEAD_SNOW, &ctx->gfx.scene_tree_dead_snow);
+	load_texture_from_file(
+		ctx, PNG_SCENE_SNOW_INN, &ctx->gfx.scene_snow_inn);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_PINE_SNOW, &ctx->gfx.scene_tree_pine_snow);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_DEAD_SNOW, &ctx->gfx.scene_tree_dead_snow);
 	load_texture_from_file(ctx, PNG_SCENE_SNOWMAN, &ctx->gfx.scene_snowman);
 	load_texture_from_file(ctx, PNG_SCENE_LANTERN, &ctx->gfx.scene_lantern);
 	load_texture_from_file(ctx, PNG_SCENE_BENCH, &ctx->gfx.scene_bench);
@@ -280,11 +283,17 @@ static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(ctx, PNG_SCENE_MAOI, &ctx->gfx.scene_maoi);
 	load_texture_from_file(ctx, PNG_SCENE_BUOY, &ctx->gfx.scene_buoy);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_PALM, &ctx->gfx.scene_tree_palm);
-	load_texture_from_file(ctx, PNG_SCENE_BOAT_SPEED, &ctx->gfx.scene_boat_speed);
-	load_texture_from_file(ctx, PNG_SCENE_BEACH_CABIN, &ctx->gfx.scene_beach_cabin);
-	load_texture_from_file(ctx, PNG_SCENE_BEACH_UMBRELLA, &ctx->gfx.scene_beach_umbrella);
-	load_texture_from_file(ctx, PNG_SCENE_BILLBOARD_BEACH, &ctx->gfx.scene_billboard_beach);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_PALM, &ctx->gfx.scene_tree_palm);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BOAT_SPEED, &ctx->gfx.scene_boat_speed);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BEACH_CABIN, &ctx->gfx.scene_beach_cabin);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BEACH_UMBRELLA, &ctx->gfx.scene_beach_umbrella);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_BILLBOARD_BEACH,
+			       &ctx->gfx.scene_billboard_beach);
 
 	return 0;
 }
@@ -293,8 +302,11 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 {
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
-	load_texture_from_file(ctx, PNG_SCENE_TUNNEL_A_BRIGHT, &ctx->gfx.scene_tunnel_a_bright);
-	load_texture_from_file(ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_TUNNEL_A_BRIGHT,
+			       &ctx->gfx.scene_tunnel_a_bright);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);
 
 	return 0;
 }
@@ -336,22 +348,21 @@ static int gfx_load_scene_sprites_dijon(struct game_context *ctx)
 
 static int gfx_load_scene_sprites(struct game_context *ctx)
 {
-	switch(ctx->track.track_selected) {
-		case TRACK_DIJON:
+	switch (ctx->track.track_selected) {
+	case TRACK_DIJON:
 		gfx_load_scene_sprites_dijon(ctx);
 		break;
-		case TRACK_SPEEDWAY:
+	case TRACK_SPEEDWAY:
 		gfx_load_scene_sprites_seaside(ctx);
 		break;
-		case TRACK_FROST:
+	case TRACK_FROST:
 		gfx_load_scene_sprites_frost(ctx);
 		break;
-		case TRACK_FORK:
+	case TRACK_FORK:
 		gfx_load_scene_sprites_fork(ctx);
 		break;
-		default:
-			SDL_Log("[%s] invalid track\n", __func__);
-
+	default:
+		SDL_Log("[%s] invalid track\n", __func__);
 	};
 	return 0;
 }
@@ -425,11 +436,26 @@ static int gfx_load_particles(struct game_context *ctx)
 
 static int gfx_load_tracks_thumbnail(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
-	gfx_load_texture(ctx, PNG_TRACK_SPEEDWAY, &ctx->gfx.track_thumbnail[TRACK_SPEEDWAY]);
-	gfx_load_texture(ctx, PNG_TRACK_FORK, &ctx->gfx.track_thumbnail[TRACK_FORK]);
-	gfx_load_texture(ctx, PNG_TRACK_FROST, &ctx->gfx.track_thumbnail[TRACK_FROST]);
-	gfx_load_texture(ctx, PNG_TRACK_STONE, &ctx->gfx.track_thumbnail[TRACK_STONE]);
+	gfx_load_texture(
+		ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
+	gfx_load_texture(ctx,
+			 PNG_TRACK_SPEEDWAY,
+			 &ctx->gfx.track_thumbnail[TRACK_SPEEDWAY]);
+	gfx_load_texture(
+		ctx, PNG_TRACK_FORK, &ctx->gfx.track_thumbnail[TRACK_FORK]);
+	gfx_load_texture(
+		ctx, PNG_TRACK_FROST, &ctx->gfx.track_thumbnail[TRACK_FROST]);
+	gfx_load_texture(
+		ctx, PNG_TRACK_STONE, &ctx->gfx.track_thumbnail[TRACK_STONE]);
+
+	return 0;
+}
+
+
+static int gfx_load_title(struct game_context *ctx)
+{
+	gfx_load_texture(ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
 	return 0;
 }
@@ -438,25 +464,27 @@ static int gfx_load_tracks_thumbnail(struct game_context *ctx)
 // public function
 /////////////////////////////////////////////////////////////////////////////////////
 
+int gfx_load_resources_title(struct game_context *ctx)
+{
+	gfx_load_title(ctx);
+	gfx_load_cars_side(ctx);
+	return 0;
+}
+
 int gfx_load_resources_menu_select_track(struct game_context *ctx)
 {
-
 	gfx_load_tracks_thumbnail(ctx);
-
 	return 0;
 }
 
 int gfx_load_resources_menu_select_car(struct game_context *ctx)
 {
-
 	gfx_load_cars_side(ctx);
-
 	return 0;
 }
 
 int gfx_load_resources_menu_main(struct game_context *ctx)
 {
-
 	gfx_load_cars_side(ctx);
 	gfx_load_tracks_thumbnail(ctx);
 
@@ -535,7 +563,7 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_bushes[5].texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bushes[6].texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bush_flower.texture);
-	
+
 	SDL_DestroyTexture(ctx->gfx.scene_maoi.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_buoy.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tree_palm.texture);
@@ -543,7 +571,7 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_beach_cabin.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_beach_umbrella.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_billboard_beach.texture);
-	
+
 	SDL_DestroyTexture(ctx->gfx.scene_igloo.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_snow_inn.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_snowman.texture);
@@ -551,7 +579,7 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_tree_dead_snow.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_lantern.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bench.texture);
-	
+
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);
 
