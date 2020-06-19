@@ -41,6 +41,8 @@ struct game_graphics{
 	struct texture car_player_right1;
 	struct texture car_player_right2;*/
 
+	struct texture car_side_bg;
+
 	//struct car_model_texture cars[CAR_MODEL_LAST]; 
 	struct texture cars[CAR_MODEL_LAST][CAR_SPRITE_LAST];
 	struct texture cars_side[CAR_MODEL_LAST];

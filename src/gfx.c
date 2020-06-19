@@ -4,6 +4,8 @@
 //#define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 //#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
 
+#define PNG_CAR_SIDE_BACKGROUND "./media/car_side_background.png"
+
 //#define PNG_CAR_PLAYER "./media/car_rear_01.png"
 #define PNG_IMPREZIA_SIDE "./media/cars/imprezia_side.png"
 #define PNG_IMPREZIA_REAR "./media/cars/imprezia_rear.png"
@@ -412,6 +414,8 @@ static int gfx_load_cars_side(struct game_context *ctx)
 	gfx_load_texture(
 		ctx, PNG_LOTUS_SIDE, &ctx->gfx.cars_side[CAR_MODEL_LOTUS]);
 	gfx_load_texture(ctx, PNG_TT_SIDE, &ctx->gfx.cars_side[CAR_MODEL_TT]);
+	
+	gfx_load_texture(ctx, PNG_CAR_SIDE_BACKGROUND, &ctx->gfx.car_side_bg);
 
 	return 0;
 }

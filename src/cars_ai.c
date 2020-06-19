@@ -2,7 +2,6 @@
 
 #define AHEAD_SEG_DISTANCE 30
 
-
 enum ai_car_available_lane {
 	AI_NO_CAR_AHEAD = 0x00,
 	AI_CAR_AHEAD = 0x01,
@@ -76,7 +75,8 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 		    ctx->pcar.max_speed * 0.88f)
 			SDL_Log("[%s] idx = %d is first !!!\n", __func__, i);*/
 
-		if (ai_car_seg_idx < ctx->track.nb_segments - AHEAD_SEG_DISTANCE) {
+		if (ai_car_seg_idx <
+		    ctx->track.nb_segments - AHEAD_SEG_DISTANCE) {
 			int dst = ctx->ai_cars[i].segment - ai_car_seg_idx;
 
 			if (dst < 0 || dst > AHEAD_SEG_DISTANCE)
@@ -111,7 +111,8 @@ ai_is_there_a_car_ahead(struct game_context *ctx,
 
 		} else {
 			// case if car to check is close before the start lane
-			int nb_seg_to_start = ctx->track.nb_segments - ai_car_seg_idx;
+			int nb_seg_to_start =
+				ctx->track.nb_segments - ai_car_seg_idx;
 			if (ctx->ai_cars[i].segment > ai_car_seg_idx) {
 
 				int dst = ctx->ai_cars[i].segment -
@@ -243,13 +244,15 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 		    ctx->ai_cars[i].speed_slow_straight <
 			    ctx->ai_cars[i].speed_max_straight) {
 
-			if (ctx->track.segments[ctx->ai_cars[i].segment].curve != 0)
+			if (ctx->track.segments[ctx->ai_cars[i].segment]
+				    .curve != 0)
 				max_speed = ctx->ai_cars[i]
 						    .speed_slow_curve /** .9f*/;
 			else
 				max_speed = ctx->ai_cars[i].speed_slow_straight;
 		} else {
-			if (ctx->track.segments[ctx->ai_cars[i].segment].curve != 0)
+			if (ctx->track.segments[ctx->ai_cars[i].segment]
+				    .curve != 0)
 				max_speed = ctx->ai_cars[i]
 						    .speed_max_curve /** .9f*/;
 			else
@@ -346,8 +349,9 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 							ctx->track.lanes);
 					ctx->ai_cars[i].dest_lane =
 						ctx->ai_cars[i].lane - 1;
-				} else if (rnd == 2 && ctx->ai_cars[i].lane <
-							       ctx->track.lanes - 1) {
+				} else if (rnd == 2 &&
+					   ctx->ai_cars[i].lane <
+						   ctx->track.lanes - 1) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 					ctx->ai_cars[i].dest_x =
@@ -386,14 +390,16 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 				ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-					ctx->ai_cars[i].lane + 1, ctx->track.lanes);
+					ctx->ai_cars[i].lane + 1,
+					ctx->track.lanes);
 				ctx->ai_cars[i].dest_lane =
 					ctx->ai_cars[i].lane + 1;
 			} else if (ctx->ai_cars[i].lane > 0) {
 				ctx->ai_cars[i].state =
 					AI_CAR_STATE_SWITCHING_LANE_LEFT;
 				ctx->ai_cars[i].dest_x = ai_lane_to_posx(
-					ctx->ai_cars[i].lane - 1, ctx->track.lanes);
+					ctx->ai_cars[i].lane - 1,
+					ctx->track.lanes);
 				ctx->ai_cars[i].dest_lane =
 					ctx->ai_cars[i].lane - 1;
 			}
@@ -412,7 +418,8 @@ int logic_race_ai_cars_state(struct game_context *ctx)
 				   ctx->ai_cars[i].state ==
 					   AI_CAR_STATE_SPEED_FULL) {
 				if (rand_interval(0, 1) == 0 &&
-				    ctx->ai_cars[i].lane < ctx->track.lanes - 1) {
+				    ctx->ai_cars[i].lane <
+					    ctx->track.lanes - 1) {
 					ctx->ai_cars[i].state =
 						AI_CAR_STATE_SWITCHING_LANE_RIGHT;
 					ctx->ai_cars[i].dest_x =
@@ -586,7 +593,8 @@ int ai_car_init(struct game_context *ctx)
 			ctx->ai_cars[j].pos_x = ctx->ai_cars[i].pos_x;
 			ctx->ai_cars[i].pos_x = tmp_pos_x;
 
-			//SDL_Log("[%s] switching #%d and #%d\n", __func__, i, j);
+			// SDL_Log("[%s] switching #%d and #%d\n", __func__, i,
+			// j);
 		}
 	}
 

@@ -167,6 +167,24 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 {
 	int bwidth = 5;
 
+	int car_bg_x =
+		SCREEN_WIDTH * 30 / 100 -
+		(int)((float)ctx->gfx.car_side_bg.w 
+		      / 2.f);
+	int car_bg_y =
+		SCREEN_HEIGHT / 2 -
+		(int)((float)ctx->gfx.car_side_bg.h / 2.f);
+
+	texture_render(ctx,
+		       &ctx->gfx.car_side_bg,
+		       car_bg_x,
+		       car_bg_y,
+		       NULL,
+		       0.f,
+		       1.f,
+		       0,
+		       NULL);
+
 	float scale_car =
 		(float)SCREEN_WIDTH / 1.8f /
 		(float)ctx->gfx.cars_side[ctx->pcar.car_player_model].w;
@@ -190,25 +208,27 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 		       0,
 		       NULL);
 
+	scale_car = 1.f;
+
 	display_screen_rect_border(
 		ctx,
-		car_x,
-		car_y,
-		car_x + (int)((float)ctx->gfx
-				      .cars_side[ctx->pcar.car_player_model]
+		car_bg_x,
+		car_bg_y,
+		car_bg_x + (int)((float)ctx->gfx
+				      .car_side_bg
 				      .w *
 			      scale_car),
-		car_y,
-		car_x,
-		car_y + (int)((float)ctx->gfx
-				      .cars_side[ctx->pcar.car_player_model]
+		car_bg_y,
+		car_bg_x,
+		car_bg_y + (int)((float)ctx->gfx
+				      .car_side_bg
 				      .h *
 			      scale_car),
-		car_x + (int)((float)ctx->gfx
-				      .cars_side[ctx->pcar.car_player_model]
+		car_bg_x + (int)((float)ctx->gfx
+				      .car_side_bg
 				      .w *
 			      scale_car),
-		car_y,
+		car_bg_y,
 		bwidth,
 		0,
 		0,
@@ -553,11 +573,11 @@ int display_screen_title(struct game_context *ctx)
 		ctx,
 		finish_font,
 		&ctx->gfx.font_race_anim,
-		"Bala ",
+		"Thrill",
 		&text_color_front_1,
 		&text_color_shadow,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
-		SCREEN_HEIGHT * 40 / 100 - ctx->gfx.font_race_anim.h / 2,
+		SCREEN_WIDTH * 25 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		SCREEN_HEIGHT * 30 / 100 - ctx->gfx.font_race_anim.h / 2,
 		4,
 		200,
 		angle);
@@ -566,12 +586,25 @@ int display_screen_title(struct game_context *ctx)
 		ctx,
 		finish_font,
 		&ctx->gfx.font_race_anim,
-		" Race",
+		"of",
 		&text_color_front_1,
 		&text_color_shadow,
-		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
-		SCREEN_HEIGHT * 40 / 100 + ctx->gfx.font_race_anim.h / 2,
+		SCREEN_WIDTH * 42 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		SCREEN_HEIGHT * 43 / 100 /*+ ctx->gfx.font_race_anim.h / 2*/,
 		4,
+		200,
+		angle);
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		"Speed",
+		&text_color_front_1,
+		&text_color_shadow,
+		SCREEN_WIDTH * 30 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		SCREEN_HEIGHT * 50 / 100 + ctx->gfx.font_race_anim.h / 2,
+		10,
 		200,
 		angle);
 
