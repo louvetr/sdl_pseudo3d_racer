@@ -1,7 +1,7 @@
 #include "main.h"
 
-const Uint32 SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
 
+const Uint32 SCREEN_TICKS_PER_FRAME = MS_PER_SEC / FPS;
 
 // TODO: move in a separtate file
 struct color_desc color_lane_white = {
@@ -18,6 +18,20 @@ struct color_desc color_lane_yellow = {
 	.a = 255,
 };
 
+
+float pcar_stats[CAR_MODEL_LAST][CAR_STAT_LAST] = {
+	/* speed, accel, centrifugal, nitro */
+	{.878f, 	0.85f, 	1.0f, 	1}, // CAR_MODEL_TRUENO = 0,
+	{.878f, 	1.0f, 	1.15f, 	1}, // CAR_MODEL_DELTA,
+	{.944f, 	1.15f, 	1.3f, 	2}, // CAR_MODEL_FALCON,
+	{.944f, 	1.0f, 	1.15f, 	3}, // CAR_MODEL_HART,
+	{1.0f,		1.0f, 	.7f, 	2}, // CAR_MODEL_IMPREZIA,
+	{1.0f, 		1.15f, 	.85f, 	3}, // CAR_MODEL_LANCER,
+	{1.066f, 	1.15f, 	1.0f,	2}, // CAR_MODEL_TT,
+	{1.066f, 	1.30f, 	1.15f, 	3}, // CAR_MODEL_NSX,
+	{1.132f, 	1.15f, 	.85f, 	3}, // CAR_MODEL_LOTUS,
+	{1.132f, 	1.30f,	1.0f, 	3}, // CAR_MODEL_VIPER,
+};
 
 /////////////////////////////////////////////////////////////////
 // static function definitions
@@ -146,14 +160,28 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->pcar.player_z = 0;
 	ctx->pcar.position = 0;
 	ctx->pcar.speed = 0;
-	ctx->pcar.max_speed = 1.f * (2.f * (float)ROAD_SEGMENT_LENGTH) /
-			      (float)ctx->step * (30.f / (float)FPS);
+
+	ctx->pcar.max_speed =
+		(2.f * (float)ROAD_SEGMENT_LENGTH) / (float)ctx->step *
+		(30.f / (float)FPS) *
+		pcar_stats[ctx->pcar.car_player_model][CAR_STAT_SPEED];
+
+	SDL_Log("[%s:%d] max_speed=%f, pcar_stats[%d][%d] = %f\n",
+		__func__,
+		__LINE__,
+		ctx->pcar.max_speed,
+		ctx->pcar.car_player_model,
+		CAR_STAT_SPEED,
+		pcar_stats[ctx->pcar.car_player_model][CAR_STAT_SPEED]);
+
 	// ctx->pcar.accel = ctx->pcar.max_speed / 5;
-	ctx->pcar.accel = ctx->pcar.max_speed / 50;
+	ctx->pcar.accel =
+		ctx->pcar.max_speed / 50 *
+		pcar_stats[ctx->pcar.car_player_model][CAR_STAT_ACCEL];
 
 	ctx->pcar.max_speed_nitro = ctx->pcar.max_speed * 1.33f;
 	ctx->pcar.accel_nitro = ctx->pcar.accel * 2.f;
-	ctx->pcar.nb_nitro = 3;
+	ctx->pcar.nb_nitro = (int) pcar_stats[ctx->pcar.car_player_model][CAR_STAT_NITRO];
 	ctx->pcar.breaking = ctx->pcar.max_speed * -1 / 20;
 	// ctx->pcar.decel = (ctx->pcar.max_speed / 5) * -1;
 	ctx->pcar.decel = (ctx->pcar.max_speed / 50) * -1;
@@ -161,7 +189,8 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->pcar.off_road_decel = (ctx->pcar.max_speed / 30) * -1;
 	// ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 3);
 	ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 2);
-	ctx->pcar.centrifugal = 0.3f;
+	ctx->pcar.centrifugal =
+		0.3f * pcar_stats[ctx->pcar.car_player_model][CAR_STAT_CENTRIFUGAL];
 
 	ctx->pcar.car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 	ctx->pcar.car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
@@ -213,7 +242,7 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
 
 	// track info init
-	//ctx->track.track_selected = TRACK_DIJON;
+	// ctx->track.track_selected = TRACK_DIJON;
 	ctx->track.lane_type = LANE_TYPE_HALF;
 	ctx->track.lane_color = color_lane_yellow;
 

@@ -3,6 +3,8 @@
 #define BORDER 0
 
 
+extern float pcar_stats[CAR_MODEL_LAST][CAR_STAT_LAST];
+
 enum another_bg_type { ANOTHER_BG_NONE, ANOTHER_BG_LEFT, ANOTHER_BG_RIGHT };
 
 
@@ -585,7 +587,8 @@ static int display_render_hud(struct game_context *ctx)
 	char speed[8];
 	sprintf(speed,
 		"%03d",
-		(int)(ctx->pcar.speed * 240.f /
+		(int)(ctx->pcar.speed * 230.f *
+		      pcar_stats[ctx->pcar.car_player_model][CAR_STAT_SPEED] /
 		      ctx->pcar.max_speed)); // TODO: set max_speed in kph per
 					     // car
 

@@ -14,17 +14,25 @@ enum car_sprite_idx {
 };
 
 enum car_model_type {
- 	CAR_MODEL_IMPREZIA = 0,
- 	CAR_MODEL_LOTUS,
- 	CAR_MODEL_FALCON,
- 	CAR_MODEL_TT,
- 	CAR_MODEL_TRUENO,
- 	CAR_MODEL_VIPER,
- 	CAR_MODEL_NSX,
- 	CAR_MODEL_HART,
+ 	CAR_MODEL_TRUENO = 0,
  	CAR_MODEL_DELTA,
+ 	CAR_MODEL_FALCON,
+ 	CAR_MODEL_HART,
+ 	CAR_MODEL_IMPREZIA,
  	CAR_MODEL_LANCER,
+ 	CAR_MODEL_TT,
+ 	CAR_MODEL_NSX,
+ 	CAR_MODEL_LOTUS,
+ 	CAR_MODEL_VIPER,
  	CAR_MODEL_LAST
+};
+
+enum car_stat_type {
+ 	CAR_STAT_SPEED = 0,
+ 	CAR_STAT_ACCEL,
+ 	CAR_STAT_CENTRIFUGAL,
+ 	CAR_STAT_NITRO,
+ 	CAR_STAT_LAST
 };
 
 /* identifies the different layers. Their value is the coefficient to which
