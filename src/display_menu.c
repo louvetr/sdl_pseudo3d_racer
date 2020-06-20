@@ -163,17 +163,68 @@ static int display_screen_rect_border(struct game_context *ctx,
 	return 0;
 }
 
+static int display_menu_stats_bordered_pict(struct game_context *ctx)
+{
+	int bwidth = 5;
+
+	float scale_car =
+		(float)SCREEN_WIDTH / 3.2f /
+		(float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].w;
+
+	int car_x =
+		SCREEN_WIDTH * 80 / 100 -
+		(int)((float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].w *
+		      scale_car / 2.f);
+	int car_y =
+		SCREEN_HEIGHT / 2 -
+		(int)((float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].h *
+		      scale_car / 2.f);
+
+	texture_render(ctx,
+		       &ctx->gfx.cars_stats[ctx->pcar.car_player_model],
+		       car_x,
+		       car_y,
+		       NULL,
+		       0.f,
+		       scale_car,
+		       0,
+		       NULL);
+
+	display_screen_rect_border(
+		ctx,
+		car_x,
+		car_y,
+		car_x + (int)((float)ctx->gfx
+				      .cars_stats[ctx->pcar.car_player_model]
+				      .w *
+			      scale_car),
+		car_y,
+		car_x,
+		car_y + (int)((float)ctx->gfx
+				      .cars_stats[ctx->pcar.car_player_model]
+				      .h *
+			      scale_car),
+		car_x + (int)((float)ctx->gfx
+				      .cars_stats[ctx->pcar.car_player_model]
+				      .w *
+			      scale_car),
+		car_y,
+		bwidth,
+		0,
+		0,
+		0);
+
+	return 0;
+}
+
 static int display_menu_car_bordered_pict(struct game_context *ctx)
 {
 	int bwidth = 5;
 
-	int car_bg_x =
-		SCREEN_WIDTH * 30 / 100 -
-		(int)((float)ctx->gfx.car_side_bg.w 
-		      / 2.f);
+	int car_bg_x = SCREEN_WIDTH * 30 / 100 -
+		       (int)((float)ctx->gfx.car_side_bg.w / 2.f);
 	int car_bg_y =
-		SCREEN_HEIGHT / 2 -
-		(int)((float)ctx->gfx.car_side_bg.h / 2.f);
+		SCREEN_HEIGHT / 2 - (int)((float)ctx->gfx.car_side_bg.h / 2.f);
 
 	texture_render(ctx,
 		       &ctx->gfx.car_side_bg,
@@ -214,20 +265,11 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 		ctx,
 		car_bg_x,
 		car_bg_y,
-		car_bg_x + (int)((float)ctx->gfx
-				      .car_side_bg
-				      .w *
-			      scale_car),
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
 		car_bg_y,
 		car_bg_x,
-		car_bg_y + (int)((float)ctx->gfx
-				      .car_side_bg
-				      .h *
-			      scale_car),
-		car_bg_x + (int)((float)ctx->gfx
-				      .car_side_bg
-				      .w *
-			      scale_car),
+		car_bg_y + (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
 		car_bg_y,
 		bwidth,
 		0,
@@ -323,6 +365,7 @@ int display_screen_menu_select_car(struct game_context *ctx)
 	SDL_RenderFillRect(ctx->renderer, &r);
 
 	display_menu_car_bordered_pict(ctx);
+	display_menu_stats_bordered_pict(ctx);
 
 	SDL_RenderPresent(ctx->renderer);
 

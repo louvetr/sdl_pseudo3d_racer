@@ -807,7 +807,7 @@ static int logic_menu_main(struct game_context *ctx)
 		// gfx_unload_resources(ctx);
 
 		// load race ressources
-		// gfx_load_resources_menu_select_car(ctx);
+		//gfx_load_resources_menu_select_car(ctx);
 		// sound_load_resources /*_race*/ (ctx);
 
 		main_ctx_init_menu_select_car(ctx);

@@ -122,6 +122,18 @@
 #define PNG_TRACK_STONE "./media/tracks/stone.png"
 
 
+#define PNG_STATS_TRUENO "./media/stats/stats_trueno.png"
+#define PNG_STATS_DELTA "./media/stats/stats_delta.png"
+#define PNG_STATS_FALCON "./media/stats/stats_falcon.png"
+#define PNG_STATS_HART "./media/stats/stats_hart.png"
+#define PNG_STATS_IMPREZIA "./media/stats/stats_imprezia.png"
+#define PNG_STATS_LANCER "./media/stats/stats_lancer.png"
+#define PNG_STATS_TT "./media/stats/stats_tt.png"
+#define PNG_STATS_NSX "./media/stats/stats_nsx.png"
+#define PNG_STATS_LOTUS "./media/stats/stats_lotus.png"
+#define PNG_STATS_VIPER "./media/stats/stats_viper.png"
+
+
 static int
 load_texture_from_file(struct game_context *ctx, char *path, struct texture *in)
 {
@@ -414,8 +426,34 @@ static int gfx_load_cars_side(struct game_context *ctx)
 	gfx_load_texture(
 		ctx, PNG_LOTUS_SIDE, &ctx->gfx.cars_side[CAR_MODEL_LOTUS]);
 	gfx_load_texture(ctx, PNG_TT_SIDE, &ctx->gfx.cars_side[CAR_MODEL_TT]);
-	
+
 	gfx_load_texture(ctx, PNG_CAR_SIDE_BACKGROUND, &ctx->gfx.car_side_bg);
+
+	return 0;
+}
+
+static int gfx_load_cars_stats(struct game_context *ctx)
+{
+	gfx_load_texture(ctx,
+			 PNG_STATS_IMPREZIA,
+			 &ctx->gfx.cars_stats[CAR_MODEL_IMPREZIA]);
+	gfx_load_texture(
+		ctx, PNG_STATS_DELTA, &ctx->gfx.cars_stats[CAR_MODEL_DELTA]);
+	gfx_load_texture(
+		ctx, PNG_STATS_TRUENO, &ctx->gfx.cars_stats[CAR_MODEL_TRUENO]);
+	gfx_load_texture(
+		ctx, PNG_STATS_FALCON, &ctx->gfx.cars_stats[CAR_MODEL_FALCON]);
+	gfx_load_texture(
+		ctx, PNG_STATS_HART, &ctx->gfx.cars_stats[CAR_MODEL_HART]);
+	gfx_load_texture(
+		ctx, PNG_STATS_NSX, &ctx->gfx.cars_stats[CAR_MODEL_NSX]);
+	gfx_load_texture(
+		ctx, PNG_STATS_VIPER, &ctx->gfx.cars_stats[CAR_MODEL_VIPER]);
+	gfx_load_texture(
+		ctx, PNG_STATS_LANCER, &ctx->gfx.cars_stats[CAR_MODEL_LANCER]);
+	gfx_load_texture(
+		ctx, PNG_STATS_LOTUS, &ctx->gfx.cars_stats[CAR_MODEL_LOTUS]);
+	gfx_load_texture(ctx, PNG_STATS_TT, &ctx->gfx.cars_stats[CAR_MODEL_TT]);
 
 	return 0;
 }
@@ -484,12 +522,14 @@ int gfx_load_resources_menu_select_track(struct game_context *ctx)
 int gfx_load_resources_menu_select_car(struct game_context *ctx)
 {
 	gfx_load_cars_side(ctx);
+	gfx_load_cars_stats(ctx);
 	return 0;
 }
 
 int gfx_load_resources_menu_main(struct game_context *ctx)
 {
 	gfx_load_cars_side(ctx);
+	gfx_load_cars_stats(ctx);
 	gfx_load_tracks_thumbnail(ctx);
 
 	return 0;
@@ -544,8 +584,10 @@ int gfx_unload_resources(struct game_context *ctx)
 		for (int j = 0; j < CAR_SPRITE_LAST; j++)
 			SDL_DestroyTexture(ctx->gfx.cars[i][j].texture);
 
-	for (int i = 0; i < CAR_MODEL_LAST; i++)
+	for (int i = 0; i < CAR_MODEL_LAST; i++) {
 		SDL_DestroyTexture(ctx->gfx.cars_side[i].texture);
+		SDL_DestroyTexture(ctx->gfx.cars_stats[i].texture);
+	}
 
 	SDL_DestroyTexture(ctx->gfx.bg_mountains.texture);
 	SDL_DestroyTexture(ctx->gfx.bg_sky_near.texture);

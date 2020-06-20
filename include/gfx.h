@@ -46,6 +46,7 @@ struct game_graphics{
 	//struct car_model_texture cars[CAR_MODEL_LAST]; 
 	struct texture cars[CAR_MODEL_LAST][CAR_SPRITE_LAST];
 	struct texture cars_side[CAR_MODEL_LAST];
+	struct texture cars_stats[CAR_MODEL_LAST];
 
 	struct texture bg_mountains;
 	struct texture bg_sky_near;
