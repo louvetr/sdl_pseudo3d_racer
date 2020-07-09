@@ -128,6 +128,63 @@ static int event_menu_select_car(struct game_context *ctx)
 	return 0;
 }
 
+static int event_menu_option(struct game_context *ctx)
+{
+
+	memset(&ctx->keys, 0, sizeof(struct keys_status));
+
+	while (SDL_PollEvent(&ctx->event) != 0) {
+		if (ctx->event.type == SDL_QUIT)
+			ctx->exit = 1;
+
+		if (ctx->event.type == SDL_KEYUP) {
+			switch (ctx->event.key.keysym.sym) {
+			case SDLK_ESCAPE:
+				ctx->action = ACTION_ESCAPE;
+				break;
+			case SDLK_RETURN:
+				ctx->action = ACTION_ENTER;
+				break;
+			case SDLK_SPACE:
+				ctx->keys.select = 1;
+				break;
+			case SDLK_UP:
+			case SDLK_z:
+				ctx->keys.up = 1;
+				break;
+			case SDLK_DOWN:
+			case SDLK_s:
+				ctx->keys.down = 1;
+				break;
+			case SDLK_LEFT:
+			case SDLK_q:
+				ctx->keys.left = 1;
+				break;
+			case SDLK_RIGHT:
+			case SDLK_d:
+				ctx->keys.right = 1;
+				break;
+			case SDLK_8:
+				ctx->keys.volume_music = 1;
+				break;
+			case SDLK_5:
+				ctx->keys.volume_sfx = 1;
+				break;
+			case SDLK_2:
+				ctx->keys.reset_save = 1;
+				break;
+			case SDLK_BACKSPACE:
+				ctx->keys.back = 1;
+				break;
+			default:
+				continue;
+			}
+		}
+	}
+
+	return 0;
+}
+
 
 static int event_menu_title(struct game_context *ctx)
 {
@@ -291,6 +348,9 @@ int main_event(struct game_context *ctx)
 	case GAME_STATE_MENU_SELECT_TRACK:
 	case GAME_STATE_MENU_SELECT_CAR:
 		event_menu_select_car(ctx);
+		break;
+	case GAME_STATE_MENU_OPTION:
+		event_menu_option(ctx);
 		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_END:

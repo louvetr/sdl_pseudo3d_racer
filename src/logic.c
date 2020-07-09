@@ -827,6 +827,20 @@ static int logic_menu_main(struct game_context *ctx)
 		main_ctx_init_menu_select_track(ctx);
 	}
 
+	if (ctx->keys.up) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+		event_update_game_state(ctx, GAME_STATE_MENU_OPTION);
+
+		// unload menu resources
+		// gfx_unload_resources(ctx);
+
+		// load race ressources
+		// gfx_load_resources_menu_select_track(ctx);
+		// sound_load_resources /*_race*/ (ctx);
+
+		main_ctx_init_menu_option(ctx);
+	}
+
 	if (ctx->keys.select) {
 		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
 
@@ -948,6 +962,72 @@ static int logic_menu_select_car(struct game_context *ctx)
 	return 0;
 }
 
+static int logic_menu_option(struct game_context *ctx)
+{
+	if (ctx->keys.back) {
+
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+
+		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
+
+		main_ctx_init_menu_main(ctx);
+
+		return 0;
+	}
+
+	if (ctx->keys.volume_music) {
+		switch(ctx->sound.volume_music){
+			case VOLUME_0:
+			ctx->sound.volume_music = VOLUME_20;
+			break;
+			case VOLUME_20:
+			ctx->sound.volume_music = VOLUME_40;
+			break;
+			case VOLUME_40:
+			ctx->sound.volume_music = VOLUME_60;
+			break;
+			case VOLUME_60:
+			ctx->sound.volume_music = VOLUME_80;
+			break;
+			case VOLUME_80:
+			ctx->sound.volume_music = VOLUME_100;
+			break;
+			case VOLUME_100:
+			ctx->sound.volume_music = VOLUME_0;
+			break;
+		}
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
+		Mix_VolumeMusic(ctx->sound.volume_music);
+	}
+
+	if (ctx->keys.volume_sfx) {
+		switch(ctx->sound.volume_sfx){
+			case VOLUME_0:
+			ctx->sound.volume_sfx = VOLUME_20;
+			break;
+			case VOLUME_20:
+			ctx->sound.volume_sfx = VOLUME_40;
+			break;
+			case VOLUME_40:
+			ctx->sound.volume_sfx = VOLUME_60;
+			break;
+			case VOLUME_60:
+			ctx->sound.volume_sfx = VOLUME_80;
+			break;
+			case VOLUME_80:
+			ctx->sound.volume_sfx = VOLUME_100;
+			break;
+			case VOLUME_100:
+			ctx->sound.volume_sfx = VOLUME_0;
+			break;
+		}
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_b, 0);
+		Mix_Volume(-1, ctx->sound.volume_sfx);
+	}
+
+	return 0;
+}
+
 
 int main_logic(struct game_context *ctx)
 {
@@ -970,6 +1050,9 @@ int main_logic(struct game_context *ctx)
 		break;
 	case GAME_STATE_MENU_SELECT_CAR:
 		logic_menu_select_car(ctx);
+		break;
+	case GAME_STATE_MENU_OPTION:
+		logic_menu_option(ctx);
 		break;
 	case GAME_STATE_RACE_ANIM_START:
 	case GAME_STATE_RACE_ANIM_END:

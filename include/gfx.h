@@ -2,12 +2,12 @@
 
 #define NB_PARTICLES_SMOKE_AVAILABLE	7
 #define NB_PARTICLES_SMOKE_DISPLAY		10
-#define PARTICLE_SMOKE_SCALE	0.2f
+#define PARTICLE_SMOKE_SCALE	0.4f
 #define PARTICLE_SMOKE_FRAME_DURATION	10
 
 #define NB_PARTICLES_NITRO_AVAILABLE	5
 #define NB_PARTICLES_NITRO_DISPLAY		10
-#define PARTICLE_NITRO_SCALE	0.2f
+#define PARTICLE_NITRO_SCALE	0.3f
 #define PARTICLE_NITRO_FRAME_DURATION	10
 
 #define NB_SPRITE_BUSH 6
@@ -116,6 +116,14 @@ struct game_graphics{
 
 	struct texture track_thumbnail[TRACK_LAST];
 
+	struct texture gui_settings;
+	struct texture gui_exit;
+	struct texture gui_prev;
+	struct texture gui_play;
+	struct texture gui_up;
+	struct texture gui_down;
+
+	struct texture gui_case;
 };
 
 

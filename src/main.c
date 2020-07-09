@@ -314,6 +314,13 @@ int main_ctx_init_menu_select_track(struct game_context *ctx)
 	return 0;
 }
 
+int main_ctx_init_menu_option(struct game_context *ctx)
+{
+	ctx->status_cur = GAME_STATE_MENU_OPTION;
+	ctx->status_prev = GAME_STATE_UNKNOWN;
+
+	return 0;
+}
 
 int main_ctx_init_menu_main(struct game_context *ctx)
 {
@@ -385,7 +392,10 @@ int main()
 		return -EINVAL;
 	}
 
-	Mix_VolumeMusic(MAX_VOLUME);
+	ctx->sound.volume_music = VOLUME_100;
+	ctx->sound.volume_sfx = VOLUME_100;
+	Mix_VolumeMusic(ctx->sound.volume_music);
+	Mix_Volume(-1, ctx->sound.volume_music);
 
 	gfx_load_resources_title(ctx);
 	sound_load_resources_title(ctx);

@@ -91,6 +91,7 @@ enum game_status {
 	GAME_STATE_MENU_MAIN,
 	GAME_STATE_MENU_SELECT_TRACK,
 	GAME_STATE_MENU_SELECT_CAR,
+	GAME_STATE_MENU_OPTION,
 	GAME_STATE_RACE,
 	GAME_STATE_RACE_ANIM_START,
 	GAME_STATE_RACE_ANIM_END,
@@ -245,6 +246,10 @@ struct keys_status {
 	int down;
 	int select;
 	int back;
+
+	int volume_music;
+	int volume_sfx;
+	int reset_save;
 };
 
 struct ai_car_info {
@@ -582,11 +587,13 @@ int load_text_message(struct game_context *ctx,
 int main_ctx_init_menu_main(struct game_context *ctx);
 int main_ctx_init_menu_select_track(struct game_context *ctx);
 int main_ctx_init_menu_select_car(struct game_context *ctx);
+int main_ctx_init_menu_option(struct game_context *ctx);
 int main_ctx_init_race(struct game_context *ctx);
 
 int display_screen_menu_main(struct game_context *ctx);
 int display_screen_menu_select_track(struct game_context *ctx);
 int display_screen_menu_select_car(struct game_context *ctx);
+int display_screen_menu_option(struct game_context *ctx);
 
 int display_screen_title(struct game_context *ctx);
 
@@ -595,6 +602,8 @@ int display_render_background_layer(struct game_context *ctx,
 					   int *texture_x_offset,
 					   struct texture *bg_texture);
 
+
+char *sound_volume2string(enum sound_volume volume);
 
 // MAINs
 int main_sound(struct game_context *ctx);

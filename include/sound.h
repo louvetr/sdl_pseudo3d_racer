@@ -1,6 +1,15 @@
    
 #define NB_BGM 4
 
+enum sound_volume {
+	VOLUME_0  = 0,
+	VOLUME_20 = 26,
+	VOLUME_40 = 51,
+	VOLUME_60 = 77,
+	VOLUME_80 = 102,
+	VOLUME_100 = 128,
+};
+
 enum sfx_state {
 	SFX_NONE = 0,
 	SFX_IDLE = 1,
@@ -39,15 +48,16 @@ struct musics {
 };
 
 struct sound_info {
-    int mute_sfx;
-    int mute_music;
 	struct sfxs sfx;
 	struct musics music;
 	int bgm_idx;
+	enum sound_volume volume_music;
+	enum sound_volume volume_sfx;
 
 	// flags for SFX notifications
 	int collision_detected;
 	float drift;
 	float drift_prev;
 	int lap_sfx;
+
 };

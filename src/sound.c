@@ -1,5 +1,5 @@
-#include "race.h"
 #include "main.h"
+#include "race.h"
 
 
 #define SFX_MENU_A "./media/sfx/MENU A_Select.wav"
@@ -30,7 +30,7 @@
 #define MUSIC_BGM_1_NAME "\"Infinity\" by Aries Beats"
 #define MUSIC_BGM_2_NAME "\"In the 1980s\" by Simon Bichbihler"
 #define MUSIC_BGM_3_NAME "\"Turbo Rush\" by Aries Beats"
-#define MUSIC_BGM_4_NAME "\"Sunrise Over Los Angeles\" by TeknoAXE"                                                           \
+#define MUSIC_BGM_4_NAME "\"Sunrise Over Los Angeles\" by TeknoAXE"
 
 #define SFX_CHANNEL_MOTOR 0
 #define SFX_CHANNEL_COLLISION 1
@@ -72,10 +72,10 @@ int sound_load_resources_race(struct game_context *ctx)
 	sound_load_music(&ctx->sound.music.bgm[2], MUSIC_BGM_3);
 	sound_load_music(&ctx->sound.music.bgm[3], MUSIC_BGM_4);
 
-	ctx->sound.music.bgm_name[0] = MUSIC_BGM_1_NAME;	
-	ctx->sound.music.bgm_name[1] = MUSIC_BGM_2_NAME;	
-	ctx->sound.music.bgm_name[2] = MUSIC_BGM_3_NAME;	
-	ctx->sound.music.bgm_name[3] = MUSIC_BGM_4_NAME;	
+	ctx->sound.music.bgm_name[0] = MUSIC_BGM_1_NAME;
+	ctx->sound.music.bgm_name[1] = MUSIC_BGM_2_NAME;
+	ctx->sound.music.bgm_name[2] = MUSIC_BGM_3_NAME;
+	ctx->sound.music.bgm_name[3] = MUSIC_BGM_4_NAME;
 
 	sound_load_wav(&ctx->sound.sfx.engine_accel, SFX_ENGINE_ACCEL);
 	sound_load_wav(&ctx->sound.sfx.engine_nitro, SFX_ENGINE_NITRO);
@@ -122,12 +122,12 @@ int sound_unload_resources(struct game_context *ctx)
 {
 	Mix_HaltMusic();
 
-	if(ctx->sound.music.title) {
+	if (ctx->sound.music.title) {
 		Mix_FreeMusic(ctx->sound.music.title);
 		ctx->sound.music.title = NULL;
 	}
 
-	if(ctx->sound.music.menu) {
+	if (ctx->sound.music.menu) {
 		Mix_FreeMusic(ctx->sound.music.menu);
 		ctx->sound.music.menu = NULL;
 	}
@@ -151,7 +151,7 @@ int sound_unload_resources(struct game_context *ctx)
 	Mix_FreeChunk(ctx->sound.sfx.three);
 	Mix_FreeChunk(ctx->sound.sfx.go);
 	Mix_FreeChunk(ctx->sound.sfx.congratulations);
-	
+
 	Mix_FreeChunk(ctx->sound.sfx.menu_a);
 	Mix_FreeChunk(ctx->sound.sfx.menu_b);
 
@@ -159,6 +159,26 @@ int sound_unload_resources(struct game_context *ctx)
 }
 
 
+char *sound_volume2string(enum sound_volume volume)
+{
+	switch (volume) {
+	case VOLUME_0:
+		return "  0%";
+	case VOLUME_20:
+		return " 20%";
+	case VOLUME_40:
+		return " 40%";
+	case VOLUME_60:
+		return " 60%";
+	case VOLUME_80:
+		return " 80%";
+	case VOLUME_100:
+		return "100%";
+	}
+
+	// should not happen
+	return "  ?%";
+}
 
 int main_sound(struct game_context *ctx)
 {
@@ -174,8 +194,9 @@ int main_sound(struct game_context *ctx)
 		if (ctx->keys.nitro &&
 		    ctx->keys.nitro != ctx->keys.nitro_prev) {
 			Mix_HaltChannel(SFX_CHANNEL_MOTOR);
-			Mix_PlayChannel(
-				SFX_CHANNEL_MOTOR, ctx->sound.sfx.engine_nitro, -1);
+			Mix_PlayChannel(SFX_CHANNEL_MOTOR,
+					ctx->sound.sfx.engine_nitro,
+					-1);
 
 			SDL_Log("[%s] NITRO 1\n", __func__);
 
@@ -187,14 +208,16 @@ int main_sound(struct game_context *ctx)
 				ctx->keys.accel_prev);*/
 			if (ctx->keys.accel) {
 				if (ctx->pcar.nitro_nb_frame) {
-					Mix_PlayChannel(SFX_CHANNEL_MOTOR,
-							ctx->sound.sfx.engine_nitro,
-							-1);
+					Mix_PlayChannel(
+						SFX_CHANNEL_MOTOR,
+						ctx->sound.sfx.engine_nitro,
+						-1);
 					SDL_Log("[%s] NITRO 2\n", __func__);
 				} else {
-					Mix_PlayChannel(SFX_CHANNEL_MOTOR,
-							ctx->sound.sfx.engine_accel,
-							-1);
+					Mix_PlayChannel(
+						SFX_CHANNEL_MOTOR,
+						ctx->sound.sfx.engine_accel,
+						-1);
 					SDL_Log("[%s] ACCEL, accel=%d, accel_prev=%d\n",
 						__func__,
 						ctx->keys.accel,
@@ -229,16 +252,21 @@ int main_sound(struct game_context *ctx)
 		}
 
 
-		if (ctx->sound.collision_detected){
-			Mix_PlayChannel(
-				SFX_CHANNEL_COLLISION, ctx->sound.sfx.impact, 0);
-			SDL_Log("[%s] --------------------- impact SFX\n", __func__);
+		if (ctx->sound.collision_detected) {
+			Mix_PlayChannel(SFX_CHANNEL_COLLISION,
+					ctx->sound.sfx.impact,
+					0);
+			SDL_Log("[%s] --------------------- impact SFX\n",
+				__func__);
 		}
 
 
-		if ((ctx->sound.drift >= 0.025f && ctx->sound.drift_prev < 0.025f) ||
-		    (ctx->sound.drift <= -0.025f && ctx->sound.drift_prev > -0.025f))
-			Mix_PlayChannel(SFX_CHANNEL_DRIFT, ctx->sound.sfx.drift, -1);
+		if ((ctx->sound.drift >= 0.025f &&
+		     ctx->sound.drift_prev < 0.025f) ||
+		    (ctx->sound.drift <= -0.025f &&
+		     ctx->sound.drift_prev > -0.025f))
+			Mix_PlayChannel(
+				SFX_CHANNEL_DRIFT, ctx->sound.sfx.drift, -1);
 
 
 		if (ctx->sound.lap_sfx)
@@ -247,7 +275,8 @@ int main_sound(struct game_context *ctx)
 
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_START &&
 	    ctx->status_prev != GAME_STATE_RACE_ANIM_START) {
-		Mix_PlayChannel(SFX_CHANNEL_MOTOR, ctx->sound.sfx.engine_idle, -1);
+		Mix_PlayChannel(
+			SFX_CHANNEL_MOTOR, ctx->sound.sfx.engine_idle, -1);
 		SDL_Log("[%s] engine IDLE\n", __func__);
 	}
 
@@ -260,7 +289,7 @@ int main_sound(struct game_context *ctx)
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END &&
 	    ctx->status_prev != GAME_STATE_RACE_ANIM_END) {
 		Mix_HaltMusic();
-		//Mix_VolumeMusic(MAX_VOLUME / 2);
+		// Mix_VolumeMusic(MAX_VOLUME / 2);
 		Mix_HaltChannel(SFX_CHANNEL_MOTOR);
 		Mix_PlayMusic(ctx->sound.music.end_race, 0);
 		Mix_PlayChannel(-1, ctx->sound.sfx.congratulations, 0);

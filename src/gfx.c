@@ -134,6 +134,16 @@
 #define PNG_STATS_VIPER "./media/stats/stats_viper.png"
 
 
+#define PNG_GUI_SETTINGS "./media/gui/settings.png"
+#define PNG_GUI_EXIT "./media/gui/exit.png"
+#define PNG_GUI_PREV "./media/gui/prev.png"
+//#define PNG_GUI_PLAY "./media/gui/play_y.png"
+#define PNG_GUI_PLAY "./media/gui/play_icon.png"
+#define PNG_GUI_UP "./media/gui/up.png"
+#define PNG_GUI_DOWN "./media/gui/down.png"
+#define PNG_GUI_CASE "./media/gui/case_empty.png"
+
+
 static int
 load_texture_from_file(struct game_context *ctx, char *path, struct texture *in)
 {
@@ -458,6 +468,39 @@ static int gfx_load_cars_stats(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_gui(struct game_context *ctx)
+{
+	gfx_load_texture(ctx,
+			 PNG_GUI_SETTINGS,
+			 &ctx->gfx.gui_settings);
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_EXIT,
+			 &ctx->gfx.gui_exit);
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_PREV,
+			 &ctx->gfx.gui_prev);
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_PLAY,
+			 &ctx->gfx.gui_play);
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_UP,
+			 &ctx->gfx.gui_up);
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_DOWN,
+			 &ctx->gfx.gui_down);		
+
+	gfx_load_texture(ctx,
+			 PNG_GUI_CASE,
+			 &ctx->gfx.gui_case);
+
+	return 0;
+}
+
 static int gfx_load_particles(struct game_context *ctx)
 {
 	gfx_load_texture(ctx, PNG_SMOKE_00, &ctx->gfx.t_smoke[0]);
@@ -531,6 +574,7 @@ int gfx_load_resources_menu_main(struct game_context *ctx)
 	gfx_load_cars_side(ctx);
 	gfx_load_cars_stats(ctx);
 	gfx_load_tracks_thumbnail(ctx);
+	gfx_load_gui(ctx);
 
 	return 0;
 }
@@ -646,6 +690,14 @@ int gfx_unload_resources(struct game_context *ctx)
 	for (int i = 0; i < TRACK_LAST; i++)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
+	
+	SDL_DestroyTexture(ctx->gfx.gui_settings.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_exit.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_prev.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_play.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_up.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_down.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_case.texture);
 
 	// unload fonts
 
