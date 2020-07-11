@@ -117,6 +117,7 @@ struct game_graphics{
 	struct texture track_thumbnail[TRACK_LAST];
 
 	struct texture gui_settings;
+	struct texture gui_credit;
 	struct texture gui_exit;
 	struct texture gui_prev;
 	struct texture gui_play;

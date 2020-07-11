@@ -1,6 +1,28 @@
 #include "main.h"
 
 
+#define CREDIT_MUSIC_01 "'Infinity' by Aries Beats"
+#define CREDIT_MUSIC_02 "'Turbo Rush' by Aries Beats"
+#define CREDIT_MUSIC_03 "'In the 1980s' by Simon Bichbihler"
+#define CREDIT_MUSIC_04 "'Sunrise Over Los Angeles' by TeknoAXE"
+#define CREDIT_MUSIC_05 "'Starting Line' by Eric Matyas"
+#define CREDIT_MUSIC_06 "'Racing Menu' by Eric Matyas"
+
+#define CREDIT_SFX_01 "'drifting tires sound' by audible-edge"
+#define CREDIT_SFX_02 "'Lap notification sound' from 'stunt rally' game"
+
+#define CREDIT_MUSIC_NB 6
+#define CREDIT_SFX_NB 2
+
+static char *CREDIT_MUSIC_TAB[CREDIT_MUSIC_NB] = {CREDIT_MUSIC_01,
+						  CREDIT_MUSIC_02,
+						  CREDIT_MUSIC_03,
+						  CREDIT_MUSIC_04,
+						  CREDIT_MUSIC_05,
+						  CREDIT_MUSIC_06};
+
+static char *CREDIT_SFX_TAB[CREDIT_SFX_NB] = {CREDIT_SFX_01, CREDIT_SFX_02};
+
 static int display_menu_sliding_grid(SDL_Renderer *renderer,
 				     int width_num,
 				     int width_den,
@@ -503,6 +525,16 @@ int display_screen_menu_main(struct game_context *ctx)
 		ctx, &ctx->gfx.gui_settings, 0, 0, NULL, 0.f, 1.f, 0, NULL);
 
 	texture_render(ctx,
+		       &ctx->gfx.gui_credit,
+		       (SCREEN_WIDTH - ctx->gfx.gui_credit.w) / 2,
+		       0,
+		       NULL,
+		       0.f,
+		       1.f,
+		       0,
+		       NULL);
+
+	texture_render(ctx,
 		       &ctx->gfx.gui_exit,
 		       SCREEN_WIDTH - ctx->gfx.gui_exit.w,
 		       0,
@@ -702,6 +734,123 @@ int display_screen_menu_option(struct game_context *ctx)
 
 	SDL_RenderPresent(ctx->renderer);
 	TTF_CloseFont(finish_font);
+
+	return ret;
+}
+
+int display_screen_menu_credit(struct game_context *ctx)
+{
+	int ret = 0;
+
+	// clear screen
+	SDL_SetRenderDrawColor(ctx->renderer, 220, 220, 0, 0xFF);
+	SDL_RenderClear(ctx->renderer);
+
+	// animated background
+	display_menu_animated_background(ctx);
+
+	SDL_Color text_color_front_1 = {0x0, 0x0, 0x0};
+	int font_size_big = 64;
+	int font_size_medium = 48;
+	int font_size_small = 32;
+	TTF_Font *font_big = NULL;
+	TTF_Font *font_medium = NULL;
+	TTF_Font *font_small = NULL;
+
+	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
+	if (!font_big) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+	font_medium = TTF_OpenFont(SOFACHROME_FONT, font_size_medium);
+	if (!font_medium) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
+	if (!font_small) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text(ctx,
+				 font_big,
+				 &ctx->gfx.font_race_anim,
+				 "Credits",
+				 &text_color_front_1,
+				 SCREEN_WIDTH * 40 / 100,
+				 SCREEN_HEIGHT * 2 / 100,
+				 0.f);
+	display_load_render_text(ctx,
+				 font_medium,
+				 &ctx->gfx.font_race_anim,
+				 "Music:",
+				 &text_color_front_1,
+				 SCREEN_WIDTH * 2 / 100,
+				 SCREEN_HEIGHT * 20 / 100,
+				 0.f);
+
+	int offset_num = 28;
+	int step = 5;
+	SDL_Rect r = {.x = 0,
+		      .y = SCREEN_HEIGHT * offset_num / 100,
+		      .w = SCREEN_WIDTH,
+		      .h = SCREEN_HEIGHT * (step * CREDIT_MUSIC_NB + 1) / 100};
+	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+	for (int i = 0; i < CREDIT_MUSIC_NB; i++) {
+		display_load_render_text(ctx,
+					 font_small,
+					 &ctx->gfx.font_race_anim,
+					 CREDIT_MUSIC_TAB[i],
+					 &text_color_front_1,
+					 SCREEN_WIDTH * 2 / 100,
+					 SCREEN_HEIGHT *
+						 (offset_num + step * i) / 100,
+					 0.f);
+	}
+
+	// Display SFX list
+	display_load_render_text(ctx,
+				 font_medium,
+				 &ctx->gfx.font_race_anim,
+				 "SFX:",
+				 &text_color_front_1,
+				 SCREEN_WIDTH * 2 / 100,
+				 SCREEN_HEIGHT * 70 / 100,
+				 0.f);
+
+	offset_num = 78;
+	r.y = SCREEN_HEIGHT * offset_num / 100;
+	r.h = SCREEN_HEIGHT * (step * CREDIT_SFX_NB + 1) / 100;
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+	for (int i = 0; i < CREDIT_SFX_NB; i++) {
+		display_load_render_text(ctx,
+					 font_small,
+					 &ctx->gfx.font_race_anim,
+					 CREDIT_SFX_TAB[i],
+					 &text_color_front_1,
+					 SCREEN_WIDTH * 2 / 100,
+					 SCREEN_HEIGHT *
+						 (offset_num + step * i) / 100,
+					 0.f);
+	}
+
+	// back button
+	texture_render(ctx, &ctx->gfx.gui_prev, 0, 0, NULL, 0.f, 1.f, 0, NULL);
+
+	SDL_RenderPresent(ctx->renderer);
+	TTF_CloseFont(font_big);
+	TTF_CloseFont(font_medium);
+	TTF_CloseFont(font_small);
 
 	return ret;
 }

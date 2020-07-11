@@ -189,6 +189,9 @@ int main_display(struct game_context *ctx)
 	case GAME_STATE_MENU_OPTION:
 		display_screen_menu_option(ctx);
 		break;
+	case GAME_STATE_MENU_CREDIT:
+		display_screen_menu_credit(ctx);
+		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_START:
 	case GAME_STATE_RACE_ANIM_END:

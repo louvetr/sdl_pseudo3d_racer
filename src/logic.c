@@ -867,6 +867,11 @@ static int logic_menu_main(struct game_context *ctx)
 		ai_car_init(ctx);
 	}
 
+	if (ctx->keys.credit) {
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+		event_update_game_state(ctx, GAME_STATE_MENU_CREDIT);
+	}
+
 	return 0;
 }
 
@@ -1031,6 +1036,22 @@ static int logic_menu_option(struct game_context *ctx)
 	return 0;
 }
 
+static int logic_menu_credit(struct game_context *ctx)
+{
+	if (ctx->keys.back) {
+
+		Mix_PlayChannel(SFX_CHANNEL_MENU, ctx->sound.sfx.menu_a, 0);
+
+		SDL_Log("[%s] ctx->keys.back PRESSED\n", __func__);
+
+		main_ctx_init_menu_main(ctx);
+
+		return 0;
+	}
+
+	return 0;
+}
+
 static int logic_race_option(struct game_context *ctx)
 {
 	if (ctx->keys.back) {
@@ -1160,6 +1181,9 @@ int main_logic(struct game_context *ctx)
 		break;
 	case GAME_STATE_MENU_OPTION:
 		logic_menu_option(ctx);
+		break;
+	case GAME_STATE_MENU_CREDIT:
+		logic_menu_credit(ctx);
 		break;
 	case GAME_STATE_RACE_OPTION:
 		logic_race_option(ctx);

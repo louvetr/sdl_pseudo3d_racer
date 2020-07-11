@@ -119,6 +119,9 @@ static int event_menu_select_car(struct game_context *ctx)
 			case SDLK_BACKSPACE:
 				ctx->keys.back = 1;
 				break;
+			case SDLK_c:
+				ctx->keys.credit = 1;
+				break;
 			default:
 				continue;
 			}
@@ -176,6 +179,26 @@ static int event_menu_option(struct game_context *ctx)
 			case SDLK_KP_2:
 				ctx->keys.reset_save = 1;
 				break;
+			case SDLK_BACKSPACE:
+				ctx->keys.back = 1;
+				break;
+			default:
+				continue;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int event_menu_credit(struct game_context *ctx)
+{
+
+	memset(&ctx->keys, 0, sizeof(struct keys_status));
+
+	while (SDL_PollEvent(&ctx->event) != 0) {
+		if (ctx->event.type == SDL_KEYUP) {
+			switch (ctx->event.key.keysym.sym) {
 			case SDLK_BACKSPACE:
 				ctx->keys.back = 1;
 				break;
@@ -393,6 +416,9 @@ int main_event(struct game_context *ctx)
 		break;
 	case GAME_STATE_MENU_OPTION:
 		event_menu_option(ctx);
+		break;
+	case GAME_STATE_MENU_CREDIT:
+		event_menu_credit(ctx);
 		break;
 	case GAME_STATE_RACE_OPTION:
 		event_race_option(ctx);

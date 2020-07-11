@@ -141,6 +141,7 @@
 #define PNG_GUI_PLAY "./media/gui/play_icon.png"
 #define PNG_GUI_UP "./media/gui/up.png"
 #define PNG_GUI_DOWN "./media/gui/down.png"
+#define PNG_GUI_CREDIT "./media/gui/credit.png"
 #define PNG_GUI_CASE "./media/gui/case_empty.png"
 
 
@@ -471,6 +472,10 @@ static int gfx_load_cars_stats(struct game_context *ctx)
 static int gfx_load_gui(struct game_context *ctx)
 {
 	gfx_load_texture(ctx,
+			 PNG_GUI_CREDIT,
+			 &ctx->gfx.gui_credit);
+
+	gfx_load_texture(ctx,
 			 PNG_GUI_SETTINGS,
 			 &ctx->gfx.gui_settings);
 
@@ -698,6 +703,7 @@ int gfx_unload_resources(struct game_context *ctx)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
 	
+	SDL_DestroyTexture(ctx->gfx.gui_credit.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_settings.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_exit.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_prev.texture);
