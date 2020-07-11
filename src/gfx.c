@@ -615,6 +615,13 @@ int gfx_load_resources_race(struct game_context *ctx)
 		return ret;
 	}
 
+	gfx_load_texture(ctx,
+			 PNG_GUI_PREV,
+			 &ctx->gfx.gui_prev);
+	gfx_load_texture(ctx,
+			 PNG_GUI_CASE,
+			 &ctx->gfx.gui_case);
+
 	SDL_Log("media loaded\n");
 
 	return 0;

@@ -97,6 +97,7 @@ enum game_status {
 	GAME_STATE_RACE_ANIM_END,
 	GAME_STATE_RACE_COLLISION_SCENE,
 	GAME_STATE_RACE_NITRO,
+	GAME_STATE_RACE_OPTION,
 	GAME_STATE_PAUSE,
 	GAME_STATE_GAMEOVER,
 	GAME_STATE_QUIT
@@ -246,7 +247,9 @@ struct keys_status {
 	int down;
 	int select;
 	int back;
+	int exit;
 
+	int option;
 	int volume_music;
 	int volume_sfx;
 	int reset_save;
@@ -323,8 +326,10 @@ struct game_context {
 
     // current status in state machine
     enum game_status status_cur;
-    // previous status in state machine
+    // previous status in state machine (updated each frame)
     enum game_status status_prev;
+    // previous status in state machine (stored purposely)
+    enum game_status status_stored;
 
     // event
     SDL_Event event;
@@ -339,6 +344,7 @@ struct game_context {
 	float dt;
 
 	struct keys_status keys;
+	struct keys_status keys_backup;
 
 	float scale_player_car[CAR_MODEL_LAST];
 	float scale_ai_car[CAR_MODEL_LAST];
@@ -548,6 +554,7 @@ int event_update_game_state(struct game_context *ctx, enum game_status state);
 
 // display 
 int display_screen_race(struct game_context *ctx);
+int display_screen_race_option(struct game_context *ctx);
 int texture_render(struct game_context *ctx,
 			  struct texture *t,
 			  int x,

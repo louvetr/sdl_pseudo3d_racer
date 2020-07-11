@@ -196,6 +196,10 @@ int main_display(struct game_context *ctx)
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		display_screen_race(ctx);
 		break;
+	case GAME_STATE_RACE_OPTION:
+		display_screen_race(ctx);
+		display_screen_race_option(ctx);
+		break;
 	case GAME_STATE_PAUSE:
 		break;
 	case GAME_STATE_GAMEOVER:

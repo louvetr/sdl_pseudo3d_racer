@@ -1335,23 +1335,30 @@ int display_render_background_layer(struct game_context *ctx,
 	if (bg_layer == BG_LAYER_LANDSCAPE_FAR)
 		bg_y_offset_num = 59;
 
-	// init bg_clip_rect.x the 1st time
-	if (!*texture_x_offset)
-		*texture_x_offset = bg_texture->w / 2 - SCREEN_WIDTH / 2;
 
-	// TODO : BG rotation % speed, no rotation if speed == 0
-	// TODO : do some modulus to avoid going too far
-	if (ctx->track.nb_segments)
-		*texture_x_offset +=
-			(int)(ctx->track.segments[ctx->pcar.player_segment]
-				      .curve *
-			      (float)bg_layer * ctx->pcar.speed /
-			      ctx->pcar.max_speed);
+	if (ctx->status_cur != GAME_STATE_RACE_OPTION) {
 
-	if (*texture_x_offset > bg_texture->w)
-		*texture_x_offset -= bg_texture->w;
-	else if (*texture_x_offset < -SCREEN_WIDTH)
-		*texture_x_offset += bg_texture->w;
+		// init bg_clip_rect.x the 1st time
+		if (!*texture_x_offset)
+			*texture_x_offset =
+				bg_texture->w / 2 - SCREEN_WIDTH / 2;
+
+		// TODO : BG rotation % speed, no rotation if speed == 0
+		// TODO : do some modulus to avoid going too far
+		if (ctx->track.nb_segments)
+			*texture_x_offset +=
+				(int)(ctx->track
+					      .segments[ctx->pcar
+								.player_segment]
+					      .curve *
+				      (float)bg_layer * ctx->pcar.speed /
+				      ctx->pcar.max_speed);
+
+		if (*texture_x_offset > bg_texture->w)
+			*texture_x_offset -= bg_texture->w;
+		else if (*texture_x_offset < -SCREEN_WIDTH)
+			*texture_x_offset += bg_texture->w;
+	}
 
 	bg_clip_rect.x = *texture_x_offset;
 
@@ -1576,7 +1583,193 @@ int display_screen_race(struct game_context *ctx)
 
 	// TODO: put at the end of switch case
 	// update screen
+	if (ctx->status_cur != GAME_STATE_RACE_OPTION)
+		SDL_RenderPresent(ctx->renderer);
+
+	return ret;
+}
+
+int display_screen_race_option(struct game_context *ctx)
+{
+	int ret = 0;
+
+	// clear screen
+	SDL_SetRenderDrawColor(ctx->renderer, 220, 220, 0, 0xFF);
+	// SDL_RenderClear(ctx->renderer);
+
+
+	boxRGBA(ctx->renderer,
+		0,
+		0,
+		SCREEN_WIDTH - 1,
+		SCREEN_HEIGHT - 1,
+		200,
+		200,
+		200,
+		(uint8_t)200);
+	// animated background
+	// display_menu_animated_background(ctx);
+
+	SDL_Rect r = {.x = SCREEN_WIDTH * 40 / 100,
+		      .y = 0,
+		      .w = SCREEN_WIDTH * 20 / 100,
+		      .h = SCREEN_HEIGHT};
+
+	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
+
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+	float scale = 1.f;
+
+	////////////////////////////////////////////////////////////
+	// music volume
+
+	int pos_x = SCREEN_WIDTH * 50 / 100 -
+		    (int)((float)ctx->gfx.gui_case.w / 2.f * scale);
+	int pos_y = SCREEN_HEIGHT * 20 / 100 -
+		    (int)((float)ctx->gfx.gui_case.h / 2.f * scale);
+
+	texture_render(ctx,
+		       &ctx->gfx.gui_case,
+		       pos_x,
+		       pos_y,
+		       NULL,
+		       0.f,
+		       scale,
+		       0,
+		       NULL);
+
+	SDL_Color text_color_front_1 = {0x0, 0x0, 0x0};
+	SDL_Color text_color_shadow = {0xFF, 0xFF, 0xFF};
+	int font_size = 64;
+	TTF_Font *finish_font = NULL;
+
+	finish_font = TTF_OpenFont(SOFACHROME_FONT, font_size);
+	if (!finish_font) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text_with_shade(ctx,
+					    finish_font,
+					    &ctx->gfx.font_race_anim,
+					    "Music:",
+					    &text_color_front_1,
+					    &text_color_shadow,
+					    pos_x * 115 / 100,
+					    pos_y * 110 / 100,
+					    4,
+					    200,
+					    0.f);
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		sound_volume2string(ctx->sound.volume_music),
+		&text_color_front_1,
+		&text_color_shadow,
+		pos_x * 125 / 100,
+		pos_y * 200 / 100,
+		4,
+		200,
+		0.f);
+
+	////////////////////////////////////////////////////////////
+	// SFX volume
+
+	pos_y = SCREEN_HEIGHT * 50 / 100 -
+		(int)((float)ctx->gfx.gui_case.h / 2.f * scale);
+
+	texture_render(ctx,
+		       &ctx->gfx.gui_case,
+		       pos_x,
+		       pos_y,
+		       NULL,
+		       0.f,
+		       scale,
+		       0,
+		       NULL);
+
+	display_load_render_text_with_shade(ctx,
+					    finish_font,
+					    &ctx->gfx.font_race_anim,
+					    "SFX:",
+					    &text_color_front_1,
+					    &text_color_shadow,
+					    pos_x * 125 / 100,
+					    pos_y * 102 / 100,
+					    4,
+					    200,
+					    0.f);
+
+	display_load_render_text_with_shade(
+		ctx,
+		finish_font,
+		&ctx->gfx.font_race_anim,
+		sound_volume2string(ctx->sound.volume_sfx),
+		&text_color_front_1,
+		&text_color_shadow,
+		pos_x * 125 / 100,
+		pos_y * 125 / 100,
+		4,
+		200,
+		0.f);
+
+	////////////////////////////////////////////////////////////
+	// reset progression
+
+	pos_y = SCREEN_HEIGHT * 80 / 100 -
+		(int)((float)ctx->gfx.gui_case.h / 2.f * scale);
+
+	texture_render(ctx,
+		       &ctx->gfx.gui_case,
+		       pos_x,
+		       pos_y,
+		       NULL,
+		       0.f,
+		       scale,
+		       0,
+		       NULL);
+
+	display_load_render_text_with_shade(ctx,
+					    finish_font,
+					    &ctx->gfx.font_race_anim,
+					    "Quit",
+					    &text_color_front_1,
+					    &text_color_shadow,
+					    pos_x * 115 / 100,
+					    pos_y * 102 / 100,
+					    4,
+					    200,
+					    0.f);
+
+	display_load_render_text_with_shade(ctx,
+					    finish_font,
+					    &ctx->gfx.font_race_anim,
+					    "Race",
+					    &text_color_front_1,
+					    &text_color_shadow,
+					    pos_x * 125 / 100,
+					    pos_y * 114 / 100,
+					    4,
+					    200,
+					    0.f);
+
+	texture_render(ctx,
+		       &ctx->gfx.gui_prev,
+		       0, // SCREEN_WIDTH - ctx->gfx.gui_prev.w,
+		       0,
+		       NULL,
+		       0.f,
+		       1.f,
+		       0,
+		       NULL);
+
 	SDL_RenderPresent(ctx->renderer);
+	TTF_CloseFont(finish_font);
 
 	return ret;
 }

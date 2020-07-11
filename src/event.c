@@ -6,6 +6,8 @@
 
 static int event_race(struct game_context *ctx)
 {
+	ctx->keys.back = 0;
+
 	while (SDL_PollEvent(&ctx->event) != 0) {
 		if (ctx->event.type == SDL_QUIT)
 			ctx->exit = 1;
@@ -33,7 +35,6 @@ static int event_race(struct game_context *ctx)
 				break;
 			case SDLK_ESCAPE:
 				exit(0);
-				break;
 			default:
 				continue;
 			}
@@ -66,8 +67,8 @@ static int event_race(struct game_context *ctx)
 			case SDLK_d:
 				ctx->keys.right = 0;
 				break;
-			case SDLK_BACKSPACE:
-				ctx->keys.back = 1;
+			case SDLK_KP_ENTER:
+				ctx->keys.option = 1;
 				break;
 			default:
 				continue;
@@ -77,7 +78,6 @@ static int event_race(struct game_context *ctx)
 
 	return 0;
 }
-
 
 
 static int event_menu_select_car(struct game_context *ctx)
@@ -165,15 +165,53 @@ static int event_menu_option(struct game_context *ctx)
 				ctx->keys.right = 1;
 				break;
 			case SDLK_8:
+			case SDLK_KP_8:
 				ctx->keys.volume_music = 1;
 				break;
 			case SDLK_5:
+			case SDLK_KP_5:
 				ctx->keys.volume_sfx = 1;
 				break;
 			case SDLK_2:
+			case SDLK_KP_2:
 				ctx->keys.reset_save = 1;
 				break;
 			case SDLK_BACKSPACE:
+				ctx->keys.back = 1;
+				break;
+			default:
+				continue;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static int event_race_option(struct game_context *ctx)
+{
+
+	memset(&ctx->keys, 0, sizeof(struct keys_status));
+
+	while (SDL_PollEvent(&ctx->event) != 0) {
+		if (ctx->event.type == SDL_QUIT)
+			ctx->exit = 1;
+
+		if (ctx->event.type == SDL_KEYUP) {
+			switch (ctx->event.key.keysym.sym) {
+			case SDLK_8:
+			case SDLK_KP_8:
+				ctx->keys.volume_music = 1;
+				break;
+			case SDLK_5:
+			case SDLK_KP_5:
+				ctx->keys.volume_sfx = 1;
+				break;
+			case SDLK_2:
+			case SDLK_KP_2:
+				ctx->keys.exit = 1;
+				break;
+			case SDLK_KP_ENTER:
 				ctx->keys.back = 1;
 				break;
 			default:
@@ -241,6 +279,10 @@ static int event_menu_title(struct game_context *ctx)
 
 int event_update_game_state(struct game_context *ctx, enum game_status state)
 {
+	SDL_Log("[%s] switch state from #%d to #%d\n",
+		__func__,
+		ctx->status_cur,
+		state);
 	ctx->status_prev = ctx->status_cur;
 	ctx->status_cur = state;
 	return 0;
@@ -351,6 +393,9 @@ int main_event(struct game_context *ctx)
 		break;
 	case GAME_STATE_MENU_OPTION:
 		event_menu_option(ctx);
+		break;
+	case GAME_STATE_RACE_OPTION:
+		event_race_option(ctx);
 		break;
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_END:
