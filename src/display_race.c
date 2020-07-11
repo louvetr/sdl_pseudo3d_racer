@@ -1581,6 +1581,18 @@ int display_screen_race(struct game_context *ctx)
 	if (ret < 0)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
 
+
+	float scale = 1.f;
+	texture_render(ctx,
+		       &ctx->gfx.gui_pause,
+		       SCREEN_WIDTH * 2 / 100,
+		       SCREEN_HEIGHT * 12 / 100,
+		       NULL,
+		       0.f,
+		       scale,
+		       0,
+		       NULL);
+
 	// TODO: put at the end of switch case
 	// update screen
 	if (ctx->status_cur != GAME_STATE_RACE_OPTION)

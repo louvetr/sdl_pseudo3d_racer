@@ -134,6 +134,7 @@
 #define PNG_STATS_VIPER "./media/stats/stats_viper.png"
 
 
+#define PNG_GUI_PAUSE "./media/gui/pause_grey.png"
 #define PNG_GUI_SETTINGS "./media/gui/settings.png"
 #define PNG_GUI_EXIT "./media/gui/exit.png"
 #define PNG_GUI_PREV "./media/gui/prev.png"
@@ -626,6 +627,9 @@ int gfx_load_resources_race(struct game_context *ctx)
 	gfx_load_texture(ctx,
 			 PNG_GUI_CASE,
 			 &ctx->gfx.gui_case);
+	gfx_load_texture(ctx,
+			 PNG_GUI_PAUSE,
+			 &ctx->gfx.gui_pause);
 
 	SDL_Log("media loaded\n");
 
@@ -703,6 +707,7 @@ int gfx_unload_resources(struct game_context *ctx)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
 	
+	SDL_DestroyTexture(ctx->gfx.gui_pause.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_credit.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_settings.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_exit.texture);

@@ -123,6 +123,7 @@ struct game_graphics{
 	struct texture gui_play;
 	struct texture gui_up;
 	struct texture gui_down;
+	struct texture gui_pause;
 
 	struct texture gui_case;
 };
