@@ -144,6 +144,10 @@
 #define PNG_GUI_DOWN "./media/gui/down.png"
 #define PNG_GUI_CREDIT "./media/gui/credit.png"
 #define PNG_GUI_CASE "./media/gui/case_empty.png"
+#define PNG_GUI_ACCEL "./media/gui/pedal_accel.png"
+#define PNG_GUI_BRAKE "./media/gui/pedal_brake.png"
+#define PNG_GUI_LEFT "./media/gui/dir_left.png"
+#define PNG_GUI_RIGHT "./media/gui/dir_right.png"
 
 
 static int
@@ -630,6 +634,18 @@ int gfx_load_resources_race(struct game_context *ctx)
 	gfx_load_texture(ctx,
 			 PNG_GUI_PAUSE,
 			 &ctx->gfx.gui_pause);
+	gfx_load_texture(ctx,
+			 PNG_GUI_ACCEL,
+			 &ctx->gfx.gui_accel);
+	gfx_load_texture(ctx,
+			 PNG_GUI_BRAKE,
+			 &ctx->gfx.gui_brake);
+	gfx_load_texture(ctx,
+			 PNG_GUI_LEFT,
+			 &ctx->gfx.gui_left);
+	gfx_load_texture(ctx,
+			 PNG_GUI_RIGHT,
+			 &ctx->gfx.gui_right);
 
 	SDL_Log("media loaded\n");
 
@@ -716,6 +732,10 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.gui_up.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_down.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_case.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_accel.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_brake.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_left.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_right.texture);
 
 	// unload fonts
 

@@ -1582,16 +1582,59 @@ int display_screen_race(struct game_context *ctx)
 		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
 
 
-	float scale = 1.f;
+	float scale_pause = 1.f;
 	texture_render(ctx,
 		       &ctx->gfx.gui_pause,
 		       SCREEN_WIDTH * 2 / 100,
 		       SCREEN_HEIGHT * 12 / 100,
 		       NULL,
 		       0.f,
-		       scale,
+		       scale_pause,
 		       0,
 		       NULL);
+	float scale_pedal = 0.5f;
+	texture_render(ctx,
+		       &ctx->gfx.gui_accel,
+		       SCREEN_WIDTH * 88 / 100,
+		       SCREEN_HEIGHT * 68 / 100,
+		       NULL,
+		       0.f,
+		       scale_pedal,
+		       0,
+		       NULL);
+	texture_render(
+		ctx,
+		&ctx->gfx.gui_brake,
+		SCREEN_WIDTH * 75 / 100,
+		SCREEN_HEIGHT * 68 / 100 +
+			(int)((float)ctx->gfx.gui_accel.h * scale_pedal) -
+			(int)((float)ctx->gfx.gui_brake.h * scale_pedal),
+		NULL,
+		0.f,
+		scale_pedal,
+		0,
+		NULL);
+
+	float scale_dir = 2.f;
+	texture_render(ctx,
+		       &ctx->gfx.gui_left,
+		       SCREEN_WIDTH * 2 / 100,
+		       SCREEN_HEIGHT * 75 / 100,
+		       NULL,
+		       0.f,
+		       scale_dir,
+		       0,
+		       NULL);
+	texture_render(
+		ctx,
+		&ctx->gfx.gui_right,
+		SCREEN_WIDTH * 15 / 100,
+		SCREEN_HEIGHT * 75 / 100,
+		NULL,
+		0.f,
+		scale_dir,
+		0,
+		NULL);
 
 	// TODO: put at the end of switch case
 	// update screen
