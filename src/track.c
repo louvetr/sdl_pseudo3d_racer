@@ -8,6 +8,10 @@ struct color_desc cd_lane_black = {.r = 0, .g = 0, .b = 0};
 
 struct color_desc cd_road_asphalt_bright = {.r = 140, .g = 140, .b = 140};
 struct color_desc cd_road_asphalt_dark = {.r = 128, .g = 128, .b = 128};
+struct color_desc cd_road_asphaltdark_bright = {.r = 0x58,
+						.g = 0x55,
+						.b = 0x54};
+struct color_desc cd_road_asphaltdark_dark = {.r = 0x3b, .g = 0x39, .b = 0x38};
 struct color_desc cd_road_mud_bright = {.r = 149, .g = 69, .b = 53};
 struct color_desc cd_road_mud_dark = {.r = 129, .g = 49, .b = 33};
 struct color_desc cd_road_ice_bright = {.r = 81, .g = 115, .b = 176};
@@ -50,7 +54,11 @@ static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY},
 	{.nb_sector = NB_SECTOR_FORK, .nb_segment = NB_SEGMENT_FORK},
 	{.nb_sector = NB_SECTOR_FROST, .nb_segment = NB_SEGMENT_FROST},
-	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE}};
+	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
+	{.nb_sector = NB_SECTOR_CURVES, .nb_segment = NB_SEGMENT_CURVES},
+	{.nb_sector = NB_SECTOR_HORNS, .nb_segment = NB_SEGMENT_HORNS},
+	{.nb_sector = NB_SECTOR_SQUARES, .nb_segment = NB_SEGMENT_SQUARES}};
+
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
@@ -187,6 +195,121 @@ static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 };
 
+
+static int sector_horns[NB_SECTOR_HORNS][NB_SECTOR_PARAM] = {
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 4},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_HARD, 4, 4},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_HARD, 4, 4},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 4, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 4},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_HARD, 4, 4},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_HARD, 4, 4},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 4, 3}};
+
+
+static int sector_curves[NB_SECTOR_CURVES][NB_SECTOR_PARAM] = {
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+};
+
+
+static int sector_squares[NB_SECTOR_SQUARES][NB_SECTOR_PARAM] = {
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	//{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 3, 3},
+};
+
+
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
 static SDL_Rect hitbox_tunnel_a = {.x = 292, .y = 0, .w = 1700, .h = 0};
 
@@ -209,6 +332,172 @@ static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
 
 // TODO: use realloc at each sector addition instead counting total nb sectors
 // in advance
+
+
+static int track_build_squares(struct game_context *ctx)
+{
+	int nb_segments_added = 0;
+
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_SQUARES; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_squares[i][SECTOR_PARAM_ENTER_LG],
+			sector_squares[i][SECTOR_PARAM_HOLD_LG],
+			sector_squares[i][SECTOR_PARAM_EXIT_LG],
+			sector_squares[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_squares[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_squares[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_squares[i][SECTOR_PARAM_NB_LANE_EXIT]);
+
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_squares[i][SECTOR_PARAM_ENTER_LG] +
+				sector_squares[i][SECTOR_PARAM_HOLD_LG] +
+				sector_squares[i][SECTOR_PARAM_EXIT_LG]);
+	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	ctx->track.lane_type = LANE_TYPE_HALF;
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
+	ctx->track.cd_lane = &cd_lane_white;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_grass_bright;
+	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	return 0;
+}
+
+
+static int track_build_curves(struct game_context *ctx)
+{
+	int nb_segments_added = 0;
+
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_CURVES; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_curves[i][SECTOR_PARAM_ENTER_LG],
+			sector_curves[i][SECTOR_PARAM_HOLD_LG],
+			sector_curves[i][SECTOR_PARAM_EXIT_LG],
+			sector_curves[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_curves[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_curves[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_curves[i][SECTOR_PARAM_NB_LANE_EXIT]);
+
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_curves[i][SECTOR_PARAM_ENTER_LG] +
+				sector_curves[i][SECTOR_PARAM_HOLD_LG] +
+				sector_curves[i][SECTOR_PARAM_EXIT_LG]);
+	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	ctx->track.lane_type = LANE_TYPE_HALF;
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
+	ctx->track.cd_lane = &cd_lane_white;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_grass_bright;
+	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	return 0;
+}
+
+
+static int track_build_horns(struct game_context *ctx)
+{
+	int nb_segments_added = 0;
+
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_HORNS; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_horns[i][SECTOR_PARAM_ENTER_LG],
+			sector_horns[i][SECTOR_PARAM_HOLD_LG],
+			sector_horns[i][SECTOR_PARAM_EXIT_LG],
+			sector_horns[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_horns[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_horns[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_horns[i][SECTOR_PARAM_NB_LANE_EXIT]);
+
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_horns[i][SECTOR_PARAM_ENTER_LG] +
+				sector_horns[i][SECTOR_PARAM_HOLD_LG] +
+				sector_horns[i][SECTOR_PARAM_EXIT_LG]);
+	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	ctx->track.lane_type = LANE_TYPE_FULL;
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
+	ctx->track.cd_lane = &cd_lane_yellow;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_grass_bright;
+	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	return 0;
+}
+
 
 static int track_build_stone(struct game_context *ctx)
 {
@@ -406,25 +695,25 @@ static int track_build_frost(struct game_context *ctx)
 	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
 		float position = (float)i * 2.f;
 		set_scene_sprite_desc(&scene_snowmen_1->sprite[2 * i],
-				      i == 1 ? &ctx->gfx.scene_snowman : &ctx->gfx.scene_tree_dead_snow,
+				      i == 1 ? &ctx->gfx.scene_snowman
+					     : &ctx->gfx.scene_tree_dead_snow,
 				      position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
 		set_scene_sprite_desc(&scene_snowmen_1->sprite[2 * i + 1],
-				      i == 1 ? &ctx->gfx.scene_snowman : &ctx->gfx.scene_tree_dead_snow,
+				      i == 1 ? &ctx->gfx.scene_snowman
+					     : &ctx->gfx.scene_tree_dead_snow,
 				      -position,
 				      NULL,
 				      1,
-				      SDL_FLIP_NONE); 
+				      SDL_FLIP_NONE);
 	}
 
-	for (int i = 0; i < nb_segments_added * 2 / 16;
-	     i += 50)
+	for (int i = 0; i < nb_segments_added * 2 / 16; i += 50)
 		ctx->track.segments[i].scene = scene_inn;
 
-	for (int i = nb_segments_added * 2 / 16;
-	     i < nb_segments_added * 6 / 16;
+	for (int i = nb_segments_added * 2 / 16; i < nb_segments_added * 6 / 16;
 	     i += 15)
 		ctx->track.segments[i].scene = scene_pine;
 
@@ -1110,6 +1399,15 @@ int track_build(struct game_context *ctx)
 		break;
 	case TRACK_STONE:
 		track_build_stone(ctx);
+		break;
+	case TRACK_HORNS:
+		track_build_horns(ctx);
+		break;
+	case TRACK_CURVES:
+		track_build_curves(ctx);
+		break;
+	case TRACK_SQUARES:
+		track_build_squares(ctx);
 		break;
 	}
 

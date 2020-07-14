@@ -34,6 +34,15 @@
 #define NB_SECTOR_STONE 15
 #define NB_SEGMENT_STONE 2525
 
+#define NB_SECTOR_HORNS 17
+#define NB_SEGMENT_HORNS 2850
+
+#define NB_SECTOR_CURVES 14
+#define NB_SEGMENT_CURVES 2850
+
+#define NB_SECTOR_SQUARES 41
+#define NB_SEGMENT_SQUARES 3450
+
 #define NB_CDS 6
 
 typedef uint8_t Uint8;
@@ -44,6 +53,9 @@ enum track_selection {
 	TRACK_FORK,
 	TRACK_FROST,
 	TRACK_STONE,
+	TRACK_HORNS,
+	TRACK_CURVES,
+	TRACK_SQUARES,
 	TRACK_LAST
 };
 
