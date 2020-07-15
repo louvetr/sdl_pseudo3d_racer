@@ -57,7 +57,8 @@ static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
 	{.nb_sector = NB_SECTOR_CURVES, .nb_segment = NB_SEGMENT_CURVES},
 	{.nb_sector = NB_SECTOR_HORNS, .nb_segment = NB_SEGMENT_HORNS},
-	{.nb_sector = NB_SECTOR_SQUARES, .nb_segment = NB_SEGMENT_SQUARES}};
+	{.nb_sector = NB_SECTOR_SQUARES, .nb_segment = NB_SEGMENT_SQUARES},
+	{.nb_sector = NB_SECTOR_WHALE, .nb_segment = NB_SEGMENT_WHALE}};
 
 
 static int sector_dijon[NB_SECTOR_DIJON][NB_SECTOR_PARAM] = {
@@ -310,6 +311,37 @@ static int sector_squares[NB_SECTOR_SQUARES][NB_SECTOR_PARAM] = {
 };
 
 
+static int sector_whale[NB_SECTOR_WHALE][NB_SECTOR_PARAM] = {
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_MEDIUM, 2, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 2, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_MEDIUM, 2, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 2, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_HARD, 3, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_HARD, 3, 3},
+
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+
+	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 2},
+
+	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 2, 2},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_L_MEDIUM, 2, 2},
+	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 2, 2},
+
+	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
+	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
+};
+
+
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
 static SDL_Rect hitbox_tunnel_a = {.x = 292, .y = 0, .w = 1700, .h = 0};
 
@@ -333,6 +365,60 @@ static int set_scene_sprite_desc(struct scene_sprite_desc *sprite_desc,
 // TODO: use realloc at each sector addition instead counting total nb sectors
 // in advance
 
+
+static int track_build_whale(struct game_context *ctx)
+{
+	int nb_segments_added = 0;
+
+	// Build the track segments
+	for (int i = 0; i < NB_SECTOR_WHALE; i++) {
+		nb_segments_added += road_add_sector(
+			ctx->track.segments,
+			nb_segments_added,
+			sector_whale[i][SECTOR_PARAM_ENTER_LG],
+			sector_whale[i][SECTOR_PARAM_HOLD_LG],
+			sector_whale[i][SECTOR_PARAM_EXIT_LG],
+			sector_whale[i][SECTOR_PARAM_EXIT_Y],
+			(float)sector_whale[i][SECTOR_PARAM_EXIT_CURVE],
+			sector_whale[i][SECTOR_PARAM_NB_LANE_ENTER],
+			sector_whale[i][SECTOR_PARAM_NB_LANE_EXIT]);
+
+		SDL_Log("[%s] segments: total = %d, sector[%d] = %d\n",
+			__func__,
+			nb_segments_added,
+			i,
+			sector_whale[i][SECTOR_PARAM_ENTER_LG] +
+				sector_whale[i][SECTOR_PARAM_HOLD_LG] +
+				sector_whale[i][SECTOR_PARAM_EXIT_LG]);
+	}
+
+	ctx->track.track_length = ROAD_SEGMENT_LENGTH * ctx->track.nb_segments;
+
+	SDL_Log("[%s] nb_segments_added = %d\n", __func__, nb_segments_added);
+
+
+	ctx->track.lane_type = LANE_TYPE_HALF;
+
+	/////////////////////////////////////////////
+	// set color of segment outside of the road
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
+	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
+	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
+	ctx->track.cd_lane = &cd_lane_white;
+	ctx->track.cd_start_line = &cd_lane_white;
+	ctx->track.nb_cds = 1;
+	ctx->track.cds[0].bright = &cd_grass_bright;
+	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].num = 0;
+	ctx->track.cds[0].den = 0;
+	ctx->track.cds[0].side = CDS_FULL_BOTH;
+
+	for (int i = 0; i < nb_segments_added; i++)
+		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	return 0;
+}
 
 static int track_build_squares(struct game_context *ctx)
 {
@@ -1408,6 +1494,9 @@ int track_build(struct game_context *ctx)
 		break;
 	case TRACK_SQUARES:
 		track_build_squares(ctx);
+		break;
+	case TRACK_WHALE:
+		track_build_whale(ctx);
 		break;
 	}
 

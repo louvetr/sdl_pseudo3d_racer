@@ -123,6 +123,7 @@
 #define PNG_TRACK_CURVES "./media/tracks/curves.png"
 #define PNG_TRACK_HORNS "./media/tracks/horns.png"
 #define PNG_TRACK_SQUARES "./media/tracks/squares.png"
+#define PNG_TRACK_WHALE "./media/tracks/whale.png"
 
 
 #define PNG_STATS_TRUENO "./media/stats/stats_trueno.png"
@@ -551,6 +552,8 @@ static int gfx_load_tracks_thumbnail(struct game_context *ctx)
 		ctx, PNG_TRACK_CURVES, &ctx->gfx.track_thumbnail[TRACK_CURVES]);
 	gfx_load_texture(
 		ctx, PNG_TRACK_SQUARES, &ctx->gfx.track_thumbnail[TRACK_SQUARES]);
+	gfx_load_texture(
+		ctx, PNG_TRACK_WHALE, &ctx->gfx.track_thumbnail[TRACK_WHALE]);
 	return 0;
 }
 

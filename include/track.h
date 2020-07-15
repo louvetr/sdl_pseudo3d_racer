@@ -43,6 +43,10 @@
 #define NB_SECTOR_SQUARES 41
 #define NB_SEGMENT_SQUARES 3450
 
+#define NB_SECTOR_WHALE 20
+//#define NB_SEGMENT_WHALE 2955
+#define NB_SEGMENT_WHALE 3080
+
 #define NB_CDS 6
 
 typedef uint8_t Uint8;
@@ -56,6 +60,7 @@ enum track_selection {
 	TRACK_HORNS,
 	TRACK_CURVES,
 	TRACK_SQUARES,
+	TRACK_WHALE,
 	TRACK_LAST
 };
 
