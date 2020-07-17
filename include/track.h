@@ -72,8 +72,6 @@ struct track_build_info {
 	int nb_segment;
 };
 
-
-
 enum track_lane_type {
 	LANE_TYPE_NONE = 0,
 	LANE_TYPE_HALF,
