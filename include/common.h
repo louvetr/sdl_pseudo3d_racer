@@ -27,6 +27,20 @@ enum car_model_type {
  	CAR_MODEL_LAST
 };
 
+enum car_model_mask {
+ 	CAR_MASK_TRUENO = (1u << 0),
+ 	CAR_MASK_DELTA = (1u << 1),
+ 	CAR_MASK_FALCON = (1u << 2),
+ 	CAR_MASK_HART = (1u << 3),
+ 	CAR_MASK_IMPREZIA = (1u << 4),
+ 	CAR_MASK_LANCER = (1u << 5),
+ 	CAR_MASK_TT = (1u << 6),
+ 	CAR_MASK_NSX = (1u << 7),
+ 	CAR_MASK_LOTUS = (1u << 8),
+ 	CAR_MASK_VIPER = (1u << 9),
+};
+
+
 enum car_stat_type {
  	CAR_STAT_SPEED = 0,
  	CAR_STAT_ACCEL,

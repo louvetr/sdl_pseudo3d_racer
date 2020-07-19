@@ -356,6 +356,69 @@ static int display_render_bgm_name(struct game_context *ctx)
 	return 0;
 }
 
+static int display_render_anim_unlock(struct game_context *ctx)
+{
+	// bright the screen progressively
+	boxRGBA(ctx->renderer,
+		0,
+		0,
+		SCREEN_WIDTH - 1,
+		SCREEN_HEIGHT - 1,
+		200,
+		200,
+		200,
+		200);
+
+	//SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
+	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0x00};
+	SDL_Color text_color_shadow = {0, 0, 0};
+	int font_size = 70;
+	TTF_Font *font = NULL;
+
+	font = TTF_OpenFont(SOFACHROME_FONT, font_size);
+	if (!font) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text_with_shade(
+		ctx,
+		font,
+		&ctx->gfx.font_race_anim,
+		ctx->last_unlocked_car > 0 ? "New Car Unlocked!" : "New Track Unlocked!",
+		//&text_color_shadow,
+		&text_color_front_1,
+		&text_color_shadow,
+		SCREEN_WIDTH / 2 - ctx->gfx.font_race_anim.w / 2,
+		SCREEN_HEIGHT * 85 / 100 - ctx->gfx.font_race_anim.h / 2,
+		1,
+		200,
+		0.f);
+
+
+
+	SDL_Rect r = {
+		.x = 0,
+		.y = SCREEN_HEIGHT / 2 - SCREEN_HEIGHT * 10 / 100,
+		.w = SCREEN_WIDTH,
+		.h = SCREEN_HEIGHT * 20 / 100,
+	};
+
+	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
+
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+	if (ctx->last_unlocked_car > 0)
+		display_menu_car_bordered_pict(ctx, ctx->last_unlocked_car, 1);
+	else if (ctx->last_unlocked_track > 0)
+		display_menu_track_bordered_pict(ctx, ctx->last_unlocked_track, 1);	
+
+	TTF_CloseFont(font);
+
+	return 0;
+}
 
 static int display_render_anim_race_end(struct game_context *ctx)
 {
@@ -1573,68 +1636,67 @@ int display_screen_race(struct game_context *ctx)
 		ret = display_render_anim_race_start(ctx);
 	if (ctx->status_cur == GAME_STATE_RACE_ANIM_END)
 		ret = display_render_anim_race_end(ctx);
+	if (ctx->status_cur == GAME_STATE_RACE_ANIM_UNLOCK)
+		ret = display_render_anim_unlock(ctx);
 	if (ctx->status_cur == GAME_STATE_RACE ||
 	    ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE ||
-	    ctx->status_cur == GAME_STATE_RACE_NITRO)
+	    ctx->status_cur == GAME_STATE_RACE_NITRO) {
+
 		ret = display_render_bgm_name(ctx);
+		float scale_pause = 1.f;
+		texture_render(ctx,
+			       &ctx->gfx.gui_pause,
+			       SCREEN_WIDTH * 2 / 100,
+			       SCREEN_HEIGHT * 12 / 100,
+			       NULL,
+			       0.f,
+			       scale_pause,
+			       0,
+			       NULL);
+		float scale_pedal = 0.5f;
+		texture_render(ctx,
+			       &ctx->gfx.gui_accel,
+			       SCREEN_WIDTH * 88 / 100,
+			       SCREEN_HEIGHT * 68 / 100,
+			       NULL,
+			       0.f,
+			       scale_pedal,
+			       0,
+			       NULL);
+		texture_render(ctx,
+			       &ctx->gfx.gui_brake,
+			       SCREEN_WIDTH * 75 / 100,
+			       SCREEN_HEIGHT * 68 / 100 +
+				       (int)((float)ctx->gfx.gui_accel.h *
+					     scale_pedal) -
+				       (int)((float)ctx->gfx.gui_brake.h *
+					     scale_pedal),
+			       NULL,
+			       0.f,
+			       scale_pedal,
+			       0,
+			       NULL);
 
-	if (ret < 0)
-		SDL_Log("[%s:%d] texture_render FAILED\n", __func__, __LINE__);
-
-
-	float scale_pause = 1.f;
-	texture_render(ctx,
-		       &ctx->gfx.gui_pause,
-		       SCREEN_WIDTH * 2 / 100,
-		       SCREEN_HEIGHT * 12 / 100,
-		       NULL,
-		       0.f,
-		       scale_pause,
-		       0,
-		       NULL);
-	float scale_pedal = 0.5f;
-	texture_render(ctx,
-		       &ctx->gfx.gui_accel,
-		       SCREEN_WIDTH * 88 / 100,
-		       SCREEN_HEIGHT * 68 / 100,
-		       NULL,
-		       0.f,
-		       scale_pedal,
-		       0,
-		       NULL);
-	texture_render(
-		ctx,
-		&ctx->gfx.gui_brake,
-		SCREEN_WIDTH * 75 / 100,
-		SCREEN_HEIGHT * 68 / 100 +
-			(int)((float)ctx->gfx.gui_accel.h * scale_pedal) -
-			(int)((float)ctx->gfx.gui_brake.h * scale_pedal),
-		NULL,
-		0.f,
-		scale_pedal,
-		0,
-		NULL);
-
-	float scale_dir = 2.f;
-	texture_render(ctx,
-		       &ctx->gfx.gui_left,
-		       SCREEN_WIDTH * 2 / 100,
-		       SCREEN_HEIGHT * 75 / 100,
-		       NULL,
-		       0.f,
-		       scale_dir,
-		       0,
-		       NULL);
-	texture_render(
-		ctx,
-		&ctx->gfx.gui_right,
-		SCREEN_WIDTH * 15 / 100,
-		SCREEN_HEIGHT * 75 / 100,
-		NULL,
-		0.f,
-		scale_dir,
-		0,
-		NULL);
+		float scale_dir = 2.f;
+		texture_render(ctx,
+			       &ctx->gfx.gui_left,
+			       SCREEN_WIDTH * 2 / 100,
+			       SCREEN_HEIGHT * 75 / 100,
+			       NULL,
+			       0.f,
+			       scale_dir,
+			       0,
+			       NULL);
+		texture_render(ctx,
+			       &ctx->gfx.gui_right,
+			       SCREEN_WIDTH * 15 / 100,
+			       SCREEN_HEIGHT * 75 / 100,
+			       NULL,
+			       0.f,
+			       scale_dir,
+			       0,
+			       NULL);
+	}
 
 	// TODO: put at the end of switch case
 	// update screen
@@ -1795,7 +1857,7 @@ int display_screen_race_option(struct game_context *ctx)
 					    "Quit",
 					    &text_color_front_1,
 					    &text_color_shadow,
-					    pos_x * 115 / 100,
+					    pos_x * 125 / 100,
 					    pos_y * 102 / 100,
 					    4,
 					    200,

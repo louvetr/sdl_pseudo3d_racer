@@ -246,6 +246,30 @@ static int event_race_option(struct game_context *ctx)
 	return 0;
 }
 
+static int event_race_anim_end(struct game_context *ctx)
+{
+	memset(&ctx->keys, 0, sizeof(struct keys_status));
+
+	while (SDL_PollEvent(&ctx->event) != 0) {
+		/*if (ctx->event.type == SDL_QUIT)
+			ctx->exit = 1;*/
+
+		if (ctx->event.type == SDL_KEYUP) {
+			switch (ctx->event.key.keysym.sym) {
+			case SDLK_KP_ENTER:
+			case SDLK_SPACE:
+				ctx->keys.exit = 1;
+				break;
+			default:
+				continue;
+			}
+		}
+	}
+
+	return 0;
+}
+
+
 
 static int event_menu_title(struct game_context *ctx)
 {
@@ -424,10 +448,13 @@ int main_event(struct game_context *ctx)
 		event_race_option(ctx);
 		break;
 	case GAME_STATE_RACE:
-	case GAME_STATE_RACE_ANIM_END:
 	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		event_race(ctx);
+		break;
+	case GAME_STATE_RACE_ANIM_UNLOCK:
+	case GAME_STATE_RACE_ANIM_END:
+		event_race_anim_end(ctx);
 		break;
 	case GAME_STATE_PAUSE:
 		break;

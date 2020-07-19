@@ -124,6 +124,7 @@ struct game_graphics{
 	struct texture gui_up;
 	struct texture gui_down;
 	struct texture gui_pause;
+	struct texture gui_lock;
 
 	struct texture gui_case;
 	struct texture gui_accel;

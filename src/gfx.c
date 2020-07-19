@@ -139,6 +139,7 @@
 #define PNG_STATS_VIPER "./media/stats/stats_viper.png"
 
 
+#define PNG_GUI_LOCK "./media/gui/lock_bright.png"
 #define PNG_GUI_PAUSE "./media/gui/pause_grey.png"
 #define PNG_GUI_SETTINGS "./media/gui/settings.png"
 #define PNG_GUI_EXIT "./media/gui/exit.png"
@@ -426,7 +427,7 @@ static int gfx_load_font(struct game_context *ctx)
 }
 
 
-static int gfx_load_cars_side(struct game_context *ctx)
+int gfx_load_cars_side(struct game_context *ctx)
 {
 	gfx_load_texture(ctx,
 			 PNG_IMPREZIA_SIDE,
@@ -513,6 +514,9 @@ static int gfx_load_gui(struct game_context *ctx)
 			 PNG_GUI_CASE,
 			 &ctx->gfx.gui_case);
 
+	gfx_load_texture(ctx,
+			 PNG_GUI_LOCK,
+			 &ctx->gfx.gui_lock);
 	return 0;
 }
 
@@ -534,7 +538,7 @@ static int gfx_load_particles(struct game_context *ctx)
 	return 0;
 }
 
-static int gfx_load_tracks_thumbnail(struct game_context *ctx)
+int gfx_load_tracks_thumbnail(struct game_context *ctx)
 {
 	gfx_load_texture(
 		ctx, PNG_TRACK_DIJON, &ctx->gfx.track_thumbnail[TRACK_DIJON]);
@@ -737,6 +741,7 @@ int gfx_unload_resources(struct game_context *ctx)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
 	
+	SDL_DestroyTexture(ctx->gfx.gui_lock.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_pause.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_credit.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_settings.texture);

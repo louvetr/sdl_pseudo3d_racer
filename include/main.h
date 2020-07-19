@@ -31,7 +31,7 @@
 #define MS_PER_SEC 1000
 
 
-
+#define SAVE_FILE "./save.bin"
 
 #define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 
@@ -96,6 +96,7 @@ enum game_status {
 	GAME_STATE_RACE,
 	GAME_STATE_RACE_ANIM_START,
 	GAME_STATE_RACE_ANIM_END,
+	GAME_STATE_RACE_ANIM_UNLOCK,
 	GAME_STATE_RACE_COLLISION_SCENE,
 	GAME_STATE_RACE_NITRO,
 	GAME_STATE_RACE_OPTION,
@@ -395,6 +396,12 @@ struct game_context {
 
 	struct race_info race;
 
+	Uint16 last_unlocked_car;
+	Uint16 last_unlocked_track;
+	Uint16 cars_available;
+	Uint16 tracks_available;
+
+
 };
 
 
@@ -545,6 +552,8 @@ int gfx_load_resources_menu_main(struct game_context *ctx);
 int gfx_load_resources_menu_select_track(struct game_context *ctx);
 int gfx_load_resources_menu_select_car(struct game_context *ctx);
 int gfx_load_resources_race(struct game_context *ctx);
+int gfx_load_cars_side(struct game_context *ctx);
+int gfx_load_tracks_thumbnail(struct game_context *ctx);
 int gfx_unload_resources(struct game_context *ctx);
 
 int sound_load_resources_title(struct game_context *ctx);
@@ -555,6 +564,12 @@ int sound_unload_resources(struct game_context *ctx);
 int event_update_game_state(struct game_context *ctx, enum game_status state);
 
 // display 
+int display_menu_track_bordered_pict(struct game_context *ctx,
+				   enum track_selection track,
+				   int centered);
+int display_menu_car_bordered_pict(struct game_context *ctx,
+				   enum car_model_type car,
+				   int centered);
 int display_screen_race(struct game_context *ctx);
 int display_screen_race_option(struct game_context *ctx);
 int texture_render(struct game_context *ctx,

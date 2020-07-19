@@ -195,6 +195,7 @@ int main_display(struct game_context *ctx)
 	case GAME_STATE_RACE:
 	case GAME_STATE_RACE_ANIM_START:
 	case GAME_STATE_RACE_ANIM_END:
+	case GAME_STATE_RACE_ANIM_UNLOCK:
 	case GAME_STATE_RACE_NITRO:
 	case GAME_STATE_RACE_COLLISION_SCENE:
 		display_screen_race(ctx);

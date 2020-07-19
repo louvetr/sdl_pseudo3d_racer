@@ -67,6 +67,19 @@ enum track_selection {
 	TRACK_LAST
 };
 
+enum track_mask {
+	TRACK_MASK_DIJON = (1u << 0),
+	TRACK_MASK_SPEEDWAY = (1u << 1),
+	TRACK_MASK_FORK = (1u << 2),
+	TRACK_MASK_FROST = (1u << 3),
+	TRACK_MASK_STONE = (1u << 4),
+	TRACK_MASK_HORNS = (1u << 5),
+	TRACK_MASK_CURVES = (1u << 6),
+	TRACK_MASK_SQUARES = (1u << 7),
+	TRACK_MASK_WHALE = (1u << 8),
+	TRACK_MASK_CARMONA = (1u << 9),
+};
+
 struct track_build_info {
 	int nb_sector;
 	int nb_segment;

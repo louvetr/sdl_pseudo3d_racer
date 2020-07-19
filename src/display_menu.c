@@ -239,11 +239,14 @@ static int display_menu_stats_bordered_pict(struct game_context *ctx)
 	return 0;
 }
 
-static int display_menu_car_bordered_pict(struct game_context *ctx)
+int display_menu_car_bordered_pict(struct game_context *ctx,
+				   enum car_model_type car,
+				   int centered)
 {
 	int bwidth = 5;
+	int offset = centered ? 50 : 30;
 
-	int car_bg_x = SCREEN_WIDTH * 30 / 100 -
+	int car_bg_x = SCREEN_WIDTH * offset / 100 -
 		       (int)((float)ctx->gfx.car_side_bg.w / 2.f);
 	int car_bg_y =
 		SCREEN_HEIGHT / 2 - (int)((float)ctx->gfx.car_side_bg.h / 2.f);
@@ -259,20 +262,16 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 		       NULL);
 
 	float scale_car =
-		(float)SCREEN_WIDTH / 1.8f /
-		(float)ctx->gfx.cars_side[ctx->pcar.car_player_model].w;
+		(float)SCREEN_WIDTH / 1.8f / (float)ctx->gfx.cars_side[car].w;
 
-	int car_x =
-		SCREEN_WIDTH * 30 / 100 -
-		(int)((float)ctx->gfx.cars_side[ctx->pcar.car_player_model].w *
-		      scale_car / 2.f);
-	int car_y =
-		SCREEN_HEIGHT / 2 -
-		(int)((float)ctx->gfx.cars_side[ctx->pcar.car_player_model].h *
-		      scale_car / 2.f);
+
+	int car_x = SCREEN_WIDTH * offset / 100 -
+		    (int)((float)ctx->gfx.cars_side[car].w * scale_car / 2.f);
+	int car_y = SCREEN_HEIGHT / 2 -
+		    (int)((float)ctx->gfx.cars_side[car].h * scale_car / 2.f);
 
 	texture_render(ctx,
-		       &ctx->gfx.cars_side[ctx->pcar.car_player_model],
+		       &ctx->gfx.cars_side[car],
 		       car_x,
 		       car_y,
 		       NULL,
@@ -298,32 +297,64 @@ static int display_menu_car_bordered_pict(struct game_context *ctx)
 		0,
 		0);
 
+
+	if (!(1 << ctx->pcar.car_player_model & ctx->cars_available) &&
+	    ctx->status_cur == GAME_STATE_MENU_SELECT_CAR) {
+
+		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
+		/*SDL_BlendMode blendMode;
+		SDL_GetRenderDrawBlendMode(ctx->renderer, &blendMode);
+		SDL_Log("blendMode = %d\n", blendMode);*/
+		SDL_SetRenderDrawBlendMode(ctx->renderer, SDL_BLENDMODE_BLEND);
+		SDL_Rect r = {
+			.x = car_bg_x,
+			.y = car_bg_y,
+			.w = (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+			.h = (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+		};
+		SDL_RenderFillRect(ctx->renderer, &r);
+
+		float scale_lock = 3.f;
+		int pos_x = r.x + r.w / 2 -
+			    (int)((float)ctx->gfx.gui_lock.w * scale_lock) / 2;
+		int pos_y = r.y + r.h / 2 -
+			    (int)((float)ctx->gfx.gui_lock.h * scale_lock) / 2;
+
+		texture_render(ctx,
+			       &ctx->gfx.gui_lock,
+			       pos_x,
+			       pos_y,
+			       NULL,
+			       0.f,
+			       scale_lock,
+			       0,
+			       NULL);
+	}
+
 	return 0;
 }
 
 
-static int display_menu_track_bordered_pict(struct game_context *ctx)
+int display_menu_track_bordered_pict(struct game_context *ctx,
+				     enum track_selection track,
+				     int centered)
 {
 	int bwidth = 5;
+	int offset = centered ? 50 : 80;
 
-	float scale_track =
-		(float)SCREEN_WIDTH / 3.0f /
-		(float)ctx->gfx.track_thumbnail[ctx->track.track_selected].w;
+	float scale_track = (float)SCREEN_WIDTH / 3.0f /
+			    (float)ctx->gfx.track_thumbnail[track].w;
 
-	int track_x =
-		SCREEN_WIDTH * 80 / 100 -
-		(int)((float)ctx->gfx.track_thumbnail[ctx->track.track_selected]
-			      .w *
-		      scale_track / 2.f);
+	int track_x = SCREEN_WIDTH * offset / 100 -
+		      (int)((float)ctx->gfx.track_thumbnail[track].w *
+			    scale_track / 2.f);
 
-	int track_y =
-		SCREEN_HEIGHT / 2 -
-		(int)((float)ctx->gfx.track_thumbnail[ctx->track.track_selected]
-			      .h *
-		      scale_track / 2.f);
+	int track_y = SCREEN_HEIGHT / 2 -
+		      (int)((float)ctx->gfx.track_thumbnail[track].h *
+			    scale_track / 2.f);
 
 	texture_render(ctx,
-		       &ctx->gfx.track_thumbnail[ctx->track.track_selected],
+		       &ctx->gfx.track_thumbnail[track],
 		       track_x,
 		       track_y,
 		       NULL,
@@ -336,31 +367,62 @@ static int display_menu_track_bordered_pict(struct game_context *ctx)
 		ctx,
 		track_x,
 		track_y,
-		track_x +
-			(int)((float)ctx->gfx
-				      .track_thumbnail[ctx->track
-							       .track_selected]
-				      .w *
-			      scale_track),
+		track_x + (int)((float)ctx->gfx.track_thumbnail[track].w *
+				scale_track),
 		track_y,
 		track_x,
-		track_y +
-			(int)((float)ctx->gfx
-				      .track_thumbnail[ctx->track
-							       .track_selected]
-				      .h *
-			      scale_track),
-		track_x +
-			(int)((float)ctx->gfx
-				      .track_thumbnail[ctx->track
-							       .track_selected]
-				      .w *
-			      scale_track),
+		track_y + (int)((float)ctx->gfx.track_thumbnail[track].h *
+				scale_track),
+		track_x + (int)((float)ctx->gfx.track_thumbnail[track].w *
+				scale_track),
 		track_y,
 		bwidth,
 		0,
 		0,
 		0);
+
+
+	if (!(1 << ctx->track.track_selected & ctx->tracks_available) &&
+	    ctx->status_cur == GAME_STATE_MENU_SELECT_TRACK) {
+
+		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
+		/*SDL_BlendMode blendMode;
+		SDL_GetRenderDrawBlendMode(ctx->renderer, &blendMode);
+		SDL_Log("blendMode = %d\n", blendMode);*/
+		SDL_SetRenderDrawBlendMode(ctx->renderer, SDL_BLENDMODE_BLEND);
+		SDL_Rect r = {
+			.x = track_x,
+			.y = track_y,
+			.w = (int)((float)ctx->gfx
+					   .track_thumbnail
+						   [ctx->track.track_selected]
+					   .w *
+				   scale_track),
+			.h = (int)((float)ctx->gfx
+					   .track_thumbnail
+						   [ctx->track.track_selected]
+					   .h *
+				   scale_track),
+		};
+		SDL_RenderFillRect(ctx->renderer, &r);
+
+		float scale_lock = 3.f;
+		int pos_x = r.x + r.w / 2 -
+			    (int)((float)ctx->gfx.gui_lock.w * scale_lock) / 2;
+		int pos_y = r.y + r.h / 2 -
+			    (int)((float)ctx->gfx.gui_lock.h * scale_lock) / 2;
+
+		texture_render(ctx,
+			       &ctx->gfx.gui_lock,
+			       pos_x,
+			       pos_y,
+			       NULL,
+			       0.f,
+			       scale_lock,
+			       0,
+			       NULL);
+	}
+
 
 	return 0;
 }
@@ -386,7 +448,7 @@ int display_screen_menu_select_car(struct game_context *ctx)
 
 	SDL_RenderFillRect(ctx->renderer, &r);
 
-	display_menu_car_bordered_pict(ctx);
+	display_menu_car_bordered_pict(ctx, ctx->pcar.car_player_model, 0);
 	display_menu_stats_bordered_pict(ctx);
 
 	float scale = 1.f;
@@ -451,7 +513,7 @@ int display_screen_menu_select_track(struct game_context *ctx)
 
 	SDL_RenderFillRect(ctx->renderer, &r);
 
-	display_menu_track_bordered_pict(ctx);
+	display_menu_track_bordered_pict(ctx, ctx->track.track_selected, 0);
 
 	float scale = 1.f;
 
@@ -517,9 +579,9 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	SDL_RenderFillRect(ctx->renderer, &r);
 
-	display_menu_car_bordered_pict(ctx);
+	display_menu_car_bordered_pict(ctx, ctx->pcar.car_player_model, 0);
 
-	display_menu_track_bordered_pict(ctx);
+	display_menu_track_bordered_pict(ctx, ctx->track.track_selected, 0);
 
 	texture_render(
 		ctx, &ctx->gfx.gui_settings, 0, 0, NULL, 0.f, 1.f, 0, NULL);

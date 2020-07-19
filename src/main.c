@@ -21,16 +21,16 @@ struct color_desc color_lane_yellow = {
 
 float pcar_stats[CAR_MODEL_LAST][CAR_STAT_LAST] = {
 	/* speed, accel, centrifugal, nitro */
-	{.878f, 	0.85f, 	1.0f, 	1}, // CAR_MODEL_TRUENO = 0,
-	{.878f, 	1.0f, 	1.15f, 	1}, // CAR_MODEL_DELTA,
-	{.944f, 	1.15f, 	1.3f, 	2}, // CAR_MODEL_FALCON,
-	{.944f, 	1.0f, 	1.15f, 	3}, // CAR_MODEL_HART,
-	{1.0f,		1.0f, 	.7f, 	2}, // CAR_MODEL_IMPREZIA,
-	{1.0f, 		1.15f, 	.85f, 	3}, // CAR_MODEL_LANCER,
-	{1.066f, 	1.15f, 	1.0f,	2}, // CAR_MODEL_TT,
-	{1.066f, 	1.30f, 	1.15f, 	3}, // CAR_MODEL_NSX,
-	{1.132f, 	1.15f, 	.85f, 	3}, // CAR_MODEL_LOTUS,
-	{1.132f, 	1.30f,	1.0f, 	3}, // CAR_MODEL_VIPER,
+	{.878f, 0.85f, 1.0f, 1}, // CAR_MODEL_TRUENO = 0,
+	{.878f, 1.0f, 1.15f, 1}, // CAR_MODEL_DELTA,
+	{.944f, 1.15f, 1.3f, 2}, // CAR_MODEL_FALCON,
+	{.944f, 1.0f, 1.15f, 3}, // CAR_MODEL_HART,
+	{1.0f, 1.0f, .7f, 2}, // CAR_MODEL_IMPREZIA,
+	{1.0f, 1.15f, .85f, 3}, // CAR_MODEL_LANCER,
+	{1.066f, 1.15f, 1.0f, 2}, // CAR_MODEL_TT,
+	{1.066f, 1.30f, 1.15f, 3}, // CAR_MODEL_NSX,
+	{1.132f, 1.15f, .85f, 3}, // CAR_MODEL_LOTUS,
+	{1.132f, 1.30f, 1.0f, 3}, // CAR_MODEL_VIPER,
 };
 
 /////////////////////////////////////////////////////////////////
@@ -181,7 +181,8 @@ int main_ctx_init_race(struct game_context *ctx)
 
 	ctx->pcar.max_speed_nitro = ctx->pcar.max_speed * 1.33f;
 	ctx->pcar.accel_nitro = ctx->pcar.accel * 2.f;
-	ctx->pcar.nb_nitro = (int) pcar_stats[ctx->pcar.car_player_model][CAR_STAT_NITRO];
+	ctx->pcar.nb_nitro =
+		(int)pcar_stats[ctx->pcar.car_player_model][CAR_STAT_NITRO];
 	ctx->pcar.breaking = ctx->pcar.max_speed * -1 / 20;
 	// ctx->pcar.decel = (ctx->pcar.max_speed / 5) * -1;
 	ctx->pcar.decel = (ctx->pcar.max_speed / 50) * -1;
@@ -190,7 +191,8 @@ int main_ctx_init_race(struct game_context *ctx)
 	// ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 3);
 	ctx->pcar.off_road_limit = (ctx->pcar.max_speed / 2);
 	ctx->pcar.centrifugal =
-		0.3f * pcar_stats[ctx->pcar.car_player_model][CAR_STAT_CENTRIFUGAL];
+		0.3f *
+		pcar_stats[ctx->pcar.car_player_model][CAR_STAT_CENTRIFUGAL];
 
 	ctx->pcar.car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 	ctx->pcar.car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
@@ -371,6 +373,55 @@ static int main_destroy(struct game_context *ctx)
 	return 0;
 }
 
+static int save_load(struct game_context *ctx)
+{
+	SDL_RWops *file = SDL_RWFromFile(SAVE_FILE, "r+b");
+
+	// File does not exist
+	if (file == NULL) {
+		SDL_Log("Warning: Unable to open file! SDL Error: %s\n",
+			SDL_GetError());
+
+		// Create file for writing
+		file = SDL_RWFromFile(SAVE_FILE, "w+b");
+
+		if (file != NULL) {
+			SDL_Log("New file created!\n");
+			// Initialize data
+			ctx->cars_available = CAR_MASK_DELTA | CAR_MASK_TRUENO;
+			ctx->tracks_available =
+				TRACK_MASK_DIJON | TRACK_MASK_SPEEDWAY;
+			SDL_RWwrite(
+				file, &ctx->cars_available, sizeof(Uint16), 1);
+			SDL_RWwrite(file,
+				    &ctx->tracks_available,
+				    sizeof(Uint16),
+				    1);
+			// Close file handler
+			SDL_RWclose(file);
+		} else {
+			SDL_Log("Error: Unable to create file! SDL Error: %s\n",
+				SDL_GetError());
+			return -1;
+		}
+	}
+	// File exists
+	else {
+		// Load data
+		SDL_Log("Reading file...!\n");
+		SDL_RWread(file, &ctx->cars_available, sizeof(Uint32), 1);
+		SDL_RWread(file, &ctx->tracks_available, sizeof(Uint32), 1);
+
+		SDL_Log("ctx->cars_available = 0x%x\n", ctx->cars_available);
+		SDL_Log("ctx->tracks_available = 0x%x\n",
+			ctx->tracks_available);
+
+		// Close file handler
+		SDL_RWclose(file);
+	}
+
+	return 0;
+}
 
 /////////////////////////////////////////////////////////////////
 // Main function
@@ -405,6 +456,9 @@ int main()
 	// track_build(ctx);
 
 	// ai_car_init(ctx);
+
+	//
+	save_load(ctx);
 
 	// game loop
 	while (!ctx->exit) {
