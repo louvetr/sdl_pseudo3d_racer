@@ -770,9 +770,11 @@ int logic_get_player_lap_nb(struct game_context *ctx)
 	if (ctx->race.nb_lap_logic == 0) {
 		return 1;
 	} else if (ctx->race.nb_lap_logic > ctx->race.nb_lap) {
-		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END)
+		if (ctx->status_cur != GAME_STATE_RACE_ANIM_END &&
+		    ctx->status_cur != GAME_STATE_RACE_ANIM_UNLOCK) {
 			ctx->race.nb_frame_anim = 0;
-		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_END);
+			event_update_game_state(ctx, GAME_STATE_RACE_ANIM_END);
+		}
 		return ctx->race.nb_lap;
 	} else {
 		return ctx->race.nb_lap_logic;
@@ -1122,8 +1124,8 @@ static int logic_race_option(struct game_context *ctx)
 	if (ctx->keys.exit) {
 		SDL_Log("[%s] ctx->keys.exit PRESSED\n", __func__);
 
-		/* // FOR DEBUG PURPOSE
-		ctx->race.nb_frame_anim = 0;
+		// FOR DEBUG PURPOSE
+		/*ctx->race.nb_frame_anim = 0;
 		event_update_game_state(ctx, GAME_STATE_RACE_ANIM_END);
 		*/
 		event_update_game_state(ctx, GAME_STATE_MENU_MAIN);
@@ -1227,8 +1229,8 @@ static int logic_race_anim_end(struct game_context *ctx)
 			ctx->last_unlocked_track);
 
 
-		if (ctx->last_unlocked_car >= 0 ||
-		    ctx->last_unlocked_track >= 0) {
+		if (ctx->last_unlocked_car > 0 ||
+		    ctx->last_unlocked_track > 0) {
 
 			// save unlocked in file
 			SDL_RWops *file = SDL_RWFromFile(SAVE_FILE, "w+b");
@@ -1338,9 +1340,11 @@ int main_logic(struct game_context *ctx)
 		logic_race(ctx);
 		break;
 	case GAME_STATE_RACE_ANIM_END:
+		logic_race(ctx);
 		logic_race_anim_end(ctx);
 		break;
 	case GAME_STATE_RACE_ANIM_UNLOCK:
+		logic_race(ctx);
 		logic_race_anim_unlock(ctx);
 		break;
 	case GAME_STATE_QUIT:

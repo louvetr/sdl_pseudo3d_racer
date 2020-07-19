@@ -251,8 +251,8 @@ static int event_race_anim_end(struct game_context *ctx)
 	memset(&ctx->keys, 0, sizeof(struct keys_status));
 
 	while (SDL_PollEvent(&ctx->event) != 0) {
-		/*if (ctx->event.type == SDL_QUIT)
-			ctx->exit = 1;*/
+		if (ctx->event.type == SDL_QUIT)
+			ctx->exit = 1;
 
 		if (ctx->event.type == SDL_KEYUP) {
 			switch (ctx->event.key.keysym.sym) {

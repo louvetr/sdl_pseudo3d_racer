@@ -214,7 +214,7 @@ int main_ctx_init_race(struct game_context *ctx)
 
 	ctx->race.nb_lap_logic = 0;
 	ctx->race.nb_lap = 3;
-	// ctx->race.nb_lap = 1;
+	//ctx->race.nb_lap = 1;
 	ctx->race.player_lap = 0;
 	ctx->pcar.player_place = NB_AI_CARS + 1;
 
