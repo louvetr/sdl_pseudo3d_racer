@@ -282,6 +282,7 @@ struct ai_car_info {
 	float pos_z_rest_percent;
 	// car position segment idx
 	int segment;
+	int segment_prev;
 	// distance done by this car
 	int distance;
 
