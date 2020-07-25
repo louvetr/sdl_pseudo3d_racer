@@ -51,13 +51,13 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 		int ai_max_y =
 			ctx->ai_cars[i].hitbox.y + ctx->ai_cars[i].hitbox.h;
 
+		int back_impact = 0;
+
 		// Xs collides
 		if ((ctx->pcar.player_max_x > ctx->ai_cars[i].hitbox.x &&
 		     ctx->pcar.player_max_x < ai_max_x) ||
 		    (ctx->pcar.player_sprite_x < ai_max_x &&
 		     ctx->pcar.player_sprite_x > ctx->ai_cars[i].hitbox.x)) {
-
-			int force_back_collision = 0;
 
 			// Front collision
 			if (ai_max_y > ctx->pcar.player_sprite_y &&
@@ -71,7 +71,7 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 						    ctx->ai_cars[i]
 							    .segment_prev <
 					    NB_SEGMENT_CAR_COLLISION) {
-					force_back_collision = 1;
+					back_impact = 1;
 					SDL_Log("[%s] COLLISON CAR FRONT FALSE -> BACK\n",
 						__func__);
 				} else if (ctx->ai_cars[i].segment -
@@ -100,15 +100,10 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 			if ((ctx->ai_cars[i].hitbox.y <
 				     ctx->pcar.player_max_y &&
 			     ctx->ai_cars[i].hitbox.y >
-				     ctx->pcar.player_sprite_y) ||
-			    force_back_collision) {
+				     ctx->pcar.player_sprite_y)) {
 
-				int back_impact = 0;
-
-				if (force_back_collision) {
-					back_impact = 1;
-				} else if (ctx->pcar.player_segment >
-					   ctx->ai_cars[i].segment) {
+				if (ctx->pcar.player_segment >
+				    ctx->ai_cars[i].segment) {
 					back_impact = 1;
 				} else if (ctx->track.nb_segments -
 						   ctx->ai_cars[i].segment +
@@ -116,10 +111,9 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 					   NB_SEGMENT_CAR_COLLISION) {
 					back_impact = 1;
 				}
+			}
 
-				if (back_impact == 0) {
-					continue;
-				}
+			if (back_impact) {
 
 				ctx->sound.collision_detected = 1;
 				SDL_Log("[%s] COLLISON CAR BACK\n", __func__);
@@ -142,8 +136,6 @@ static int logic_race_check_collision_with_cars(struct game_context *ctx)
 						ctx->ai_cars[i]
 							.speed_slow_straight =
 							new_speed_slow_straight;
-					// ctx->pcar.speed *
-					// .5f;
 
 					SDL_Log("[%s][>0] COLLISON CAR BACK, AI car speed SLOW AFTER = %f\n",
 						__func__,

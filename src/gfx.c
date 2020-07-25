@@ -100,6 +100,21 @@
 #define PNG_SCENE_BUSH_06 "./media/scene/scene_bush_06.png"
 #define PNG_SCENE_BUSH_FLOWER "./media/scene/scene_bush_flower.png"
 
+
+#define PNG_SCENE_BIG_ROCK "./media/scene/scene_big_rock.png"
+#define PNG_SCENE_ROCK_01 "./media/scene/scene_rock_01.png"
+#define PNG_SCENE_ROCK_02 "./media/scene/scene_rock_02.png"
+#define PNG_SCENE_ROCK_03 "./media/scene/scene_rock_03.png"
+#define PNG_SCENE_ROCK_04 "./media/scene/scene_rock_04.png"
+#define PNG_SCENE_ROCK_05 "./media/scene/scene_rock_05.png"
+#define PNG_SCENE_CACTUS_01 "./media/scene/scene_cactus_01.png"
+#define PNG_SCENE_CACTUS_02 "./media/scene/scene_cactus_02.png"
+#define PNG_SCENE_CACTUS_03 "./media/scene/scene_cactus_03.png"
+#define PNG_SCENE_CACTUS_04 "./media/scene/scene_cactus_04.png"
+#define PNG_SCENE_DESERT_GRASS_01 "./media/scene/scene_desert_grass_01.png"
+#define PNG_SCENE_DESERT_GRASS_02 "./media/scene/scene_desert_grass_02.png"
+
+
 #define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
 #define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
 #define PNG_SMOKE_02 "./media/particles/whitePuff02.png"
@@ -338,11 +353,37 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 {
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
-	load_texture_from_file(ctx,
+	/*load_texture_from_file(ctx,
 			       PNG_SCENE_TUNNEL_A_BRIGHT,
 			       &ctx->gfx.scene_tunnel_a_bright);
 	load_texture_from_file(
-		ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);
+		ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);*/
+
+	load_texture_from_file(
+		ctx, PNG_SCENE_BIG_ROCK, &ctx->gfx.scene_big_rock);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROCK_01, &ctx->gfx.scene_rock_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROCK_02, &ctx->gfx.scene_rock_02);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROCK_03, &ctx->gfx.scene_rock_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROCK_04, &ctx->gfx.scene_rock_04);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROCK_05, &ctx->gfx.scene_rock_05);
+	load_texture_from_file(
+		ctx, PNG_SCENE_CACTUS_01, &ctx->gfx.scene_cactus_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_CACTUS_02, &ctx->gfx.scene_cactus_02);
+	load_texture_from_file(
+		ctx, PNG_SCENE_CACTUS_03, &ctx->gfx.scene_cactus_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_CACTUS_04, &ctx->gfx.scene_cactus_04);
+	load_texture_from_file(
+		ctx, PNG_SCENE_DESERT_GRASS_01, &ctx->gfx.scene_desert_grass_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_DESERT_GRASS_02, &ctx->gfx.scene_desert_grass_02);
+
 
 	return 0;
 }
@@ -719,6 +760,19 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_tree_dead_snow.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_lantern.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_bench.texture);
+
+	SDL_DestroyTexture(ctx->gfx.scene_big_rock.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rock_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rock_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rock_03.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rock_04.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rock_05.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_cactus_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_cactus_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_cactus_03.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_cactus_04.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_desert_grass_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_desert_grass_02.texture);
 
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);

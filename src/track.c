@@ -202,7 +202,13 @@ static int sector_horns[NB_SECTOR_HORNS][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 4},
 
 	{LG_LONG, LG_LONG, LG_LONG, HILL_DOWN_HIGH, CURVE_R_HARD, 4, 4},
-	{LG_LONG, LG_LONG, LG_LONG, HILL_UP_HIGH/*HILL_DOWN_HIGH*/, CURVE_R_HARD, 4, 4},
+	{LG_LONG,
+	 LG_LONG,
+	 LG_LONG,
+	 HILL_UP_HIGH /*HILL_DOWN_HIGH*/,
+	 CURVE_R_HARD,
+	 4,
+	 4},
 
 	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_NONE, 4, 3},
 	{LG_SHORT, LG_SHORT, LG_SHORT, HILL_NONE, CURVE_R_HARD, 3, 3},
@@ -335,7 +341,13 @@ static int sector_whale[NB_SECTOR_WHALE][NB_SECTOR_PARAM] = {
 	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_L_MEDIUM, 3, 2},
 
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 2, 2},
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_DOWN_MEDIUM, CURVE_L_MEDIUM, 2, 2},
+	{LG_MEDIUM,
+	 LG_MEDIUM,
+	 LG_MEDIUM,
+	 HILL_DOWN_MEDIUM,
+	 CURVE_L_MEDIUM,
+	 2,
+	 2},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_R_HARD, 2, 2},
 
 	{LG_VSHORT, LG_VSHORT, LG_VSHORT, HILL_NONE, CURVE_NONE, 2, 3},
@@ -346,7 +358,13 @@ static int sector_whale[NB_SECTOR_WHALE][NB_SECTOR_PARAM] = {
 static int sector_carmona[NB_SECTOR_CARMONA][NB_SECTOR_PARAM] = {
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 4},
 
-	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_DOWN_MEDIUM, CURVE_R_MEDIUM, 4, 4},
+	{LG_MEDIUM,
+	 LG_MEDIUM,
+	 LG_MEDIUM,
+	 HILL_DOWN_MEDIUM,
+	 CURVE_R_MEDIUM,
+	 4,
+	 4},
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 4, 4},
 
 	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 4, 4},
@@ -966,6 +984,7 @@ static int track_build_fork(struct game_context *ctx)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
 
+	/*
 	struct scene_seg_desc *scene_tunnel_bright =
 		calloc(1, sizeof(struct scene_seg_desc));
 	scene_tunnel_bright->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
@@ -994,7 +1013,318 @@ static int track_build_fork(struct game_context *ctx)
 		ctx->track.segments[i].scene =
 			i % 2 == 0 ? scene_tunnel_bright : scene_tunnel_dark;
 	}
+	*/
 
+	float rstep = 3.f;
+
+	struct scene_seg_desc *scene_rockline_01 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rockline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 1.5f;
+		set_scene_sprite_desc(&scene_rockline_01->sprite[(2*i)],
+				      &ctx->gfx.scene_rock_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rockline_01->sprite[(2*i)+1],
+				      &ctx->gfx.scene_rock_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_rockline_02 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rockline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 3.f;
+		set_scene_sprite_desc(&scene_rockline_02->sprite[(2*i)],
+				      &ctx->gfx.scene_rock_02,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rockline_02->sprite[(2*i)+0],
+				      &ctx->gfx.scene_rock_02,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_rockline_03 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rockline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 4.5f;
+		set_scene_sprite_desc(&scene_rockline_03->sprite[(2*i)],
+				      &ctx->gfx.scene_rock_03,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rockline_03->sprite[(2*i)+1],
+				      &ctx->gfx.scene_rock_03,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_rockline_04 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rockline_04->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 2.f;
+		set_scene_sprite_desc(&scene_rockline_04->sprite[(2*i)],
+				      &ctx->gfx.scene_rock_04,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rockline_04->sprite[(2*i)+1],
+				      &ctx->gfx.scene_rock_04,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_rockline_05 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rockline_05->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 4.f;
+		set_scene_sprite_desc(&scene_rockline_05->sprite[(2*i)],
+				      &ctx->gfx.scene_rock_05,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rockline_05->sprite[(2*i)+1],
+				      &ctx->gfx.scene_rock_05,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+
+
+	float vstep = 5.f;
+	struct scene_seg_desc *scene_vegline_01 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 2.f;
+		set_scene_sprite_desc(&scene_vegline_01->sprite[(2*i)],
+				      &ctx->gfx.scene_cactus_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_01->sprite[(2*i)+1],
+				      &ctx->gfx.scene_cactus_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_vegline_02 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 4.f;
+		set_scene_sprite_desc(&scene_vegline_02->sprite[(2*i)],
+				      &ctx->gfx.scene_desert_grass_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_02->sprite[(2*i)+1],
+				      &ctx->gfx.scene_desert_grass_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_vegline_03 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 3.f;
+		set_scene_sprite_desc(&scene_vegline_03->sprite[(2*i)],
+				      &ctx->gfx.scene_cactus_02,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_03->sprite[(2*i)+1],
+				      &ctx->gfx.scene_cactus_02,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_vegline_04 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_04->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 5.f;
+		set_scene_sprite_desc(&scene_vegline_04->sprite[(2*i)],
+				      &ctx->gfx.scene_cactus_03,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_04->sprite[(2*i)+1],
+				      &ctx->gfx.scene_cactus_03,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_vegline_05 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_05->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 6.f;
+		set_scene_sprite_desc(&scene_vegline_05->sprite[(2*i)],
+				      &ctx->gfx.scene_desert_grass_02,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_05->sprite[(2*i)+1],
+				      &ctx->gfx.scene_desert_grass_02,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_vegline_06 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vegline_06->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * vstep + 7.f;
+		set_scene_sprite_desc(&scene_vegline_06->sprite[(2*i)],
+				      &ctx->gfx.scene_cactus_04,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vegline_06->sprite[(2*i)+1],
+				      &ctx->gfx.scene_cactus_04,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+
+	struct scene_seg_desc *scene_bigrocks =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_bigrocks->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	for (int i = 0; i < /*2*/ MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(i + 1) * 1.5f;
+		set_scene_sprite_desc(&scene_bigrocks->sprite[(2 * i)],
+				      &ctx->gfx.scene_big_rock,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_bigrocks->sprite[(2 * i) + 1],
+				      &ctx->gfx.scene_big_rock,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL /*SDL_FLIP_NONE*/);
+	}
+
+	int seg_step = 100;
+	for (int i = 1;
+	     i < nb_segments_added * 1 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_01;
+	for (int i = 21;
+	     i < nb_segments_added * 1 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_02;
+	for (int i = 41;
+	     i < nb_segments_added * 1 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_03;
+	for (int i = 61;
+	     i < nb_segments_added * 1 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_04;
+	for (int i = 81;
+	     i < nb_segments_added * 1 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_05;
+
+
+	for (int i = nb_segments_added * 1 / 6;
+	     i < nb_segments_added * 3 / 6;
+	     i += 10)
+		ctx->track.segments[i].scene = scene_bigrocks;
+
+	seg_step = 120;
+	for (int i = 1 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added * 5 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_01;
+	for (int i = 21 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added * 5 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_02;
+	for (int i = 41 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_03;
+	for (int i = 61 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added * 5 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_04;
+	for (int i = 81 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added * 5 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_05;
+	for (int i = 101 + nb_segments_added * 3 / 6;
+	     i < nb_segments_added * 5 / 6;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_vegline_06;
+
+	seg_step = 100;
+	for (int i = 1 + nb_segments_added * 5 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_01;
+	for (int i = 21 + nb_segments_added * 5 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_02;
+	for (int i = 41 + nb_segments_added * 5 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_03;
+	for (int i = 61 + nb_segments_added * 5 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_04;
+	for (int i = 81 + nb_segments_added * 5 / 6;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rockline_05;
 
 	return 0;
 }
