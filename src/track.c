@@ -188,11 +188,11 @@ static int sector_stone[NB_SECTOR_STONE][NB_SECTOR_PARAM] = {
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_NONE, CURVE_NONE, 3, 2},
 
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_UP_MEDIUM, CURVE_L_MEDIUM, 2, 2},
-	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_NONE, 2, 2},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 2, 2},
 	{LG_SHORT, LG_MEDIUM, LG_SHORT, HILL_DOWN_MEDIUM, CURVE_L_EASY, 2, 2},
 
-	{LG_MEDIUM, LG_LONG, LG_MEDIUM, HILL_UP_HIGH, CURVE_NONE, 2, 3},
-	{LG_SHORT, LG_LONG, LG_MEDIUM, HILL_NONE, CURVE_R_HARD, 3, 3},
+	{LG_LONG, LG_LONG, LG_LONG, HILL_NONE, CURVE_NONE, 2, 3},
+	{LG_SHORT, LG_LONG, LG_MEDIUM, HILL_UP_HIGH, CURVE_R_HARD, 3, 3},
 
 	{LG_MEDIUM, LG_MEDIUM, LG_MEDIUM, HILL_NONE, CURVE_NONE, 3, 3},
 };
@@ -747,6 +747,145 @@ static int track_build_stone(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
+	struct scene_seg_desc *scene_delphi =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_delphi->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_delphi->sprite[0],
+			      &ctx->gfx.scene_delphi,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_delphi->sprite[1],
+			      &ctx->gfx.scene_delphi,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	struct scene_seg_desc *scene_temple =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_temple->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_temple->sprite[0],
+			      &ctx->gfx.scene_temple,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_temple->sprite[1],
+			      &ctx->gfx.scene_temple,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+
+	struct scene_seg_desc *scene_columns_a =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_columns_a->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_columns_a->sprite[0],
+			      &ctx->gfx.scene_column_01,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_columns_a->sprite[1],
+			      &ctx->gfx.scene_column_01,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+
+
+	float rstep = 3.f;
+
+	struct scene_seg_desc *scene_columns_01 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_columns_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 1.5f;
+		set_scene_sprite_desc(&scene_columns_01->sprite[(2*i)],
+				      &ctx->gfx.scene_column_02,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_columns_01->sprite[(2*i)+1],
+				      &ctx->gfx.scene_column_02,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_columns_02 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_columns_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 3.f;
+		set_scene_sprite_desc(&scene_columns_02->sprite[(2*i)],
+				      &ctx->gfx.scene_column_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_columns_02->sprite[(2*i)+0],
+				      &ctx->gfx.scene_column_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_columns_03 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_columns_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 10; i++) {
+		float position = (float)i * rstep + 4.5f;
+		set_scene_sprite_desc(&scene_columns_03->sprite[(2*i)],
+				      &ctx->gfx.scene_column_03,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_columns_03->sprite[(2*i)+1],
+				      &ctx->gfx.scene_column_03,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	for (int i = 0; i < nb_segments_added * 3 / 16; i += 60)
+		ctx->track.segments[i].scene = scene_delphi;
+
+	for (int i = nb_segments_added * 3 / 16;
+	     i < nb_segments_added * 7 / 16;
+	     i += 20)
+		ctx->track.segments[i].scene = scene_columns_a;
+
+	for (int i = nb_segments_added * 7 / 16; i < nb_segments_added * /*7*/11 / 16;
+	     i += 80)
+		ctx->track.segments[i].scene = scene_temple;
+
+	for (int i = nb_segments_added * 11 / 16; i < nb_segments_added * 15 / 16;
+	     i += 60)
+		ctx->track.segments[i].scene = scene_columns_01;
+	for (int i = nb_segments_added * 11 / 16 + 20; i < nb_segments_added * 15 / 16;
+	     i += 60)
+		ctx->track.segments[i].scene = scene_columns_02;
+	for (int i = nb_segments_added * 11 / 16 + 40; i < nb_segments_added * 15 / 16;
+	     i += 60)
+		ctx->track.segments[i].scene = scene_columns_03;
+
+	for (int i = nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += 40)
+		ctx->track.segments[i].scene = scene_delphi;
+
 	return 0;
 }
 
@@ -982,38 +1121,6 @@ static int track_build_fork(struct game_context *ctx)
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
-
-
-	/*
-	struct scene_seg_desc *scene_tunnel_bright =
-		calloc(1, sizeof(struct scene_seg_desc));
-	scene_tunnel_bright->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
-	scene_tunnel_bright->type = SCENE_SPRITE_CENTERED;
-	set_scene_sprite_desc(&scene_tunnel_bright->sprite[0],
-			      &ctx->gfx.scene_tunnel_a_bright,
-			      1.5f,
-			      &hitbox_tunnel_a,
-			      1,
-			      SDL_FLIP_NONE);
-
-	struct scene_seg_desc *scene_tunnel_dark =
-		calloc(1, sizeof(struct scene_seg_desc));
-	scene_tunnel_dark->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
-	scene_tunnel_dark->type = SCENE_SPRITE_CENTERED;
-	set_scene_sprite_desc(&scene_tunnel_dark->sprite[0],
-			      &ctx->gfx.scene_tunnel_a_dark,
-			      1.5f,
-			      &hitbox_tunnel_a,
-			      1,
-			      SDL_FLIP_NONE);
-
-	for (int i = nb_segments_added * 0 / 16 + 20;
-	     i < nb_segments_added * 15 / 16;
-	     i += 3) {
-		ctx->track.segments[i].scene =
-			i % 2 == 0 ? scene_tunnel_bright : scene_tunnel_dark;
-	}
-	*/
 
 	float rstep = 3.f;
 

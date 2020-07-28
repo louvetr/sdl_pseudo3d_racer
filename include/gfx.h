@@ -69,6 +69,12 @@ struct game_graphics{
 	struct texture scene_bushes[NB_SPRITE_BUSH];
 	struct texture scene_bush_flower;
 
+	// scene greece
+	struct texture scene_column_01;
+	struct texture scene_column_02;
+	struct texture scene_column_03;
+	struct texture scene_delphi;
+	struct texture scene_temple;
 
 	// scene fork
 	struct texture scene_big_rock;

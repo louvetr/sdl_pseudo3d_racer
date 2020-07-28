@@ -115,6 +115,14 @@
 #define PNG_SCENE_DESERT_GRASS_02 "./media/scene/scene_desert_grass_02.png"
 
 
+
+#define PNG_SCENE_COLUMN_01 "./media/scene/scene_column_01.png"
+#define PNG_SCENE_COLUMN_02 "./media/scene/scene_column_02.png"
+#define PNG_SCENE_COLUMN_03 "./media/scene/scene_column_03.png"
+#define PNG_SCENE_DELPHI "./media/scene/scene_delphi.png"
+#define PNG_SCENE_TEMPLE "./media/scene/scene_temple.png"
+
+
 #define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
 #define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
 #define PNG_SMOKE_02 "./media/particles/whitePuff02.png"
@@ -310,6 +318,27 @@ static int gfx_load_background(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_scene_sprites_stone(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+
+	load_texture_from_file(
+		ctx, PNG_SCENE_COLUMN_01, &ctx->gfx.scene_column_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_COLUMN_02, &ctx->gfx.scene_column_02);
+	load_texture_from_file(
+		ctx, PNG_SCENE_COLUMN_03, &ctx->gfx.scene_column_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_DELPHI, &ctx->gfx.scene_delphi);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TEMPLE, &ctx->gfx.scene_temple);
+
+	return 0;
+}
+
+
+
 static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 {
 	load_texture_from_file(
@@ -437,6 +466,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_FORK:
 		gfx_load_scene_sprites_fork(ctx);
+		break;
+	case TRACK_STONE:
+		gfx_load_scene_sprites_stone(ctx);
 		break;
 	default:
 		SDL_Log("[%s] invalid track\n", __func__);
@@ -773,6 +805,12 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_cactus_04.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_desert_grass_01.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_desert_grass_02.texture);
+
+	SDL_DestroyTexture(ctx->gfx.scene_column_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_column_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_column_03.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_delphi.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_temple.texture);
 
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);
