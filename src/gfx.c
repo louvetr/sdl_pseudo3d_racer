@@ -115,13 +115,19 @@
 #define PNG_SCENE_DESERT_GRASS_02 "./media/scene/scene_desert_grass_02.png"
 
 
-
 #define PNG_SCENE_COLUMN_01 "./media/scene/scene_column_01.png"
 #define PNG_SCENE_COLUMN_02 "./media/scene/scene_column_02.png"
 #define PNG_SCENE_COLUMN_03 "./media/scene/scene_column_03.png"
 #define PNG_SCENE_DELPHI "./media/scene/scene_delphi.png"
 #define PNG_SCENE_TEMPLE "./media/scene/scene_temple.png"
 
+#define PNG_SCENE_DUNE_01 "./media/scene/scene_dune_01.png"
+#define PNG_SCENE_DUNE_02 "./media/scene/scene_dune_02.png"
+#define PNG_SCENE_DUNE_03 "./media/scene/scene_dune_03.png"
+#define PNG_SCENE_EGYPT_COLUMN "./media/scene/scene_egypt_column.png"
+#define PNG_SCENE_EGYPT_TEMPLE "./media/scene/scene_egypt_temple.png"
+//#define PNG_SCENE_RAM_STATUE "./media/scene/scene_ram_statue.png"
+#define PNG_SCENE_RAM_STATUE "./media/scene/scene_ram_statue_75p.png"
 
 #define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
 #define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
@@ -329,14 +335,29 @@ static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 		ctx, PNG_SCENE_COLUMN_02, &ctx->gfx.scene_column_02);
 	load_texture_from_file(
 		ctx, PNG_SCENE_COLUMN_03, &ctx->gfx.scene_column_03);
-	load_texture_from_file(
-		ctx, PNG_SCENE_DELPHI, &ctx->gfx.scene_delphi);
-	load_texture_from_file(
-		ctx, PNG_SCENE_TEMPLE, &ctx->gfx.scene_temple);
+	load_texture_from_file(ctx, PNG_SCENE_DELPHI, &ctx->gfx.scene_delphi);
+	load_texture_from_file(ctx, PNG_SCENE_TEMPLE, &ctx->gfx.scene_temple);
 
 	return 0;
 }
 
+static int gfx_load_scene_sprites_curves(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+
+	load_texture_from_file(ctx, PNG_SCENE_DUNE_01, &ctx->gfx.scene_dune_01);
+	load_texture_from_file(ctx, PNG_SCENE_DUNE_02, &ctx->gfx.scene_dune_02);
+	load_texture_from_file(ctx, PNG_SCENE_DUNE_03, &ctx->gfx.scene_dune_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_EGYPT_COLUMN, &ctx->gfx.scene_egypt_column);
+	load_texture_from_file(
+		ctx, PNG_SCENE_EGYPT_TEMPLE, &ctx->gfx.scene_egypt_temple);
+	load_texture_from_file(
+		ctx, PNG_SCENE_RAM_STATUE, &ctx->gfx.scene_ram_statue);
+
+	return 0;
+}
 
 
 static int gfx_load_scene_sprites_frost(struct game_context *ctx)
@@ -390,16 +411,11 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 
 	load_texture_from_file(
 		ctx, PNG_SCENE_BIG_ROCK, &ctx->gfx.scene_big_rock);
-	load_texture_from_file(
-		ctx, PNG_SCENE_ROCK_01, &ctx->gfx.scene_rock_01);
-	load_texture_from_file(
-		ctx, PNG_SCENE_ROCK_02, &ctx->gfx.scene_rock_02);
-	load_texture_from_file(
-		ctx, PNG_SCENE_ROCK_03, &ctx->gfx.scene_rock_03);
-	load_texture_from_file(
-		ctx, PNG_SCENE_ROCK_04, &ctx->gfx.scene_rock_04);
-	load_texture_from_file(
-		ctx, PNG_SCENE_ROCK_05, &ctx->gfx.scene_rock_05);
+	load_texture_from_file(ctx, PNG_SCENE_ROCK_01, &ctx->gfx.scene_rock_01);
+	load_texture_from_file(ctx, PNG_SCENE_ROCK_02, &ctx->gfx.scene_rock_02);
+	load_texture_from_file(ctx, PNG_SCENE_ROCK_03, &ctx->gfx.scene_rock_03);
+	load_texture_from_file(ctx, PNG_SCENE_ROCK_04, &ctx->gfx.scene_rock_04);
+	load_texture_from_file(ctx, PNG_SCENE_ROCK_05, &ctx->gfx.scene_rock_05);
 	load_texture_from_file(
 		ctx, PNG_SCENE_CACTUS_01, &ctx->gfx.scene_cactus_01);
 	load_texture_from_file(
@@ -408,10 +424,12 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 		ctx, PNG_SCENE_CACTUS_03, &ctx->gfx.scene_cactus_03);
 	load_texture_from_file(
 		ctx, PNG_SCENE_CACTUS_04, &ctx->gfx.scene_cactus_04);
-	load_texture_from_file(
-		ctx, PNG_SCENE_DESERT_GRASS_01, &ctx->gfx.scene_desert_grass_01);
-	load_texture_from_file(
-		ctx, PNG_SCENE_DESERT_GRASS_02, &ctx->gfx.scene_desert_grass_02);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_DESERT_GRASS_01,
+			       &ctx->gfx.scene_desert_grass_01);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_DESERT_GRASS_02,
+			       &ctx->gfx.scene_desert_grass_02);
 
 
 	return 0;
@@ -469,6 +487,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_STONE:
 		gfx_load_scene_sprites_stone(ctx);
+		break;
+	case TRACK_CURVES:
+		gfx_load_scene_sprites_curves(ctx);
 		break;
 	default:
 		SDL_Log("[%s] invalid track\n", __func__);
@@ -555,41 +576,23 @@ static int gfx_load_cars_stats(struct game_context *ctx)
 
 static int gfx_load_gui(struct game_context *ctx)
 {
-	gfx_load_texture(ctx,
-			 PNG_GUI_CREDIT,
-			 &ctx->gfx.gui_credit);
+	gfx_load_texture(ctx, PNG_GUI_CREDIT, &ctx->gfx.gui_credit);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_SETTINGS,
-			 &ctx->gfx.gui_settings);
+	gfx_load_texture(ctx, PNG_GUI_SETTINGS, &ctx->gfx.gui_settings);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_EXIT,
-			 &ctx->gfx.gui_exit);
+	gfx_load_texture(ctx, PNG_GUI_EXIT, &ctx->gfx.gui_exit);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_PREV,
-			 &ctx->gfx.gui_prev);
+	gfx_load_texture(ctx, PNG_GUI_PREV, &ctx->gfx.gui_prev);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_PLAY,
-			 &ctx->gfx.gui_play);
+	gfx_load_texture(ctx, PNG_GUI_PLAY, &ctx->gfx.gui_play);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_UP,
-			 &ctx->gfx.gui_up);
+	gfx_load_texture(ctx, PNG_GUI_UP, &ctx->gfx.gui_up);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_DOWN,
-			 &ctx->gfx.gui_down);		
+	gfx_load_texture(ctx, PNG_GUI_DOWN, &ctx->gfx.gui_down);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_CASE,
-			 &ctx->gfx.gui_case);
+	gfx_load_texture(ctx, PNG_GUI_CASE, &ctx->gfx.gui_case);
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_LOCK,
-			 &ctx->gfx.gui_lock);
+	gfx_load_texture(ctx, PNG_GUI_LOCK, &ctx->gfx.gui_lock);
 	return 0;
 }
 
@@ -628,12 +631,14 @@ int gfx_load_tracks_thumbnail(struct game_context *ctx)
 		ctx, PNG_TRACK_HORNS, &ctx->gfx.track_thumbnail[TRACK_HORNS]);
 	gfx_load_texture(
 		ctx, PNG_TRACK_CURVES, &ctx->gfx.track_thumbnail[TRACK_CURVES]);
-	gfx_load_texture(
-		ctx, PNG_TRACK_SQUARES, &ctx->gfx.track_thumbnail[TRACK_SQUARES]);
+	gfx_load_texture(ctx,
+			 PNG_TRACK_SQUARES,
+			 &ctx->gfx.track_thumbnail[TRACK_SQUARES]);
 	gfx_load_texture(
 		ctx, PNG_TRACK_WHALE, &ctx->gfx.track_thumbnail[TRACK_WHALE]);
-	gfx_load_texture(
-		ctx, PNG_TRACK_CARMONA, &ctx->gfx.track_thumbnail[TRACK_CARMONA]);
+	gfx_load_texture(ctx,
+			 PNG_TRACK_CARMONA,
+			 &ctx->gfx.track_thumbnail[TRACK_CARMONA]);
 	return 0;
 }
 
@@ -716,27 +721,13 @@ int gfx_load_resources_race(struct game_context *ctx)
 		return ret;
 	}
 
-	gfx_load_texture(ctx,
-			 PNG_GUI_PREV,
-			 &ctx->gfx.gui_prev);
-	gfx_load_texture(ctx,
-			 PNG_GUI_CASE,
-			 &ctx->gfx.gui_case);
-	gfx_load_texture(ctx,
-			 PNG_GUI_PAUSE,
-			 &ctx->gfx.gui_pause);
-	gfx_load_texture(ctx,
-			 PNG_GUI_ACCEL,
-			 &ctx->gfx.gui_accel);
-	gfx_load_texture(ctx,
-			 PNG_GUI_BRAKE,
-			 &ctx->gfx.gui_brake);
-	gfx_load_texture(ctx,
-			 PNG_GUI_LEFT,
-			 &ctx->gfx.gui_left);
-	gfx_load_texture(ctx,
-			 PNG_GUI_RIGHT,
-			 &ctx->gfx.gui_right);
+	gfx_load_texture(ctx, PNG_GUI_PREV, &ctx->gfx.gui_prev);
+	gfx_load_texture(ctx, PNG_GUI_CASE, &ctx->gfx.gui_case);
+	gfx_load_texture(ctx, PNG_GUI_PAUSE, &ctx->gfx.gui_pause);
+	gfx_load_texture(ctx, PNG_GUI_ACCEL, &ctx->gfx.gui_accel);
+	gfx_load_texture(ctx, PNG_GUI_BRAKE, &ctx->gfx.gui_brake);
+	gfx_load_texture(ctx, PNG_GUI_LEFT, &ctx->gfx.gui_left);
+	gfx_load_texture(ctx, PNG_GUI_RIGHT, &ctx->gfx.gui_right);
 
 	SDL_Log("media loaded\n");
 
@@ -812,6 +803,13 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_delphi.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_temple.texture);
 
+	SDL_DestroyTexture(ctx->gfx.scene_dune_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_dune_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_dune_03.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_egypt_column.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_egypt_temple.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_ram_statue.texture);
+
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);
 
@@ -832,7 +830,7 @@ int gfx_unload_resources(struct game_context *ctx)
 	for (int i = 0; i < TRACK_LAST; i++)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
-	
+
 	SDL_DestroyTexture(ctx->gfx.gui_lock.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_pause.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_credit.texture);

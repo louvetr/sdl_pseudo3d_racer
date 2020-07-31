@@ -40,6 +40,8 @@ struct color_desc cd_foam_bright = {.r = 240, .g = 240, .b = 240};
 struct color_desc cd_foam_dark = {.r = 220, .g = 220, .b = 220};
 struct color_desc cd_sand_bright = {.r = 248, .g = 220, .b = 172};
 struct color_desc cd_sand_dark = {.r = 228, .g = 200, .b = 152};
+struct color_desc cd_desert_bright = {.r = 247, .g = 205, .b = 45};
+struct color_desc cd_desert_dark = {.r = 237, .g = 167, .b = 35};
 struct color_desc cd_mud_bright = {.r = 193, .g = 154, .b = 107};
 struct color_desc cd_mud_dark = {.r = 173, .g = 134, .b = 87};
 struct color_desc cd_ice_bright = {.r = 215, .g = 255, .b = 254};
@@ -628,14 +630,211 @@ static int track_build_curves(struct game_context *ctx)
 	ctx->track.cd_lane = &cd_lane_white;
 	ctx->track.cd_start_line = &cd_lane_white;
 	ctx->track.nb_cds = 1;
-	ctx->track.cds[0].bright = &cd_grass_bright;
-	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].bright = &cd_desert_bright;
+	ctx->track.cds[0].dark = &cd_desert_dark;
 	ctx->track.cds[0].num = 0;
 	ctx->track.cds[0].den = 0;
 	ctx->track.cds[0].side = CDS_FULL_BOTH;
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+	float rstep = 5.f;
+
+	struct scene_seg_desc *scene_duneline_01 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_duneline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 20; i++) {
+		float position = (float)i * rstep + 4.f;
+		set_scene_sprite_desc(&scene_duneline_01->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_duneline_01->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_duneline_02 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_duneline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 20; i++) {
+		float position = (float)i * rstep + 2.f;
+		set_scene_sprite_desc(&scene_duneline_02->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_02,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_duneline_02->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_02,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_duneline_03 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_duneline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < 20; i++) {
+		float position = (float)i * rstep + 3.f;
+		set_scene_sprite_desc(&scene_duneline_03->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_03,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_duneline_03->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_03,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+
+	struct scene_seg_desc *scene_ram_statues =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_ram_statues->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+		set_scene_sprite_desc(&scene_ram_statues->sprite[0],
+				      &ctx->gfx.scene_ram_statue,
+				      -2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+		set_scene_sprite_desc(&scene_ram_statues->sprite[1],
+				      &ctx->gfx.scene_ram_statue,
+				      2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	for (int i = 1; i < 18; i++) {
+		float position = (float)i * rstep + 4.f;
+		set_scene_sprite_desc(&scene_ram_statues->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_ram_statues->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+
+	struct scene_seg_desc *scene_egypt_columns =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_egypt_columns->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[0],
+				      &ctx->gfx.scene_egypt_column,
+				      -2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[1],
+				      &ctx->gfx.scene_egypt_column,
+				      2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	for (int i = 1; i < 18; i++) {
+		float position = (float)i * rstep + 4.f;
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	struct scene_seg_desc *scene_egypt_temples =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_egypt_temples->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[0],
+				      &ctx->gfx.scene_egypt_temple,
+				      -2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[1],
+				      &ctx->gfx.scene_egypt_temple,
+				      2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	for (int i = 1; i < 18; i++) {
+		float position = (float)i * rstep + 4.f;
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2*i)],
+				      &ctx->gfx.scene_dune_01,
+				      -position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2*i)+1],
+				      &ctx->gfx.scene_dune_01,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+	}
+
+	int seg_step = 90;
+	for (int i = 1 + nb_segments_added * 0 / 6;
+	     i < nb_segments_added * 3 / 15;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_01;
+	for (int i = 31 + nb_segments_added * 0 / 6;
+	     i < nb_segments_added * 3 / 15;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_02;
+	for (int i = 61 + nb_segments_added * 0 / 6;
+	     i < nb_segments_added * 3 / 15;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_03;
+
+
+	for (int i = 1 + nb_segments_added * 3 / 16;
+	     i < nb_segments_added * 7 / 16;
+	     i += 40)
+		ctx->track.segments[i].scene = scene_ram_statues;
+
+	for (int i = 1 + nb_segments_added * 7 / 16;
+	     i < nb_segments_added * 11 / 16;
+	     i += 40)
+		ctx->track.segments[i].scene = scene_egypt_columns;
+
+	for (int i = 1 + nb_segments_added * 11 / 16 + 40;
+	     i < nb_segments_added * 15 / 16;
+	     i += 80)
+		ctx->track.segments[i].scene = scene_egypt_temples;
+
+	for (int i = 1 + nb_segments_added * 15 / 16;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_01;
+	for (int i = 31 + nb_segments_added * 15 / 16;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_02;
+	for (int i = 61 + nb_segments_added * 15 / 16;
+	     i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_duneline_03;
 
 	return 0;
 }

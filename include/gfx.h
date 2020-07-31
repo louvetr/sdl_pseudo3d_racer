@@ -69,6 +69,14 @@ struct game_graphics{
 	struct texture scene_bushes[NB_SPRITE_BUSH];
 	struct texture scene_bush_flower;
 
+	// scene egypt
+	struct texture scene_dune_01;
+	struct texture scene_dune_02;
+	struct texture scene_dune_03;
+	struct texture scene_egypt_column;
+	struct texture scene_egypt_temple;
+	struct texture scene_ram_statue;
+
 	// scene greece
 	struct texture scene_column_01;
 	struct texture scene_column_02;
