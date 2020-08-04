@@ -646,13 +646,13 @@ static int track_build_curves(struct game_context *ctx)
 	scene_duneline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 20; i++) {
 		float position = (float)i * rstep + 4.f;
-		set_scene_sprite_desc(&scene_duneline_01->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_duneline_01->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_duneline_01->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_duneline_01->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_01,
 				      position,
 				      NULL,
@@ -665,13 +665,13 @@ static int track_build_curves(struct game_context *ctx)
 	scene_duneline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 20; i++) {
 		float position = (float)i * rstep + 2.f;
-		set_scene_sprite_desc(&scene_duneline_02->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_duneline_02->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_02,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_duneline_02->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_duneline_02->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_02,
 				      position,
 				      NULL,
@@ -684,13 +684,13 @@ static int track_build_curves(struct game_context *ctx)
 	scene_duneline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 20; i++) {
 		float position = (float)i * rstep + 3.f;
-		set_scene_sprite_desc(&scene_duneline_03->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_duneline_03->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_03,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_duneline_03->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_duneline_03->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_03,
 				      position,
 				      NULL,
@@ -702,27 +702,27 @@ static int track_build_curves(struct game_context *ctx)
 	struct scene_seg_desc *scene_ram_statues =
 		calloc(1, sizeof(struct scene_seg_desc));
 	scene_ram_statues->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
-		set_scene_sprite_desc(&scene_ram_statues->sprite[0],
-				      &ctx->gfx.scene_ram_statue,
-				      -2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_HORIZONTAL);
-		set_scene_sprite_desc(&scene_ram_statues->sprite[1],
-				      &ctx->gfx.scene_ram_statue,
-				      2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_ram_statues->sprite[0],
+			      &ctx->gfx.scene_ram_statue,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+	set_scene_sprite_desc(&scene_ram_statues->sprite[1],
+			      &ctx->gfx.scene_ram_statue,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
 	for (int i = 1; i < 18; i++) {
 		float position = (float)i * rstep + 4.f;
-		set_scene_sprite_desc(&scene_ram_statues->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_ram_statues->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_ram_statues->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_ram_statues->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_01,
 				      position,
 				      NULL,
@@ -734,27 +734,27 @@ static int track_build_curves(struct game_context *ctx)
 	struct scene_seg_desc *scene_egypt_columns =
 		calloc(1, sizeof(struct scene_seg_desc));
 	scene_egypt_columns->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
-		set_scene_sprite_desc(&scene_egypt_columns->sprite[0],
-				      &ctx->gfx.scene_egypt_column,
-				      -2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_egypt_columns->sprite[1],
-				      &ctx->gfx.scene_egypt_column,
-				      2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_egypt_columns->sprite[0],
+			      &ctx->gfx.scene_egypt_column,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_egypt_columns->sprite[1],
+			      &ctx->gfx.scene_egypt_column,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
 	for (int i = 1; i < 18; i++) {
 		float position = (float)i * rstep + 4.f;
-		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_egypt_columns->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_01,
 				      position,
 				      NULL,
@@ -765,27 +765,27 @@ static int track_build_curves(struct game_context *ctx)
 	struct scene_seg_desc *scene_egypt_temples =
 		calloc(1, sizeof(struct scene_seg_desc));
 	scene_egypt_temples->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
-		set_scene_sprite_desc(&scene_egypt_temples->sprite[0],
-				      &ctx->gfx.scene_egypt_temple,
-				      -2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_egypt_temples->sprite[1],
-				      &ctx->gfx.scene_egypt_temple,
-				      2.f,
-				      NULL,
-				      1,
-				      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_egypt_temples->sprite[0],
+			      &ctx->gfx.scene_egypt_temple,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_egypt_temples->sprite[1],
+			      &ctx->gfx.scene_egypt_temple,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
 	for (int i = 1; i < 18; i++) {
 		float position = (float)i * rstep + 4.f;
-		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2 * i)],
 				      &ctx->gfx.scene_dune_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_egypt_temples->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_dune_01,
 				      position,
 				      NULL,
@@ -823,16 +823,13 @@ static int track_build_curves(struct game_context *ctx)
 	     i += 80)
 		ctx->track.segments[i].scene = scene_egypt_temples;
 
-	for (int i = 1 + nb_segments_added * 15 / 16;
-	     i < nb_segments_added;
+	for (int i = 1 + nb_segments_added * 15 / 16; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_duneline_01;
-	for (int i = 31 + nb_segments_added * 15 / 16;
-	     i < nb_segments_added;
+	for (int i = 31 + nb_segments_added * 15 / 16; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_duneline_02;
-	for (int i = 61 + nb_segments_added * 15 / 16;
-	     i < nb_segments_added;
+	for (int i = 61 + nb_segments_added * 15 / 16; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_duneline_03;
 
@@ -890,6 +887,126 @@ static int track_build_horns(struct game_context *ctx)
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+
+	struct scene_seg_desc *garga_n_well =
+		calloc(1, sizeof(struct scene_seg_desc));
+	garga_n_well->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = 2.f + 3.f * (float)i;
+		set_scene_sprite_desc(&garga_n_well->sprite[2 * i],
+				      i == 0 ? &ctx->gfx.scene_well
+					     : &ctx->gfx.scene_grass,
+				      position, //2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&garga_n_well->sprite[2 * i + 1],
+				      i == 0 ? &ctx->gfx.scene_gargamel
+					     : &ctx->gfx.scene_bush_flower,
+				      -position, //-2.f,
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *walls = calloc(1, sizeof(struct scene_seg_desc));
+	walls->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	set_scene_sprite_desc(&walls->sprite[0],
+			      &ctx->gfx.scene_wall,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&walls->sprite[1],
+			      &ctx->gfx.scene_wall,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+
+	struct scene_seg_desc *willow_forest_1 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	willow_forest_1->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(1 + 2 * i);
+		set_scene_sprite_desc(&willow_forest_1->sprite[2 * i],
+				      &ctx->gfx.scene_tree_willow,
+				      position,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&willow_forest_1->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_willow,
+				      -position,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *willow_forest_2 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	willow_forest_2->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+		float position = (float)(2 + 2 * i);
+		set_scene_sprite_desc(&willow_forest_2->sprite[2 * i],
+				      &ctx->gfx.scene_tree_willow,
+				      position,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&willow_forest_2->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_willow,
+				      -position,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *towers = calloc(1, sizeof(struct scene_seg_desc));
+	towers->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	set_scene_sprite_desc(&towers->sprite[0],
+			      &ctx->gfx.scene_tower,
+			      2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&towers->sprite[1],
+			      &ctx->gfx.scene_tower,
+			      -2.f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	for (int i = 0; i < nb_segments_added * 3 / 16;
+	     i += 8)
+		ctx->track.segments[i].scene = willow_forest_1;
+	for (int i = 4; i < nb_segments_added * 3 / 16;
+	     i += 8)
+		ctx->track.segments[i].scene = willow_forest_2;
+
+	for (int i = nb_segments_added * 3 / 16;
+	     i < nb_segments_added * 7 / 16;
+	     i += 40)
+		ctx->track.segments[i].scene = garga_n_well;
+
+	for (int i = nb_segments_added * 7 / 16;
+	     i < nb_segments_added * 11 / 16;
+	     i += 40)
+		ctx->track.segments[i].scene = towers;
+
+	for (int i = nb_segments_added * 11 / 16;
+	     i < nb_segments_added * 15 / 16;
+	     i += 8)
+		ctx->track.segments[i].scene = walls;
+
+	for (int i = nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += 8)
+		ctx->track.segments[i].scene = willow_forest_1;
+	for (int i = nb_segments_added * 15 / 16 + 4; i < nb_segments_added;
+	     i += 8)
+		ctx->track.segments[i].scene = willow_forest_2;
 
 	return 0;
 }
@@ -999,7 +1116,6 @@ static int track_build_stone(struct game_context *ctx)
 			      SDL_FLIP_HORIZONTAL);
 
 
-
 	float rstep = 3.f;
 
 	struct scene_seg_desc *scene_columns_01 =
@@ -1007,13 +1123,13 @@ static int track_build_stone(struct game_context *ctx)
 	scene_columns_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 1.5f;
-		set_scene_sprite_desc(&scene_columns_01->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_columns_01->sprite[(2 * i)],
 				      &ctx->gfx.scene_column_02,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_columns_01->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_columns_01->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_column_02,
 				      position,
 				      NULL,
@@ -1026,13 +1142,13 @@ static int track_build_stone(struct game_context *ctx)
 	scene_columns_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 3.f;
-		set_scene_sprite_desc(&scene_columns_02->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_columns_02->sprite[(2 * i)],
 				      &ctx->gfx.scene_column_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_columns_02->sprite[(2*i)+0],
+		set_scene_sprite_desc(&scene_columns_02->sprite[(2 * i) + 0],
 				      &ctx->gfx.scene_column_01,
 				      position,
 				      NULL,
@@ -1045,13 +1161,13 @@ static int track_build_stone(struct game_context *ctx)
 	scene_columns_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 4.5f;
-		set_scene_sprite_desc(&scene_columns_03->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_columns_03->sprite[(2 * i)],
 				      &ctx->gfx.scene_column_03,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_columns_03->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_columns_03->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_column_03,
 				      position,
 				      NULL,
@@ -1062,22 +1178,25 @@ static int track_build_stone(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added * 3 / 16; i += 60)
 		ctx->track.segments[i].scene = scene_delphi;
 
-	for (int i = nb_segments_added * 3 / 16;
-	     i < nb_segments_added * 7 / 16;
+	for (int i = nb_segments_added * 3 / 16; i < nb_segments_added * 7 / 16;
 	     i += 20)
 		ctx->track.segments[i].scene = scene_columns_a;
 
-	for (int i = nb_segments_added * 7 / 16; i < nb_segments_added * /*7*/11 / 16;
+	for (int i = nb_segments_added * 7 / 16;
+	     i < nb_segments_added * /*7*/ 11 / 16;
 	     i += 80)
 		ctx->track.segments[i].scene = scene_temple;
 
-	for (int i = nb_segments_added * 11 / 16; i < nb_segments_added * 15 / 16;
+	for (int i = nb_segments_added * 11 / 16;
+	     i < nb_segments_added * 15 / 16;
 	     i += 60)
 		ctx->track.segments[i].scene = scene_columns_01;
-	for (int i = nb_segments_added * 11 / 16 + 20; i < nb_segments_added * 15 / 16;
+	for (int i = nb_segments_added * 11 / 16 + 20;
+	     i < nb_segments_added * 15 / 16;
 	     i += 60)
 		ctx->track.segments[i].scene = scene_columns_02;
-	for (int i = nb_segments_added * 11 / 16 + 40; i < nb_segments_added * 15 / 16;
+	for (int i = nb_segments_added * 11 / 16 + 40;
+	     i < nb_segments_added * 15 / 16;
 	     i += 60)
 		ctx->track.segments[i].scene = scene_columns_03;
 
@@ -1328,13 +1447,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_rockline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 1.5f;
-		set_scene_sprite_desc(&scene_rockline_01->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_rockline_01->sprite[(2 * i)],
 				      &ctx->gfx.scene_rock_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_rockline_01->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_rockline_01->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_rock_01,
 				      position,
 				      NULL,
@@ -1347,13 +1466,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_rockline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 3.f;
-		set_scene_sprite_desc(&scene_rockline_02->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_rockline_02->sprite[(2 * i)],
 				      &ctx->gfx.scene_rock_02,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_rockline_02->sprite[(2*i)+0],
+		set_scene_sprite_desc(&scene_rockline_02->sprite[(2 * i) + 0],
 				      &ctx->gfx.scene_rock_02,
 				      position,
 				      NULL,
@@ -1366,13 +1485,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_rockline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 4.5f;
-		set_scene_sprite_desc(&scene_rockline_03->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_rockline_03->sprite[(2 * i)],
 				      &ctx->gfx.scene_rock_03,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_rockline_03->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_rockline_03->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_rock_03,
 				      position,
 				      NULL,
@@ -1385,13 +1504,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_rockline_04->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 2.f;
-		set_scene_sprite_desc(&scene_rockline_04->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_rockline_04->sprite[(2 * i)],
 				      &ctx->gfx.scene_rock_04,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_rockline_04->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_rockline_04->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_rock_04,
 				      position,
 				      NULL,
@@ -1404,13 +1523,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_rockline_05->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * rstep + 4.f;
-		set_scene_sprite_desc(&scene_rockline_05->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_rockline_05->sprite[(2 * i)],
 				      &ctx->gfx.scene_rock_05,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_rockline_05->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_rockline_05->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_rock_05,
 				      position,
 				      NULL,
@@ -1419,20 +1538,19 @@ static int track_build_fork(struct game_context *ctx)
 	}
 
 
-
 	float vstep = 5.f;
 	struct scene_seg_desc *scene_vegline_01 =
 		calloc(1, sizeof(struct scene_seg_desc));
 	scene_vegline_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 2.f;
-		set_scene_sprite_desc(&scene_vegline_01->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_01->sprite[(2 * i)],
 				      &ctx->gfx.scene_cactus_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_01->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_01->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_cactus_01,
 				      position,
 				      NULL,
@@ -1445,13 +1563,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_vegline_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 4.f;
-		set_scene_sprite_desc(&scene_vegline_02->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_02->sprite[(2 * i)],
 				      &ctx->gfx.scene_desert_grass_01,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_02->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_02->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_desert_grass_01,
 				      position,
 				      NULL,
@@ -1464,13 +1582,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_vegline_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 3.f;
-		set_scene_sprite_desc(&scene_vegline_03->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_03->sprite[(2 * i)],
 				      &ctx->gfx.scene_cactus_02,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_03->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_03->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_cactus_02,
 				      position,
 				      NULL,
@@ -1483,13 +1601,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_vegline_04->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 5.f;
-		set_scene_sprite_desc(&scene_vegline_04->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_04->sprite[(2 * i)],
 				      &ctx->gfx.scene_cactus_03,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_04->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_04->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_cactus_03,
 				      position,
 				      NULL,
@@ -1502,13 +1620,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_vegline_05->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 6.f;
-		set_scene_sprite_desc(&scene_vegline_05->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_05->sprite[(2 * i)],
 				      &ctx->gfx.scene_desert_grass_02,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_05->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_05->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_desert_grass_02,
 				      position,
 				      NULL,
@@ -1521,13 +1639,13 @@ static int track_build_fork(struct game_context *ctx)
 	scene_vegline_06->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	for (int i = 0; i < 10; i++) {
 		float position = (float)i * vstep + 7.f;
-		set_scene_sprite_desc(&scene_vegline_06->sprite[(2*i)],
+		set_scene_sprite_desc(&scene_vegline_06->sprite[(2 * i)],
 				      &ctx->gfx.scene_cactus_04,
 				      -position,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
-		set_scene_sprite_desc(&scene_vegline_06->sprite[(2*i)+1],
+		set_scene_sprite_desc(&scene_vegline_06->sprite[(2 * i) + 1],
 				      &ctx->gfx.scene_cactus_04,
 				      position,
 				      NULL,
@@ -1557,30 +1675,19 @@ static int track_build_fork(struct game_context *ctx)
 	}
 
 	int seg_step = 100;
-	for (int i = 1;
-	     i < nb_segments_added * 1 / 6;
-	     i += seg_step)
+	for (int i = 1; i < nb_segments_added * 1 / 6; i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_01;
-	for (int i = 21;
-	     i < nb_segments_added * 1 / 6;
-	     i += seg_step)
+	for (int i = 21; i < nb_segments_added * 1 / 6; i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_02;
-	for (int i = 41;
-	     i < nb_segments_added * 1 / 6;
-	     i += seg_step)
+	for (int i = 41; i < nb_segments_added * 1 / 6; i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_03;
-	for (int i = 61;
-	     i < nb_segments_added * 1 / 6;
-	     i += seg_step)
+	for (int i = 61; i < nb_segments_added * 1 / 6; i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_04;
-	for (int i = 81;
-	     i < nb_segments_added * 1 / 6;
-	     i += seg_step)
+	for (int i = 81; i < nb_segments_added * 1 / 6; i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_05;
 
 
-	for (int i = nb_segments_added * 1 / 6;
-	     i < nb_segments_added * 3 / 6;
+	for (int i = nb_segments_added * 1 / 6; i < nb_segments_added * 3 / 6;
 	     i += 10)
 		ctx->track.segments[i].scene = scene_bigrocks;
 
@@ -1593,8 +1700,7 @@ static int track_build_fork(struct game_context *ctx)
 	     i < nb_segments_added * 5 / 6;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_vegline_02;
-	for (int i = 41 + nb_segments_added * 3 / 6;
-	     i < nb_segments_added;
+	for (int i = 41 + nb_segments_added * 3 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_vegline_03;
 	for (int i = 61 + nb_segments_added * 3 / 6;
@@ -1611,24 +1717,19 @@ static int track_build_fork(struct game_context *ctx)
 		ctx->track.segments[i].scene = scene_vegline_06;
 
 	seg_step = 100;
-	for (int i = 1 + nb_segments_added * 5 / 6;
-	     i < nb_segments_added;
+	for (int i = 1 + nb_segments_added * 5 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_01;
-	for (int i = 21 + nb_segments_added * 5 / 6;
-	     i < nb_segments_added;
+	for (int i = 21 + nb_segments_added * 5 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_02;
-	for (int i = 41 + nb_segments_added * 5 / 6;
-	     i < nb_segments_added;
+	for (int i = 41 + nb_segments_added * 5 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_03;
-	for (int i = 61 + nb_segments_added * 5 / 6;
-	     i < nb_segments_added;
+	for (int i = 61 + nb_segments_added * 5 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_04;
-	for (int i = 81 + nb_segments_added * 5 / 6;
-	     i < nb_segments_added;
+	for (int i = 81 + nb_segments_added * 5 / 6; i < nb_segments_added;
 	     i += seg_step)
 		ctx->track.segments[i].scene = scene_rockline_05;
 
@@ -1839,8 +1940,6 @@ static int track_build_speedway(struct game_context *ctx)
 
 static int track_build_dijon(struct game_context *ctx)
 {
-
-
 	int nb_segments_added = 0;
 
 	// Build the track segments

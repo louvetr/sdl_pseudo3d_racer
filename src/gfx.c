@@ -129,6 +129,11 @@
 //#define PNG_SCENE_RAM_STATUE "./media/scene/scene_ram_statue.png"
 #define PNG_SCENE_RAM_STATUE "./media/scene/scene_ram_statue_75p.png"
 
+
+#define PNG_SCENE_WALL "./media/scene/scene_wall.png"
+#define PNG_SCENE_TOWER "./media/scene/scene_tower.png"
+#define PNG_SCENE_GARGAMEL "./media/scene/scene_gargamel.png"
+
 #define PNG_SMOKE_00 "./media/particles/whitePuff00.png"
 #define PNG_SMOKE_01 "./media/particles/whitePuff01.png"
 #define PNG_SMOKE_02 "./media/particles/whitePuff02.png"
@@ -324,6 +329,44 @@ static int gfx_load_background(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_scene_sprites_horns(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
+	load_texture_from_file(ctx, PNG_SCENE_WELL, &ctx->gfx.scene_well);
+	
+	load_texture_from_file(ctx, PNG_SCENE_WALL, &ctx->gfx.scene_wall);
+	load_texture_from_file(ctx, PNG_SCENE_TOWER, &ctx->gfx.scene_tower);
+	load_texture_from_file(ctx, PNG_SCENE_GARGAMEL, &ctx->gfx.scene_gargamel);
+
+	load_texture_from_file(ctx, PNG_SCENE_GRASS, &ctx->gfx.scene_grass);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);
+
+	/*load_texture_from_file(ctx, PNG_SCENE_FENCE, &ctx->gfx.scene_fence);
+	load_texture_from_file(
+		ctx, PNG_SCENE_WINDMILL, &ctx->gfx.scene_windmill);
+	load_texture_from_file(ctx, PNG_SCENE_BARN, &ctx->gfx.scene_barn);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_01, &ctx->gfx.scene_bushes[0]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_02, &ctx->gfx.scene_bushes[2]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_03, &ctx->gfx.scene_bushes[3]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_04, &ctx->gfx.scene_bushes[4]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_05, &ctx->gfx.scene_bushes[5]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_06, &ctx->gfx.scene_bushes[6]);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);*/
+
+	return 0;
+}
+
 static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 {
 	load_texture_from_file(
@@ -490,6 +533,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_CURVES:
 		gfx_load_scene_sprites_curves(ctx);
+		break;
+	case TRACK_HORNS:
+		gfx_load_scene_sprites_horns(ctx);
 		break;
 	default:
 		SDL_Log("[%s] invalid track\n", __func__);
@@ -809,6 +855,10 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_egypt_column.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_egypt_temple.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_ram_statue.texture);
+	
+	SDL_DestroyTexture(ctx->gfx.scene_wall.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tower.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_gargamel.texture);
 
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);
