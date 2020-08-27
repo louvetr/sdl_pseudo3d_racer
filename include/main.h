@@ -276,13 +276,13 @@ struct ai_car_info {
 	float speed_slow_straight;
 	float speed_slow_curve;
 
-
 	// car position (distance) on the road
 	int pos_z;
 	float pos_z_rest_percent;
 	// car position segment idx
 	int segment;
 	int segment_prev;
+	int segment_prev2;
 	// distance done by this car
 	int distance;
 

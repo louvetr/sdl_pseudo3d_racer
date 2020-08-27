@@ -265,6 +265,8 @@ int logic_race_ai_cars_speed(struct game_context *ctx)
 		ctx->ai_cars[i].pos_z = inline_increase(
 			ctx->ai_cars[i].pos_z, step, ctx->track.track_length);
 
+		ctx->ai_cars[i].segment_prev2 =
+			ctx->ai_cars[i].segment_prev;
 		ctx->ai_cars[i].segment_prev = ctx->ai_cars[i].segment;
 		ctx->ai_cars[i].segment =
 			((ctx->ai_cars[i].pos_z / ROAD_SEGMENT_LENGTH) %
@@ -505,6 +507,8 @@ int ai_car_init(struct game_context *ctx)
 		ctx->ai_cars[i].pos_x =
 			ai_lane_to_posx(ctx->ai_cars[i].lane, ctx->track.lanes);
 
+		ctx->ai_cars[i].segment_prev2 =
+			ctx->ai_cars[i].segment_prev;
 		ctx->ai_cars[i].segment_prev = ctx->ai_cars[i].segment;
 		ctx->ai_cars[i].segment =
 			ctx->track.nb_segments - 1 -
@@ -582,6 +586,8 @@ int ai_car_init(struct game_context *ctx)
 			if (i < 3)
 				continue;
 
+			ctx->ai_cars[i].segment_prev2 =
+				ctx->ai_cars[i].segment_prev;
 			ctx->ai_cars[i].segment_prev = ctx->ai_cars[i].segment;
 			ctx->ai_cars[j].segment = ctx->ai_cars[i].segment;
 			ctx->ai_cars[i].segment = tmp_segment;

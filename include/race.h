@@ -62,6 +62,7 @@ struct player_car
 	// index of the current player segment in segments array
 	int player_segment;
 	int player_segment_prev;
+	int player_segment_prev_prev;
 
 	// player car sprite values
 	int player_sprite_x;
