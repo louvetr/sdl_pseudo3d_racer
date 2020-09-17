@@ -106,6 +106,10 @@ struct game_graphics{
 	// scene city
 	struct texture scene_tunnel_a_bright;	
 	struct texture scene_tunnel_a_dark;	
+	struct texture scene_building_01;	
+	struct texture scene_building_02;	
+	struct texture scene_building_03;	
+
 	
 	// scene seaside
 	struct texture scene_maoi;

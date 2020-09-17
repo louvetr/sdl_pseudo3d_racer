@@ -58,7 +58,8 @@
 #define PNG_LANCER_RIGHT2 "./media/cars/lancer_right_2.png"
 
 
-#define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
+//#define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
+#define PNG_BG_MOUNTAINS "./media/background/bg_desert.png"
 #define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
 
@@ -91,6 +92,9 @@
 
 #define PNG_SCENE_TUNNEL_A_BRIGHT "./media/scene/scene_tunnel_a_bright.png"
 #define PNG_SCENE_TUNNEL_A_DARK "./media/scene/scene_tunnel_a_dark.png"
+#define PNG_SCENE_BUILDING_01 "./media/scene/scene_building_01.png"
+#define PNG_SCENE_BUILDING_02 "./media/scene/scene_building_02.png"
+#define PNG_SCENE_BUILDING_03 "./media/scene/scene_building_03.png"
 
 #define PNG_SCENE_BUSH_01 "./media/scene/scene_bush_01.png"
 #define PNG_SCENE_BUSH_02 "./media/scene/scene_bush_02.png"
@@ -329,6 +333,28 @@ static int gfx_load_background(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_scene_sprites_whale(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_TUNNEL_A_BRIGHT,
+			       &ctx->gfx.scene_tunnel_a_bright);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);
+
+	load_texture_from_file(ctx, PNG_SCENE_BUILDING_01, &ctx->gfx.scene_building_01);
+	load_texture_from_file(ctx, PNG_SCENE_BUILDING_02, &ctx->gfx.scene_building_02);
+	load_texture_from_file(ctx, PNG_SCENE_BUILDING_03, &ctx->gfx.scene_building_03);
+	load_texture_from_file(ctx, PNG_SCENE_LANTERN, &ctx->gfx.scene_lantern);
+	load_texture_from_file(ctx, PNG_SCENE_BENCH, &ctx->gfx.scene_bench);
+	load_texture_from_file(ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
+	load_texture_from_file(ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);
+	load_texture_from_file(ctx, PNG_SCENE_BILLBOARD_BEACH, &ctx->gfx.scene_billboard_beach);
+
+	return 0;
+}
+
 static int gfx_load_scene_sprites_horns(struct game_context *ctx)
 {
 	load_texture_from_file(
@@ -536,6 +562,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_HORNS:
 		gfx_load_scene_sprites_horns(ctx);
+		break;
+	case TRACK_WHALE:
+		gfx_load_scene_sprites_whale(ctx);
 		break;
 	default:
 		SDL_Log("[%s] invalid track\n", __func__);
@@ -862,6 +891,9 @@ int gfx_unload_resources(struct game_context *ctx)
 
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_bright.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tunnel_a_dark.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_building_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_building_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_building_03.texture);
 
 	SDL_DestroyTexture(ctx->gfx.t_smoke[0].texture);
 	SDL_DestroyTexture(ctx->gfx.t_smoke[1].texture);

@@ -514,15 +514,15 @@ static int track_build_whale(struct game_context *ctx)
 
 	/////////////////////////////////////////////
 	// set color of segment outside of the road
-	ctx->track.cd_road_bright = &cd_road_asphalt_bright;
-	ctx->track.cd_road_dark = &cd_road_asphalt_dark;
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
 	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
 	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
 	ctx->track.cd_lane = &cd_lane_white;
 	ctx->track.cd_start_line = &cd_lane_white;
 	ctx->track.nb_cds = 1;
-	ctx->track.cds[0].bright = &cd_grass_bright;
-	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].bright = &cd_road_asphalt_bright;
+	ctx->track.cds[0].dark = &cd_road_asphalt_dark;
 	ctx->track.cds[0].num = 0;
 	ctx->track.cds[0].den = 0;
 	ctx->track.cds[0].side = CDS_FULL_BOTH;
@@ -530,8 +530,264 @@ static int track_build_whale(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
+	////////////////////////
+	struct scene_seg_desc *scene_buildine_01 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_buildine_01->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_buildine_01->sprite[0],
+			      &ctx->gfx.scene_building_01,
+			      -2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_01->sprite[1],
+			      &ctx->gfx.scene_building_01,
+			      2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_01->sprite[2],
+			      &ctx->gfx.scene_building_02,
+			      -5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_01->sprite[3],
+			      &ctx->gfx.scene_building_02,
+			      5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_01->sprite[4],
+			      &ctx->gfx.scene_building_03,
+			      -8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_01->sprite[5],
+			      &ctx->gfx.scene_building_03,
+			      8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	///////////////////////
+	struct scene_seg_desc *scene_buildine_02 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_buildine_02->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_buildine_02->sprite[0],
+			      &ctx->gfx.scene_building_02,
+			      -2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_02->sprite[1],
+			      &ctx->gfx.scene_building_02,
+			      2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_02->sprite[2],
+			      &ctx->gfx.scene_building_01,
+			      -5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_02->sprite[3],
+			      &ctx->gfx.scene_building_01,
+			      5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_02->sprite[4],
+			      &ctx->gfx.scene_building_03,
+			      -8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_02->sprite[5],
+			      &ctx->gfx.scene_building_03,
+			      8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	//////////////////////////
+	struct scene_seg_desc *scene_buildine_03 =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_buildine_03->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_buildine_03->sprite[0],
+			      &ctx->gfx.scene_building_03,
+			      -2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_03->sprite[1],
+			      &ctx->gfx.scene_building_03,
+			      2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_03->sprite[2],
+			      &ctx->gfx.scene_building_02,
+			      -5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_03->sprite[3],
+			      &ctx->gfx.scene_building_02,
+			      5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_buildine_03->sprite[4],
+			      &ctx->gfx.scene_building_01,
+			      -8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_buildine_03->sprite[5],
+			      &ctx->gfx.scene_building_01,
+			      8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	//////////////////////////
+	struct scene_seg_desc *scene_bench_n_billboard =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_bench_n_billboard->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[0],
+			      &ctx->gfx.scene_billboard_beach,
+			      -2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[1],
+			      &ctx->gfx.scene_lantern,
+			      2.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[2],
+			      &ctx->gfx.scene_building_02,
+			      -5.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[3],
+			      &ctx->gfx.scene_bench,
+			      3.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[4],
+			      &ctx->gfx.scene_building_01,
+			      -8.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_bench_n_billboard->sprite[5],
+			      &ctx->gfx.scene_bush_flower,
+			      4.0f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	float rstep = 1.0f;
+	for (int i = 6; i < 20; i++) {
+		float position = (float)(i - 5) * rstep + 4.f;
+		set_scene_sprite_desc(&scene_bench_n_billboard->sprite[i],
+				      &ctx->gfx.scene_tree_willow,
+				      position,
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+
+	/////////////////////////////////////////////
+	struct scene_seg_desc *scene_tunnel_bright =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_tunnel_bright->nb_sprites = 1;
+	scene_tunnel_bright->type = SCENE_SPRITE_CENTERED;
+	set_scene_sprite_desc(&scene_tunnel_bright->sprite[0],
+			      &ctx->gfx.scene_tunnel_a_bright,
+			      1.5f,
+			      &hitbox_tunnel_a,
+			      1,
+			      SDL_FLIP_NONE);
+
+	struct scene_seg_desc *scene_tunnel_dark =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_tunnel_dark->nb_sprites = 1;
+	scene_tunnel_dark->type = SCENE_SPRITE_CENTERED;
+	set_scene_sprite_desc(&scene_tunnel_dark->sprite[0],
+			      &ctx->gfx.scene_tunnel_a_dark,
+			      1.5f,
+			      &hitbox_tunnel_a,
+			      1,
+			      SDL_FLIP_NONE);
+
+
+	//////////////////////////////////////////////////////////
+	int seg_step = 90;
+	for (int i = 1 + nb_segments_added * 0 / 16;
+	     i < nb_segments_added * 6 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_01;
+	for (int i = 31 + nb_segments_added * 0 / 16;
+	     i < nb_segments_added * 6 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_02;
+	for (int i = 61 + nb_segments_added * 0 / 16;
+	     i < nb_segments_added * 6 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_03;
+
+	for (int i = 1 + nb_segments_added * 6 / 16;
+	     i < nb_segments_added * 10 / 16;
+	     i += 20)
+		ctx->track.segments[i].scene = scene_bench_n_billboard;
+
+	int bg_cpt = 0;
+	for (int i = nb_segments_added * 10 / 16 /*+ 20*/;
+	     i < nb_segments_added * 15 / 16;
+	     i += 3) {
+		ctx->track.segments[i].scene =
+			i % 2 == 0 ? scene_tunnel_bright : scene_tunnel_dark;
+		if (bg_cpt == 0)
+			ctx->track.segments[i + 1].scene = scene_buildine_01;
+		if (bg_cpt == 7)
+			ctx->track.segments[i + 1].scene = scene_buildine_03;
+		bg_cpt++;
+	}
+
+	for (int i = 1 + nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_01;
+	for (int i = 31 + nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_02;
+	for (int i = 61 + nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_buildine_03;
+
 	return 0;
 }
+
 
 static int track_build_squares(struct game_context *ctx)
 {
@@ -897,7 +1153,7 @@ static int track_build_horns(struct game_context *ctx)
 		set_scene_sprite_desc(&garga_n_well->sprite[2 * i],
 				      i == 0 ? &ctx->gfx.scene_well
 					     : &ctx->gfx.scene_grass,
-				      position, //2.f,
+				      position, // 2.f,
 				      NULL,
 				      1,
 				      SDL_FLIP_NONE);
@@ -964,7 +1220,8 @@ static int track_build_horns(struct game_context *ctx)
 				      SDL_FLIP_HORIZONTAL);
 	}
 
-	struct scene_seg_desc *towers = calloc(1, sizeof(struct scene_seg_desc));
+	struct scene_seg_desc *towers =
+		calloc(1, sizeof(struct scene_seg_desc));
 	towers->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
 	set_scene_sprite_desc(&towers->sprite[0],
 			      &ctx->gfx.scene_tower,
@@ -979,15 +1236,12 @@ static int track_build_horns(struct game_context *ctx)
 			      1,
 			      SDL_FLIP_HORIZONTAL);
 
-	for (int i = 0; i < nb_segments_added * 3 / 16;
-	     i += 8)
+	for (int i = 0; i < nb_segments_added * 3 / 16; i += 8)
 		ctx->track.segments[i].scene = willow_forest_1;
-	for (int i = 4; i < nb_segments_added * 3 / 16;
-	     i += 8)
+	for (int i = 4; i < nb_segments_added * 3 / 16; i += 8)
 		ctx->track.segments[i].scene = willow_forest_2;
 
-	for (int i = nb_segments_added * 3 / 16;
-	     i < nb_segments_added * 7 / 16;
+	for (int i = nb_segments_added * 3 / 16; i < nb_segments_added * 7 / 16;
 	     i += 40)
 		ctx->track.segments[i].scene = garga_n_well;
 
@@ -1001,8 +1255,7 @@ static int track_build_horns(struct game_context *ctx)
 	     i += 8)
 		ctx->track.segments[i].scene = walls;
 
-	for (int i = nb_segments_added * 15 / 16; i < nb_segments_added;
-	     i += 8)
+	for (int i = nb_segments_added * 15 / 16; i < nb_segments_added; i += 8)
 		ctx->track.segments[i].scene = willow_forest_1;
 	for (int i = nb_segments_added * 15 / 16 + 4; i < nb_segments_added;
 	     i += 8)
