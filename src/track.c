@@ -402,6 +402,7 @@ static int sector_carmona[NB_SECTOR_CARMONA][NB_SECTOR_PARAM] = {
 
 
 static SDL_Rect hitbox_oak = {.x = 262, .y = 0, .w = 240, .h = 711};
+static SDL_Rect hitbox_stree = {.x = 477, .y = 0, .w = 300, .h = 1400};
 static SDL_Rect hitbox_tunnel_a = {.x = 292, .y = 0, .w = 1700, .h = 0};
 
 
@@ -839,6 +840,266 @@ static int track_build_squares(struct game_context *ctx)
 
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
+
+
+	struct scene_seg_desc *scene_grave_gates =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_grave_gates->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_grave_gates->sprite[0],
+			      &ctx->gfx.scene_grave_fence,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_grave_gates->sprite[1],
+			      &ctx->gfx.scene_grave_fence,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	struct scene_seg_desc *scene_grave_lanes_a =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_grave_lanes_a->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	float grave_step = 2.5f;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 6; i++) {
+
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i],
+				      &ctx->gfx.scene_grave_01,
+				      grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i + 1],
+				      &ctx->gfx.scene_grave_02,
+				      -grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i + 2],
+				      &ctx->gfx.scene_grave_02,
+				      grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i + 3],
+				      &ctx->gfx.scene_grave_03,
+				      -grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i + 4],
+				      &ctx->gfx.scene_grave_03,
+				      grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_a->sprite[6 * i + 5],
+				      &ctx->gfx.scene_grave_01,
+				      -grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_grave_lanes_b =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_grave_lanes_b->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 6; i++) {
+
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i],
+				      &ctx->gfx.scene_grave_02,
+				      grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i + 1],
+				      &ctx->gfx.scene_grave_03,
+				      -grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i + 2],
+				      &ctx->gfx.scene_grave_03,
+				      grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i + 3],
+				      &ctx->gfx.scene_grave_01,
+				      -grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i + 4],
+				      &ctx->gfx.scene_grave_01,
+				      grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_b->sprite[6 * i + 5],
+				      &ctx->gfx.scene_grave_02,
+				      -grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_grave_lanes_c =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_grave_lanes_c->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 6; i++) {
+
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i],
+				      &ctx->gfx.scene_grave_03,
+				      grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i + 1],
+				      &ctx->gfx.scene_grave_01,
+				      -grave_step * (float)(i * 3 + 1),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i + 2],
+				      &ctx->gfx.scene_grave_01,
+				      grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i + 3],
+				      &ctx->gfx.scene_grave_02,
+				      -grave_step * (float)(i * 3 + 2),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i + 4],
+				      &ctx->gfx.scene_grave_02,
+				      grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_grave_lanes_c->sprite[6 * i + 5],
+				      &ctx->gfx.scene_grave_03,
+				      -grave_step * (float)(i * 3 + 3),
+				      NULL,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+
+	struct scene_seg_desc *scene_stree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_stree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	float stree_step = 3.f;
+	for (int i = 0; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_stree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_spooky,
+				      stree_step * (float)(i) + 1.5f,
+				      &hitbox_stree,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_stree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_spooky,
+				      -stree_step * (float)(i)-1.5f,
+				      &hitbox_stree,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_vault_n_stree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_vault_n_stree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	// float stree_step = 3.f;
+
+	set_scene_sprite_desc(&scene_vault_n_stree->sprite[0],
+			      &ctx->gfx.scene_vault,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_vault_n_stree->sprite[1],
+			      &ctx->gfx.scene_vault,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_vault_n_stree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_spooky,
+				      stree_step * (float)(i) + 1.5f,
+				      &hitbox_stree,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_vault_n_stree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_spooky,
+				      -stree_step * (float)(i)-1.5f,
+				      &hitbox_stree,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	int seg_step = 15;
+	for (int i = 1 + nb_segments_added * 0 / 16;
+	     i < nb_segments_added * 3 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_grave_gates;
+
+	seg_step = 30;
+/*
+	int j = 0;
+	for (int i = 1 + nb_segments_added * 3 / 16;
+	     i < nb_segments_added * 7 / 16;
+	     i += seg_step) {
+		if (j == 0)
+			ctx->track.segments[i].scene = scene_grave_lanes_a;
+		else if (j == 1)
+			ctx->track.segments[i].scene = scene_grave_lanes_b;
+		else if (j == 2)
+			ctx->track.segments[i].scene = scene_grave_lanes_c;
+		else
+			j = -1;
+		j++;
+	}*/
+
+	for (int i = 1 + nb_segments_added * 3 / 16;
+	     i < nb_segments_added * 7 / 16;
+	     i += seg_step) 
+			ctx->track.segments[i].scene = scene_grave_lanes_a;
+	for (int i = 1 + nb_segments_added * 3 / 16 + 10;
+	     i < nb_segments_added * 7 / 16;
+	     i += seg_step) 
+			ctx->track.segments[i].scene = scene_grave_lanes_b;
+	for (int i = 1 + nb_segments_added * 3 / 16 + 20;
+	     i < nb_segments_added * 7 / 16;
+	     i += seg_step) 
+			ctx->track.segments[i].scene = scene_grave_lanes_c;
+
+	seg_step = 10;
+	for (int i = 1 + nb_segments_added * 7 / 16;
+	     i < nb_segments_added * 11 / 16;
+	     i += 40)
+		ctx->track.segments[i].scene = scene_vault_n_stree;
+
+	for (int i = 1 + nb_segments_added * 11 / 16;
+	     i < nb_segments_added * 15 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_stree;
+
+	for (int i = 1 + nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_grave_gates;
 
 	return 0;
 }

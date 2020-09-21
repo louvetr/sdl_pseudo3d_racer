@@ -110,6 +110,13 @@ struct game_graphics{
 	struct texture scene_building_02;	
 	struct texture scene_building_03;	
 
+	// scene spooky
+	struct texture scene_vault;	
+	struct texture scene_grave_01;	
+	struct texture scene_grave_02;	
+	struct texture scene_grave_03;	
+	struct texture scene_grave_fence;	
+	struct texture scene_tree_spooky;	
 	
 	// scene seaside
 	struct texture scene_maoi;

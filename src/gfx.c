@@ -96,6 +96,13 @@
 #define PNG_SCENE_BUILDING_02 "./media/scene/scene_building_02.png"
 #define PNG_SCENE_BUILDING_03 "./media/scene/scene_building_03.png"
 
+#define PNG_SCENE_VAULT "./media/scene/scene_vault.png"
+#define PNG_SCENE_GRAVE_01 "./media/scene/scene_grave_01.png"
+#define PNG_SCENE_GRAVE_02 "./media/scene/scene_grave_02.png"
+#define PNG_SCENE_GRAVE_03 "./media/scene/scene_grave_03.png"
+#define PNG_SCENE_GRAVE_FENCE "./media/scene/scene_grave_fence.png"
+#define PNG_SCENE_TREE_SPOOKY "./media/scene/scene_tree_spooky.png"
+
 #define PNG_SCENE_BUSH_01 "./media/scene/scene_bush_01.png"
 #define PNG_SCENE_BUSH_02 "./media/scene/scene_bush_02.png"
 #define PNG_SCENE_BUSH_03 "./media/scene/scene_bush_03.png"
@@ -355,6 +362,21 @@ static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 	return 0;
 }
 
+static int gfx_load_scene_sprites_squares(struct game_context *ctx)
+{
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
+
+	load_texture_from_file(ctx, PNG_SCENE_VAULT, &ctx->gfx.scene_vault);
+	load_texture_from_file(ctx, PNG_SCENE_GRAVE_01, &ctx->gfx.scene_grave_01);
+	load_texture_from_file(ctx, PNG_SCENE_GRAVE_02, &ctx->gfx.scene_grave_02);
+	load_texture_from_file(ctx, PNG_SCENE_GRAVE_03, &ctx->gfx.scene_grave_03);
+	load_texture_from_file(ctx, PNG_SCENE_GRAVE_FENCE, &ctx->gfx.scene_grave_fence);
+	load_texture_from_file(ctx, PNG_SCENE_TREE_SPOOKY, &ctx->gfx.scene_tree_spooky);
+
+	return 0;
+}
+
 static int gfx_load_scene_sprites_horns(struct game_context *ctx)
 {
 	load_texture_from_file(
@@ -562,6 +584,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_HORNS:
 		gfx_load_scene_sprites_horns(ctx);
+		break;
+	case TRACK_SQUARES:
+		gfx_load_scene_sprites_squares(ctx);
 		break;
 	case TRACK_WHALE:
 		gfx_load_scene_sprites_whale(ctx);
@@ -894,6 +919,13 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_building_01.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_building_02.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_building_03.texture);
+
+	SDL_DestroyTexture(ctx->gfx.scene_vault.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_grave_01.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_grave_02.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_grave_03.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_grave_fence.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_tree_spooky.texture);	
 
 	SDL_DestroyTexture(ctx->gfx.t_smoke[0].texture);
 	SDL_DestroyTexture(ctx->gfx.t_smoke[1].texture);
