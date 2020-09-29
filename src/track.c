@@ -476,6 +476,162 @@ static int track_build_carmona(struct game_context *ctx)
 	for (int i = 0; i < nb_segments_added; i++)
 		ctx->track.segments[i].cds = &ctx->track.cds[0];
 
+
+	struct scene_seg_desc *scene_circus_n_tree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_circus_n_tree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+	float stree_step = 2.f;
+
+	set_scene_sprite_desc(&scene_circus_n_tree->sprite[0],
+			      &ctx->gfx.scene_circus,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_circus_n_tree->sprite[1],
+			      &ctx->gfx.scene_circus,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE /*SDL_FLIP_HORIZONTAL*/);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_circus_n_tree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_oak,
+				      stree_step * (float)(i) + 4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_circus_n_tree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_oak,
+				      -stree_step * (float)(i)-4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_carousel_n_tree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_carousel_n_tree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_carousel_n_tree->sprite[0],
+			      &ctx->gfx.scene_carousel,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_carousel_n_tree->sprite[1],
+			      &ctx->gfx.scene_carousel,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_carousel_n_tree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_oak,
+				      stree_step * (float)(i) + 4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_carousel_n_tree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_oak,
+				      -stree_step * (float)(i)-4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_rollercoaster_n_tree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_rollercoaster_n_tree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_rollercoaster_n_tree->sprite[0],
+			      &ctx->gfx.scene_rollercoaster,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_rollercoaster_n_tree->sprite[1],
+			      &ctx->gfx.scene_rollercoaster,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_rollercoaster_n_tree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_oak,
+				      stree_step * (float)(i) + 5.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_rollercoaster_n_tree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_oak,
+				      -stree_step * (float)(i) - 5.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	struct scene_seg_desc *scene_greatwheel_n_tree =
+		calloc(1, sizeof(struct scene_seg_desc));
+	scene_greatwheel_n_tree->nb_sprites = MAX_SCENE_SPRITE_PER_SEG;
+
+	set_scene_sprite_desc(&scene_greatwheel_n_tree->sprite[0],
+			      &ctx->gfx.scene_greatwheel,
+			      -1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_NONE);
+	set_scene_sprite_desc(&scene_greatwheel_n_tree->sprite[1],
+			      &ctx->gfx.scene_greatwheel,
+			      1.5f,
+			      NULL,
+			      1,
+			      SDL_FLIP_HORIZONTAL);
+
+	for (int i = 1; i < MAX_SCENE_SPRITE_PER_SEG / 2; i++) {
+
+		set_scene_sprite_desc(&scene_greatwheel_n_tree->sprite[2 * i],
+				      &ctx->gfx.scene_tree_oak,
+				      stree_step * (float)(i) + 4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_NONE);
+		set_scene_sprite_desc(&scene_greatwheel_n_tree->sprite[2 * i + 1],
+				      &ctx->gfx.scene_tree_oak,
+				      -stree_step * (float)(i) - 4.f,
+				      &hitbox_oak,
+				      1,
+				      SDL_FLIP_HORIZONTAL);
+	}
+
+	int seg_step = 60;
+
+	for (int i = 1; i < nb_segments_added * 3 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_circus_n_tree;
+
+	for (int i = 1 + nb_segments_added * 3 / 16; i < nb_segments_added * 7 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_greatwheel_n_tree;
+
+	for (int i = 1 + nb_segments_added * 7 / 16; i < nb_segments_added * 11 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_rollercoaster_n_tree;
+
+	for (int i = 1 + nb_segments_added * 11 / 16; i < nb_segments_added * 15 / 16;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_carousel_n_tree;
+
+	for (int i = 1 + nb_segments_added * 15 / 16; i < nb_segments_added;
+	     i += seg_step)
+		ctx->track.segments[i].scene = scene_circus_n_tree;
+
 	return 0;
 }
 

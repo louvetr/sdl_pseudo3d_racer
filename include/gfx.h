@@ -116,7 +116,13 @@ struct game_graphics{
 	struct texture scene_grave_02;	
 	struct texture scene_grave_03;	
 	struct texture scene_grave_fence;	
-	struct texture scene_tree_spooky;	
+	struct texture scene_tree_spooky;
+
+	// scene fun fair
+	struct texture scene_circus;	
+	struct texture scene_rollercoaster;	
+	struct texture scene_greatwheel;	
+	struct texture scene_carousel;	
 	
 	// scene seaside
 	struct texture scene_maoi;

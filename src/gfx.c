@@ -103,6 +103,11 @@
 #define PNG_SCENE_GRAVE_FENCE "./media/scene/scene_grave_fence.png"
 #define PNG_SCENE_TREE_SPOOKY "./media/scene/scene_tree_spooky.png"
 
+#define PNG_SCENE_CAROUSEL "./media/scene/scene_carousel.png"
+#define PNG_SCENE_CIRCUS "./media/scene/scene_circus.png"
+#define PNG_SCENE_GREATWHEEL "./media/scene/scene_greatwheel.png"
+#define PNG_SCENE_ROLLERCOASTER "./media/scene/scene_rollercoaster.png"
+
 #define PNG_SCENE_BUSH_01 "./media/scene/scene_bush_01.png"
 #define PNG_SCENE_BUSH_02 "./media/scene/scene_bush_02.png"
 #define PNG_SCENE_BUSH_03 "./media/scene/scene_bush_03.png"
@@ -336,6 +341,17 @@ static int gfx_load_background(struct game_context *ctx)
 	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
+	return 0;
+}
+
+static int gfx_load_scene_sprites_carmona(struct game_context *ctx)
+{
+	load_texture_from_file(ctx, PNG_SCENE_CAROUSEL, &ctx->gfx.scene_carousel);
+	load_texture_from_file(ctx, PNG_SCENE_CIRCUS, &ctx->gfx.scene_circus);
+	load_texture_from_file(ctx, PNG_SCENE_GREATWHEEL, &ctx->gfx.scene_greatwheel);
+	load_texture_from_file(ctx, PNG_SCENE_ROLLERCOASTER, &ctx->gfx.scene_rollercoaster);
+	load_texture_from_file(ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
 
 	return 0;
 }
@@ -590,6 +606,9 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 		break;
 	case TRACK_WHALE:
 		gfx_load_scene_sprites_whale(ctx);
+		break;
+	case TRACK_CARMONA:
+		gfx_load_scene_sprites_carmona(ctx);
 		break;
 	default:
 		SDL_Log("[%s] invalid track\n", __func__);
@@ -926,6 +945,11 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_grave_03.texture);	
 	SDL_DestroyTexture(ctx->gfx.scene_grave_fence.texture);	
 	SDL_DestroyTexture(ctx->gfx.scene_tree_spooky.texture);	
+
+	SDL_DestroyTexture(ctx->gfx.scene_circus.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_greatwheel.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_carousel.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_rollercoaster.texture);
 
 	SDL_DestroyTexture(ctx->gfx.t_smoke[0].texture);
 	SDL_DestroyTexture(ctx->gfx.t_smoke[1].texture);
