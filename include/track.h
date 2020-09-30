@@ -150,6 +150,9 @@ struct color_desc_scene{
 
 struct track_info {
 
+
+
+
 	enum track_selection track_selected;
 	enum track_lane_type lane_type;
 	struct color_desc lane_color;
@@ -167,6 +170,9 @@ struct track_info {
 	
 
 	// color info
+	struct color_desc *bg_color_sky;
+	struct color_desc *bg_color_ground;
+
 	struct color_desc *cd_road_bright;
 	struct color_desc *cd_road_dark;
 	struct color_desc *cd_rumble_bright;

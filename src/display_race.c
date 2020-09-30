@@ -369,7 +369,7 @@ static int display_render_anim_unlock(struct game_context *ctx)
 		200,
 		200);
 
-	//SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
+	// SDL_Color text_color_front_1 = {0xFF, 0xFF, 0xFF};
 	SDL_Color text_color_front_1 = {0xFF, 0xFF, 0x00};
 	SDL_Color text_color_shadow = {0, 0, 0};
 	int font_size = 70;
@@ -387,7 +387,8 @@ static int display_render_anim_unlock(struct game_context *ctx)
 		ctx,
 		font,
 		&ctx->gfx.font_race_anim,
-		ctx->last_unlocked_car > 0 ? "New Car Unlocked!" : "New Track Unlocked!",
+		ctx->last_unlocked_car > 0 ? "New Car Unlocked!"
+					   : "New Track Unlocked!",
 		//&text_color_shadow,
 		&text_color_front_1,
 		&text_color_shadow,
@@ -396,7 +397,6 @@ static int display_render_anim_unlock(struct game_context *ctx)
 		1,
 		200,
 		0.f);
-
 
 
 	SDL_Rect r = {
@@ -413,7 +413,8 @@ static int display_render_anim_unlock(struct game_context *ctx)
 	if (ctx->last_unlocked_car > 0)
 		display_menu_car_bordered_pict(ctx, ctx->last_unlocked_car, 1);
 	else if (ctx->last_unlocked_track > 0)
-		display_menu_track_bordered_pict(ctx, ctx->last_unlocked_track, 1);	
+		display_menu_track_bordered_pict(
+			ctx, ctx->last_unlocked_track, 1);
 
 	TTF_CloseFont(font);
 
@@ -1395,10 +1396,6 @@ int display_render_background_layer(struct game_context *ctx,
 	bg_clip_rect.w = SCREEN_WIDTH;
 	bg_clip_rect.y = 0;
 
-	if (bg_layer == BG_LAYER_LANDSCAPE_FAR)
-		bg_y_offset_num = 59;
-
-
 	if (ctx->status_cur != GAME_STATE_RACE_OPTION) {
 
 		// init bg_clip_rect.x the 1st time
@@ -1442,14 +1439,32 @@ int display_render_background_layer(struct game_context *ctx,
 		another_bg = ANOTHER_BG_NONE;
 	}
 
+
+	int y = SCREEN_HEIGHT * bg_y_offset_num / 100;
+
+	if (bg_layer == BG_LAYER_LANDSCAPE_FAR) {
+		bg_y_offset_num = 59;
+		boxRGBA(ctx->renderer,
+			0,
+			(Sint16)y,
+			SCREEN_WIDTH,
+			SCREEN_HEIGHT,
+			ctx->track.bg_color_ground->r,
+			ctx->track.bg_color_ground->g,
+			ctx->track.bg_color_ground->b,
+			0xFF);
+	}
+
+	y -= bg_texture->h;
+
 	ret = texture_render(ctx,
 			     bg_texture,
 			     bg_x1,
-			     SCREEN_HEIGHT * bg_y_offset_num / 100 -
-				     bg_texture->h,
+			     y,
 			     &bg_clip_rect,
 			     0.f,
-			     1,
+			     1.f,
+			     // 0.5f,
 			     SDL_FLIP_NONE,
 			     NULL);
 
@@ -1464,16 +1479,17 @@ int display_render_background_layer(struct game_context *ctx,
 	}
 
 	if (another_bg != ANOTHER_BG_NONE) {
-		ret = texture_render(ctx,
-				     bg_texture,
-				     bg_x2,
-				     SCREEN_HEIGHT * bg_y_offset_num / 100 -
-					     bg_texture->h,
-				     &bg_clip_rect,
-				     0.f,
-				     1,
-				     SDL_FLIP_NONE,
-				     NULL);
+		ret = texture_render(
+			ctx,
+			bg_texture,
+			bg_x2,
+			y,
+			&bg_clip_rect,
+			0.f,
+			// bg_layer == BG_LAYER_LANDSCAPE_FAR ? 0.5f : 1.f,
+			1.f,
+			SDL_FLIP_NONE,
+			NULL);
 	}
 
 	return ret;
@@ -1493,7 +1509,7 @@ static int display_render_backgrounds(struct game_context *ctx)
 		ctx,
 		BG_LAYER_LANDSCAPE_FAR,
 		&ctx->gfx.layers_x_offset.landscape_far,
-		&ctx->gfx.bg_mountains);
+		&ctx->gfx.bg_landscape_far);
 
 	ret = display_render_background_layer(
 		ctx,
@@ -1610,7 +1626,11 @@ int display_screen_race(struct game_context *ctx)
 	int ret = 0;
 
 	// clear screen
-	SDL_SetRenderDrawColor(ctx->renderer, 135, 206, 235, 0xFF); // blue sky
+	SDL_SetRenderDrawColor(ctx->renderer,
+			       ctx->track.bg_color_sky->r,
+			       ctx->track.bg_color_sky->g,
+			       ctx->track.bg_color_sky->b,
+			       0xFF); // sky
 	SDL_RenderClear(ctx->renderer);
 
 	// render the different layers of background

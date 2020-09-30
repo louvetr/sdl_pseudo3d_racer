@@ -58,8 +58,8 @@
 #define PNG_LANCER_RIGHT2 "./media/cars/lancer_right_2.png"
 
 
-//#define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
-#define PNG_BG_MOUNTAINS "./media/background/bg_desert.png"
+#define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
+#define PNG_BG_CANYON "./media/background/bg_canyon.png"
 #define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
 
@@ -336,28 +336,34 @@ static int gfx_load_cars_sprites(struct game_context *ctx)
 }
 
 
-static int gfx_load_background(struct game_context *ctx)
+static int gfx_load_scene_sprites_carmona(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_mountains);
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
-	return 0;
-}
+	load_texture_from_file(
+		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 
-static int gfx_load_scene_sprites_carmona(struct game_context *ctx)
-{
-	load_texture_from_file(ctx, PNG_SCENE_CAROUSEL, &ctx->gfx.scene_carousel);
+	load_texture_from_file(
+		ctx, PNG_SCENE_CAROUSEL, &ctx->gfx.scene_carousel);
 	load_texture_from_file(ctx, PNG_SCENE_CIRCUS, &ctx->gfx.scene_circus);
-	load_texture_from_file(ctx, PNG_SCENE_GREATWHEEL, &ctx->gfx.scene_greatwheel);
-	load_texture_from_file(ctx, PNG_SCENE_ROLLERCOASTER, &ctx->gfx.scene_rollercoaster);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GREATWHEEL, &ctx->gfx.scene_greatwheel);
+	load_texture_from_file(
+		ctx, PNG_SCENE_ROLLERCOASTER, &ctx->gfx.scene_rollercoaster);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_OAK, &ctx->gfx.scene_tree_oak);
 
 	return 0;
 }
 
 static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(ctx,
@@ -366,44 +372,65 @@ static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 	load_texture_from_file(
 		ctx, PNG_SCENE_TUNNEL_A_DARK, &ctx->gfx.scene_tunnel_a_dark);
 
-	load_texture_from_file(ctx, PNG_SCENE_BUILDING_01, &ctx->gfx.scene_building_01);
-	load_texture_from_file(ctx, PNG_SCENE_BUILDING_02, &ctx->gfx.scene_building_02);
-	load_texture_from_file(ctx, PNG_SCENE_BUILDING_03, &ctx->gfx.scene_building_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUILDING_01, &ctx->gfx.scene_building_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUILDING_02, &ctx->gfx.scene_building_02);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUILDING_03, &ctx->gfx.scene_building_03);
 	load_texture_from_file(ctx, PNG_SCENE_LANTERN, &ctx->gfx.scene_lantern);
 	load_texture_from_file(ctx, PNG_SCENE_BENCH, &ctx->gfx.scene_bench);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
-	load_texture_from_file(ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);
-	load_texture_from_file(ctx, PNG_SCENE_BILLBOARD_BEACH, &ctx->gfx.scene_billboard_beach);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
+	load_texture_from_file(
+		ctx, PNG_SCENE_BUSH_FLOWER, &ctx->gfx.scene_bush_flower);
+	load_texture_from_file(ctx,
+			       PNG_SCENE_BILLBOARD_BEACH,
+			       &ctx->gfx.scene_billboard_beach);
 
 	return 0;
 }
 
 static int gfx_load_scene_sprites_squares(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 
 	load_texture_from_file(ctx, PNG_SCENE_VAULT, &ctx->gfx.scene_vault);
-	load_texture_from_file(ctx, PNG_SCENE_GRAVE_01, &ctx->gfx.scene_grave_01);
-	load_texture_from_file(ctx, PNG_SCENE_GRAVE_02, &ctx->gfx.scene_grave_02);
-	load_texture_from_file(ctx, PNG_SCENE_GRAVE_03, &ctx->gfx.scene_grave_03);
-	load_texture_from_file(ctx, PNG_SCENE_GRAVE_FENCE, &ctx->gfx.scene_grave_fence);
-	load_texture_from_file(ctx, PNG_SCENE_TREE_SPOOKY, &ctx->gfx.scene_tree_spooky);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GRAVE_01, &ctx->gfx.scene_grave_01);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GRAVE_02, &ctx->gfx.scene_grave_02);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GRAVE_03, &ctx->gfx.scene_grave_03);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GRAVE_FENCE, &ctx->gfx.scene_grave_fence);
+	load_texture_from_file(
+		ctx, PNG_SCENE_TREE_SPOOKY, &ctx->gfx.scene_tree_spooky);
 
 	return 0;
 }
 
 static int gfx_load_scene_sprites_horns(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(
 		ctx, PNG_SCENE_TREE_WILLOW, &ctx->gfx.scene_tree_willow);
 	load_texture_from_file(ctx, PNG_SCENE_WELL, &ctx->gfx.scene_well);
-	
+
 	load_texture_from_file(ctx, PNG_SCENE_WALL, &ctx->gfx.scene_wall);
 	load_texture_from_file(ctx, PNG_SCENE_TOWER, &ctx->gfx.scene_tower);
-	load_texture_from_file(ctx, PNG_SCENE_GARGAMEL, &ctx->gfx.scene_gargamel);
+	load_texture_from_file(
+		ctx, PNG_SCENE_GARGAMEL, &ctx->gfx.scene_gargamel);
 
 	load_texture_from_file(ctx, PNG_SCENE_GRASS, &ctx->gfx.scene_grass);
 	load_texture_from_file(
@@ -433,6 +460,10 @@ static int gfx_load_scene_sprites_horns(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 
@@ -450,6 +481,10 @@ static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_curves(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 
@@ -469,6 +504,10 @@ static int gfx_load_scene_sprites_curves(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(ctx, PNG_SCENE_IGLOO, &ctx->gfx.scene_igloo);
@@ -487,6 +526,10 @@ static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(ctx, PNG_SCENE_MAOI, &ctx->gfx.scene_maoi);
@@ -508,6 +551,10 @@ static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_CANYON, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	/*load_texture_from_file(ctx,
@@ -544,6 +591,10 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_dijon(struct game_context *ctx)
 {
+	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
+	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
 	load_texture_from_file(
@@ -816,12 +867,6 @@ int gfx_load_resources_race(struct game_context *ctx)
 		return ret;
 	}
 
-	ret = gfx_load_background(ctx);
-	if (ret < 0) {
-		SDL_Log("[%s] gfx_load_background!\n", __func__);
-		return ret;
-	}
-
 	ret = gfx_load_scene_sprites(ctx);
 	if (ret < 0) {
 		SDL_Log("[%s] gfx_load_scene_sprites!\n", __func__);
@@ -866,7 +911,7 @@ int gfx_unload_resources(struct game_context *ctx)
 		SDL_DestroyTexture(ctx->gfx.cars_stats[i].texture);
 	}
 
-	SDL_DestroyTexture(ctx->gfx.bg_mountains.texture);
+	SDL_DestroyTexture(ctx->gfx.bg_landscape_far.texture);
 	SDL_DestroyTexture(ctx->gfx.bg_sky_near.texture);
 	SDL_DestroyTexture(ctx->gfx.bg_sky_far.texture);
 
@@ -928,7 +973,7 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_egypt_column.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_egypt_temple.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_ram_statue.texture);
-	
+
 	SDL_DestroyTexture(ctx->gfx.scene_wall.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_tower.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_gargamel.texture);
@@ -939,12 +984,12 @@ int gfx_unload_resources(struct game_context *ctx)
 	SDL_DestroyTexture(ctx->gfx.scene_building_02.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_building_03.texture);
 
-	SDL_DestroyTexture(ctx->gfx.scene_vault.texture);	
-	SDL_DestroyTexture(ctx->gfx.scene_grave_01.texture);	
-	SDL_DestroyTexture(ctx->gfx.scene_grave_02.texture);	
-	SDL_DestroyTexture(ctx->gfx.scene_grave_03.texture);	
-	SDL_DestroyTexture(ctx->gfx.scene_grave_fence.texture);	
-	SDL_DestroyTexture(ctx->gfx.scene_tree_spooky.texture);	
+	SDL_DestroyTexture(ctx->gfx.scene_vault.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_grave_01.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_grave_02.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_grave_03.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_grave_fence.texture);
+	SDL_DestroyTexture(ctx->gfx.scene_tree_spooky.texture);
 
 	SDL_DestroyTexture(ctx->gfx.scene_circus.texture);
 	SDL_DestroyTexture(ctx->gfx.scene_greatwheel.texture);
