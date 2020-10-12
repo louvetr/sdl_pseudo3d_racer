@@ -65,8 +65,12 @@
 #define PNG_BG_HILLS "./media/background/bg_hills_v2.png"
 #define PNG_BG_FOREST "./media/background/bg_forest_v2.png"
 #define PNG_BG_SKYLINE "./media/background/bg_skyline.png"
+
 #define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
+#define PNG_BG_SKYLOW_NEAR "./media/background/bg_cloudslow_near.png"
+#define PNG_BG_SKYLOW_FAR "./media/background/bg_cloudslow_far.png"
+#define PNG_BG_SKYNIGHT_FAR "./media/background/bg_skynight_v2.png"
 
 #define PNG_SCENE_START_LANE "./media/scene/scene_start_lane_01.png"
 #define PNG_SCENE_TREE_OAK "./media/scene/scene_tree_oak.png"
@@ -399,8 +403,8 @@ static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 static int gfx_load_scene_sprites_squares(struct game_context *ctx)
 {
 	gfx_load_texture(ctx, PNG_BG_FOREST, &ctx->gfx.bg_landscape_far);
-	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
-	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+	memset(&ctx->gfx.bg_sky_near, 0 , sizeof(struct texture));
+	gfx_load_texture(ctx, PNG_BG_SKYNIGHT_FAR, &ctx->gfx.bg_sky_far);
 
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
@@ -487,8 +491,8 @@ static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 static int gfx_load_scene_sprites_curves(struct game_context *ctx)
 {
 	gfx_load_texture(ctx, PNG_BG_DESERT, &ctx->gfx.bg_landscape_far);
-	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
-	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+	memset(&ctx->gfx.bg_sky_near, 0 , sizeof(struct texture));
+	gfx_load_texture(ctx, PNG_BG_SKYLOW_NEAR, &ctx->gfx.bg_sky_far);
 
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
@@ -532,8 +536,8 @@ static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
 {
 	gfx_load_texture(ctx, PNG_BG_ISLANDS, &ctx->gfx.bg_landscape_far);
-	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
-	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
+	memset(&ctx->gfx.bg_sky_near, 0 , sizeof(struct texture));
+	gfx_load_texture(ctx, PNG_BG_SKYLOW_FAR, &ctx->gfx.bg_sky_far);
 
 	load_texture_from_file(
 		ctx, PNG_SCENE_START_LANE, &ctx->gfx.scene_start_lane);
