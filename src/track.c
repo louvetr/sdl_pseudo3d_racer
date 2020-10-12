@@ -1223,7 +1223,7 @@ static int track_build_squares(struct game_context *ctx)
 				      SDL_FLIP_HORIZONTAL);
 	}
 
-	int seg_step = 15;
+	int seg_step = 10;
 	for (int i = 1 + nb_segments_added * 0 / 16;
 	     i < nb_segments_added * 3 / 16;
 	     i += seg_step)
