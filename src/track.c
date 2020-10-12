@@ -4,10 +4,12 @@
 struct color_desc cd_sky_blue = {.r = 135,
 						.g = 206,
 						.b = 235};
-struct color_desc cd_sky_night = {.r = 47,
+/*struct color_desc cd_sky_night = {.r = 47,
 						.g = 47,
-						.b = 119};
-
+						.b = 119};*/
+struct color_desc cd_sky_night = {.r = 17,
+						.g = 17,
+						.b = 89};
 
 struct color_desc cd_lane_yellow = {.r = 255, .g = 234, .b = 0};
 struct color_desc cd_lane_white = {.r = 255, .g = 255, .b = 255};
@@ -28,6 +30,8 @@ struct color_desc cd_road_stone_dark = {.r = 235, .g = 232, .b = 220};
 
 struct color_desc cd_grass_bright = {.r = 0, .g = 169, .b = 0};
 struct color_desc cd_grass_dark = {.r = 0, .g = 160, .b = 0};
+struct color_desc cd_grassdark_bright = {.r = 0, .g = 79, .b = 0};
+struct color_desc cd_grassdark_dark = {.r = 0, .g = 70, .b = 0};
 struct color_desc cd_rumble_bright = {.r = 255, .g = 255, .b = 255};
 struct color_desc cd_rumble_dark = {.r = 255, .g = 0, .b = 0};
 struct color_desc cd_rumble_mud_bright = {.r = 123, .g = 63, .b = 0};
@@ -63,11 +67,11 @@ static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY},
 	{.nb_sector = NB_SECTOR_FORK, .nb_segment = NB_SEGMENT_FORK},
 	{.nb_sector = NB_SECTOR_FROST, .nb_segment = NB_SEGMENT_FROST},
-	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
+	{.nb_sector = NB_SECTOR_WHALE, .nb_segment = NB_SEGMENT_WHALE},
 	{.nb_sector = NB_SECTOR_CURVES, .nb_segment = NB_SEGMENT_CURVES},
 	{.nb_sector = NB_SECTOR_HORNS, .nb_segment = NB_SEGMENT_HORNS},
 	{.nb_sector = NB_SECTOR_SQUARES, .nb_segment = NB_SEGMENT_SQUARES},
-	{.nb_sector = NB_SECTOR_WHALE, .nb_segment = NB_SEGMENT_WHALE},
+	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
 	{.nb_sector = NB_SECTOR_CARMONA, .nb_segment = NB_SEGMENT_CARMONA}};
 
 
@@ -468,8 +472,8 @@ static int track_build_carmona(struct game_context *ctx)
 	/////////////////////////////////////////////
 	// set color of segment outside of the road
 	ctx->track.bg_color_sky = &cd_sky_blue;
-	ctx->track.bg_color_ground = &cd_rumble_stone_bright;
-	ctx->track.cd_road_bright = &cd_grass_bright;
+	ctx->track.bg_color_ground = &cd_grass_dark;
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_bright;
 	ctx->track.cd_road_dark = &cd_road_asphaltdark_dark;
 	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
 	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
@@ -993,16 +997,16 @@ static int track_build_squares(struct game_context *ctx)
 	/////////////////////////////////////////////
 	// set color of segment outside of the road
 	ctx->track.bg_color_sky = &cd_sky_night;
-	ctx->track.bg_color_ground = &cd_grass_bright;
-	ctx->track.cd_road_bright = &cd_road_mud_bright;
-	ctx->track.cd_road_dark = &cd_road_mud_dark;
+	ctx->track.bg_color_ground = &cd_grassdark_dark;
+	ctx->track.cd_road_bright = &cd_road_asphaltdark_dark;
+	ctx->track.cd_road_dark = &cd_road_asphaltdark_bright;
 	ctx->track.cd_rumble_bright = &cd_rumble_stone_bright;
 	ctx->track.cd_rumble_dark = &cd_rumble_stone_dark;
 	ctx->track.cd_lane = &cd_lane_white;
 	ctx->track.cd_start_line = &cd_lane_white;
 	ctx->track.nb_cds = 1;
-	ctx->track.cds[0].bright = &cd_grass_bright;
-	ctx->track.cds[0].dark = &cd_grass_dark;
+	ctx->track.cds[0].bright = &cd_grassdark_bright;
+	ctx->track.cds[0].dark = &cd_grassdark_dark;
 	ctx->track.cds[0].num = 0;
 	ctx->track.cds[0].den = 0;
 	ctx->track.cds[0].side = CDS_FULL_BOTH;

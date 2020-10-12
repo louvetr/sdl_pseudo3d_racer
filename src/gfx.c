@@ -60,6 +60,11 @@
 
 #define PNG_BG_MOUNTAINS "./media/background/bg_mountains.png"
 #define PNG_BG_CANYON "./media/background/bg_canyon.png"
+#define PNG_BG_DESERT "./media/background/bg_desert_v2.png"
+#define PNG_BG_ISLANDS "./media/background/bg_islands_v3.png"
+#define PNG_BG_HILLS "./media/background/bg_hills_v2.png"
+#define PNG_BG_FOREST "./media/background/bg_forest_v2.png"
+#define PNG_BG_SKYLINE "./media/background/bg_skyline.png"
 #define PNG_BG_SKY_NEAR "./media/background/bg_clouds_near.png"
 #define PNG_BG_SKY_FAR "./media/background/bg_clouds_far.png"
 
@@ -338,7 +343,7 @@ static int gfx_load_cars_sprites(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_carmona(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_FOREST, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -360,7 +365,7 @@ static int gfx_load_scene_sprites_carmona(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_SKYLINE, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -393,7 +398,7 @@ static int gfx_load_scene_sprites_whale(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_squares(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_FOREST, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -417,7 +422,7 @@ static int gfx_load_scene_sprites_squares(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_horns(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_HILLS, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -481,7 +486,7 @@ static int gfx_load_scene_sprites_stone(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_curves(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_DESERT, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -526,7 +531,7 @@ static int gfx_load_scene_sprites_frost(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_seaside(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_ISLANDS, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
@@ -591,7 +596,7 @@ static int gfx_load_scene_sprites_fork(struct game_context *ctx)
 
 static int gfx_load_scene_sprites_dijon(struct game_context *ctx)
 {
-	gfx_load_texture(ctx, PNG_BG_MOUNTAINS, &ctx->gfx.bg_landscape_far);
+	gfx_load_texture(ctx, PNG_BG_FOREST, &ctx->gfx.bg_landscape_far);
 	gfx_load_texture(ctx, PNG_BG_SKY_NEAR, &ctx->gfx.bg_sky_near);
 	gfx_load_texture(ctx, PNG_BG_SKY_FAR, &ctx->gfx.bg_sky_far);
 
