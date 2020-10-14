@@ -1674,6 +1674,7 @@ int display_screen_race(struct game_context *ctx)
 			       0,
 			       NULL);
 		float scale_pedal = 0.5f;
+		//SDL_SetTextureAlphaMod(ctx->gfx.gui_accel.texture, 125);
 		texture_render(ctx,
 			       &ctx->gfx.gui_accel,
 			       SCREEN_WIDTH * 88 / 100,
@@ -1683,6 +1684,7 @@ int display_screen_race(struct game_context *ctx)
 			       scale_pedal,
 			       0,
 			       NULL);
+		//SDL_SetTextureAlphaMod(ctx->gfx.gui_brake.texture, 125);
 		texture_render(ctx,
 			       &ctx->gfx.gui_brake,
 			       SCREEN_WIDTH * 75 / 100,
@@ -1694,6 +1696,18 @@ int display_screen_race(struct game_context *ctx)
 			       NULL,
 			       0.f,
 			       scale_pedal,
+			       0,
+			       NULL);
+
+		//SDL_SetTextureAlphaMod(ctx->gfx.gui_nitro.texture, 125);
+
+		texture_render(ctx,
+			       &ctx->gfx.gui_nitro,
+			       SCREEN_WIDTH * 87 / 100,
+			       SCREEN_HEIGHT * 43 / 100,
+			       NULL,
+			       0.f,
+			       0.66f,
 			       0,
 			       NULL);
 
