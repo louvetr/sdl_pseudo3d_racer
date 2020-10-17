@@ -25,6 +25,7 @@
 
 
 #define SCREEN_WIDTH 1280
+//#define SCREEN_WIDTH 1680
 #define SCREEN_HEIGHT 720
 
 #define FPS 30
@@ -240,8 +241,11 @@ struct keys_status {
 	int accel;
 	int accel_prev;
 	int brake;
+	int brake_prev;
 	int left;
+	int left_prev;
 	int right;
+	int right_prev;
 	int nitro;
 	int nitro_prev;
 

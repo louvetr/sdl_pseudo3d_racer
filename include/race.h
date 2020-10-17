@@ -48,6 +48,7 @@ struct player_car
 	int nb_nitro;
 	// number of frames in nitro state
 	int nitro_nb_frame;
+	int nitro_nb_frame_prev;
 	// deceleration rate when braking
 	float breaking;
 	// 'natural' deceleration rate when neither accelerating, nor braking

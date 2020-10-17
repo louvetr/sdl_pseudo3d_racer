@@ -214,7 +214,7 @@ int main_ctx_init_race(struct game_context *ctx)
 
 	ctx->race.nb_lap_logic = 0;
 	ctx->race.nb_lap = 3;
-	//ctx->race.nb_lap = 1;
+	// ctx->race.nb_lap = 1;
 	ctx->race.player_lap = 0;
 	ctx->pcar.player_place = NB_AI_CARS + 1;
 
@@ -391,6 +391,8 @@ static int save_load(struct game_context *ctx)
 			ctx->cars_available = CAR_MASK_DELTA | CAR_MASK_TRUENO;
 			ctx->tracks_available =
 				TRACK_MASK_DIJON | TRACK_MASK_SPEEDWAY;
+			//ctx->cars_available = 0xffff;
+			//ctx->tracks_available = 0xffff;
 			SDL_RWwrite(
 				file, &ctx->cars_available, sizeof(Uint16), 1);
 			SDL_RWwrite(file,
@@ -499,6 +501,9 @@ int main()
 		ctx->status_prev = ctx->status_cur;
 		ctx->action = ACTION_NONE;
 		ctx->keys.accel_prev = ctx->keys.accel;
+		ctx->keys.brake_prev = ctx->keys.brake;
+		ctx->keys.left_prev = ctx->keys.left;
+		ctx->keys.right_prev = ctx->keys.right;
 		ctx->keys.nitro_prev = ctx->keys.nitro;
 		ctx->sound.drift_prev = ctx->sound.drift;
 	}

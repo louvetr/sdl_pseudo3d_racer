@@ -1674,7 +1674,11 @@ int display_screen_race(struct game_context *ctx)
 			       0,
 			       NULL);
 		float scale_pedal = 0.5f;
-		//SDL_SetTextureAlphaMod(ctx->gfx.gui_accel.texture, 125);
+
+		if (ctx->keys.accel != ctx->keys.accel_prev)
+			SDL_SetTextureAlphaMod(ctx->gfx.gui_accel.texture,
+					       ctx->keys.accel ? 255 : 125);
+
 		texture_render(ctx,
 			       &ctx->gfx.gui_accel,
 			       SCREEN_WIDTH * 88 / 100,
@@ -1684,7 +1688,11 @@ int display_screen_race(struct game_context *ctx)
 			       scale_pedal,
 			       0,
 			       NULL);
-		//SDL_SetTextureAlphaMod(ctx->gfx.gui_brake.texture, 125);
+
+		if (ctx->keys.brake != ctx->keys.brake_prev)
+			SDL_SetTextureAlphaMod(ctx->gfx.gui_brake.texture,
+					       ctx->keys.brake ? 255 : 125);
+
 		texture_render(ctx,
 			       &ctx->gfx.gui_brake,
 			       SCREEN_WIDTH * 75 / 100,
@@ -1699,7 +1707,10 @@ int display_screen_race(struct game_context *ctx)
 			       0,
 			       NULL);
 
-		//SDL_SetTextureAlphaMod(ctx->gfx.gui_nitro.texture, 125);
+		if (ctx->pcar.nitro_nb_frame_prev != ctx->pcar.nitro_nb_frame)
+			SDL_SetTextureAlphaMod(ctx->gfx.gui_nitro.texture,
+					       ctx->pcar.nitro_nb_frame ? 255
+									: 125);
 
 		texture_render(ctx,
 			       &ctx->gfx.gui_nitro,
@@ -1712,6 +1723,11 @@ int display_screen_race(struct game_context *ctx)
 			       NULL);
 
 		float scale_dir = 2.f;
+
+		if (ctx->keys.left != ctx->keys.left_prev)
+			SDL_SetTextureAlphaMod(ctx->gfx.gui_left.texture,
+					       ctx->keys.left ? 255 : 125);
+
 		texture_render(ctx,
 			       &ctx->gfx.gui_left,
 			       SCREEN_WIDTH * 2 / 100,
@@ -1721,6 +1737,11 @@ int display_screen_race(struct game_context *ctx)
 			       scale_dir,
 			       0,
 			       NULL);
+
+		if (ctx->keys.right != ctx->keys.right_prev)
+			SDL_SetTextureAlphaMod(ctx->gfx.gui_right.texture,
+					       ctx->keys.right ? 255 : 125);
+
 		texture_render(ctx,
 			       &ctx->gfx.gui_right,
 			       SCREEN_WIDTH * 15 / 100,

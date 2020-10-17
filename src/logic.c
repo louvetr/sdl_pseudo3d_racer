@@ -550,6 +550,7 @@ static int logic_race_control(struct game_context *ctx)
 	if (ctx->status_cur == GAME_STATE_RACE_NITRO) {
 		max_speed = ctx->pcar.max_speed_nitro;
 		accel = ctx->pcar.accel_nitro;
+		ctx->pcar.nitro_nb_frame_prev = ctx->pcar.nitro_nb_frame;
 		ctx->pcar.nitro_nb_frame--;
 		if (ctx->pcar.nitro_nb_frame == 0) {
 			event_update_game_state(ctx, GAME_STATE_RACE);
