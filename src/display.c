@@ -3,17 +3,16 @@
 #define BORDER 0
 
 
-
 /////////////////////////////////////////////////////////////////
 // static functions definition
 /////////////////////////////////////////////////////////////////
 
 
 int load_text_message(struct game_context *ctx,
-			     TTF_Font *font,
-			     struct texture *t,
-			     char *string,
-			     SDL_Color text_color)
+		      TTF_Font *font,
+		      struct texture *t,
+		      char *string,
+		      SDL_Color text_color)
 {
 	if (t->texture)
 		SDL_DestroyTexture(t->texture);
@@ -45,13 +44,13 @@ int load_text_message(struct game_context *ctx,
 }
 
 int display_load_render_text(struct game_context *ctx,
-				    TTF_Font *font,
-				    struct texture *t,
-				    char *msg,
-				    SDL_Color *color,
-				    int x,
-				    int y,
-				    float angle)
+			     TTF_Font *font,
+			     struct texture *t,
+			     char *msg,
+			     SDL_Color *color,
+			     int x,
+			     int y,
+			     float angle)
 {
 	int ret;
 
@@ -65,16 +64,16 @@ int display_load_render_text(struct game_context *ctx,
 
 
 int display_load_render_text_with_shade(struct game_context *ctx,
-					       TTF_Font *font,
-					       struct texture *t,
-					       char *msg,
-					       SDL_Color *color_front,
-					       SDL_Color *color_shadow,
-					       int x_front,
-					       int y_front,
-					       int shadow_num,
-					       int shadow_den,
-					       float angle)
+					TTF_Font *font,
+					struct texture *t,
+					char *msg,
+					SDL_Color *color_front,
+					SDL_Color *color_shadow,
+					int x_front,
+					int y_front,
+					int shadow_num,
+					int shadow_den,
+					float angle)
 {
 
 	display_load_render_text(ctx,
@@ -94,14 +93,14 @@ int display_load_render_text_with_shade(struct game_context *ctx,
 
 
 int texture_render(struct game_context *ctx,
-			  struct texture *t,
-			  int x,
-			  int y,
-			  SDL_Rect *clip,
-			  float angle,
-			  float scale,
-			  SDL_RendererFlip flip,
-			  SDL_Rect *hitbox)
+		   struct texture *t,
+		   int x,
+		   int y,
+		   SDL_Rect *clip,
+		   float angle,
+		   float scale,
+		   SDL_RendererFlip flip,
+		   SDL_Rect *hitbox)
 {
 	if (!t || !ctx) {
 		SDL_Log("[%s] invalid param\n", __func__);
@@ -137,14 +136,13 @@ int texture_render(struct game_context *ctx,
 		return 0;
 	}
 
-	SDL_RenderCopyEx(ctx->renderer,
-			 t->texture,
-			 clip,
-			 &render_quad,
-			 angle,
-			 NULL,
-			 flip);
-
+	int ret = SDL_RenderCopyEx(ctx->renderer,
+				   t->texture,
+				   clip,
+				   &render_quad,
+				   angle,
+				   NULL,
+				   flip);
 
 	/* Set hitbox. Only for AI cars since scene sprite hitbox doesn't always
 	 * follow the sprite shape (eg. tree with trunk) */
@@ -152,7 +150,7 @@ int texture_render(struct game_context *ctx,
 		memcpy(hitbox, &render_quad, sizeof(SDL_Rect));
 	}
 
-	return 0;
+	return ret;
 }
 
 

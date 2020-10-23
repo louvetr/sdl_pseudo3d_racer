@@ -909,7 +909,7 @@ int gfx_load_resources_race(struct game_context *ctx)
 	SDL_SetTextureAlphaMod(ctx->gfx.gui_nitro.texture, 125);
 	SDL_SetTextureAlphaMod(ctx->gfx.gui_left.texture, 125);
 	SDL_SetTextureAlphaMod(ctx->gfx.gui_right.texture, 125);
-
+	SDL_SetTextureAlphaMod(ctx->gfx.gui_pause.texture, 125);
 
 	SDL_Log("media loaded\n");
 
