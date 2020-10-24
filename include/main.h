@@ -90,17 +90,17 @@ enum game_status {
 	GAME_STATE_CREDIT,
 	GAME_STATE_GAME,
 	GAME_STATE_MENU_MAIN,
-	GAME_STATE_MENU_SELECT_TRACK,
+	GAME_STATE_MENU_SELECT_TRACK, //5
 	GAME_STATE_MENU_SELECT_CAR,
 	GAME_STATE_MENU_OPTION,
 	GAME_STATE_MENU_CREDIT,
 	GAME_STATE_RACE,
-	GAME_STATE_RACE_ANIM_START,
+	GAME_STATE_RACE_ANIM_START,	// 10
 	GAME_STATE_RACE_ANIM_END,
 	GAME_STATE_RACE_ANIM_UNLOCK,
 	GAME_STATE_RACE_COLLISION_SCENE,
 	GAME_STATE_RACE_NITRO,
-	GAME_STATE_RACE_OPTION,
+	GAME_STATE_RACE_OPTION, // 15
 	GAME_STATE_PAUSE,
 	GAME_STATE_GAMEOVER,
 	GAME_STATE_QUIT
@@ -316,6 +316,15 @@ struct ai_car_info {
 
 };
 
+struct save_data {
+	Uint16 last_unlocked_car;
+	Uint16 last_unlocked_track;
+	Uint16 cars_available;
+	Uint16 tracks_available;
+
+	Uint32 tracks_time[TRACK_LAST];
+	Uint8 tracks_position[TRACK_LAST];
+};
 
 
 // game context, contains all information of the game
@@ -401,11 +410,7 @@ struct game_context {
 
 	struct race_info race;
 
-	Uint16 last_unlocked_car;
-	Uint16 last_unlocked_track;
-	Uint16 cars_available;
-	Uint16 tracks_available;
-
+	struct save_data save;
 
 };
 

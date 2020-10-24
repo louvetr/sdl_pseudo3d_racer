@@ -915,7 +915,7 @@ static int logic_menu_select_track(struct game_context *ctx)
 
 		// force selection of an unlocked track
 		while (!(1 << ctx->track.track_selected &
-			 ctx->tracks_available)) {
+			 ctx->save.tracks_available)) {
 			ctx->track.track_selected--;
 			if (ctx->track.track_selected == 0)
 				break;
@@ -977,7 +977,7 @@ static int logic_menu_select_car(struct game_context *ctx)
 
 		// force selection of an unlocked car
 		while (!(1 << ctx->pcar.car_player_model &
-			 ctx->cars_available)) {
+			 ctx->save.cars_available)) {
 			ctx->pcar.car_player_model--;
 			if (ctx->pcar.car_player_model == 0)
 				break;
@@ -1071,30 +1071,26 @@ static int logic_menu_option(struct game_context *ctx)
 
 	if (ctx->keys.reset_save) {
 		// reset and save unlocked in file
-		ctx->cars_available = CAR_MASK_DELTA | CAR_MASK_TRUENO;
-		ctx->tracks_available = TRACK_MASK_DIJON | TRACK_MASK_SPEEDWAY;
+		memset(&ctx->save, 0xff, sizeof(struct save_data));
+		ctx->save.cars_available = CAR_MASK_DELTA | CAR_MASK_TRUENO;
+		ctx->save.tracks_available =
+			TRACK_MASK_DIJON | TRACK_MASK_SPEEDWAY;
 		SDL_RWops *file = SDL_RWFromFile(SAVE_FILE, "w+b");
 		if (file != NULL) {
 			SDL_RWwrite(
-				file, &ctx->cars_available, sizeof(Uint16), 1);
-			SDL_RWwrite(file,
-				    &ctx->tracks_available,
-				    sizeof(Uint16),
-				    1);
-
-			// Close file handler
+				file, &ctx->save, sizeof(struct save_data), 1);
 			SDL_RWclose(file);
 
 			// force selection of an unlocked track
 			while (!(1 << ctx->track.track_selected &
-				 ctx->tracks_available)) {
+				 ctx->save.tracks_available)) {
 				ctx->track.track_selected--;
 				if (ctx->track.track_selected == 0)
 					break;
 			}
 			// force selection of an unlocked car
 			while (!(1 << ctx->pcar.car_player_model &
-				 ctx->cars_available)) {
+				 ctx->save.cars_available)) {
 				ctx->pcar.car_player_model--;
 				if (ctx->pcar.car_player_model == 0)
 					break;
@@ -1223,19 +1219,19 @@ static int logic_race_anim_end(struct game_context *ctx)
 
 		ctx->race.nb_frame_anim = 0;
 
-		ctx->last_unlocked_car = 0;
-		ctx->last_unlocked_track = 0;
+		ctx->save.last_unlocked_car = 0;
+		ctx->save.last_unlocked_track = 0;
 
 		for (Uint16 i = 0; i < CAR_MODEL_LAST; i++) {
-			if (!((1 << i) & ctx->cars_available)) {
-				ctx->last_unlocked_car = i;
-				ctx->cars_available |= (Uint16)(1u << i);
+			if (!((1 << i) & ctx->save.cars_available)) {
+				ctx->save.last_unlocked_car = i;
+				ctx->save.cars_available |= (Uint16)(1u << i);
 				gfx_load_cars_side(ctx);
 				break;
 			}
-			if (!((1 << i) & ctx->tracks_available)) {
-				ctx->last_unlocked_track = i;
-				ctx->tracks_available |= (Uint16)(1u << i);
+			if (!((1 << i) & ctx->save.tracks_available)) {
+				ctx->save.last_unlocked_track = i;
+				ctx->save.tracks_available |= (Uint16)(1u << i);
 				gfx_load_tracks_thumbnail(ctx);
 				break;
 			}
@@ -1243,33 +1239,27 @@ static int logic_race_anim_end(struct game_context *ctx)
 
 		SDL_Log("[%s] last_unlocked_car = %u, last_unlocked_track = %u\n",
 			__func__,
-			ctx->last_unlocked_car,
-			ctx->last_unlocked_track);
+			ctx->save.last_unlocked_car,
+			ctx->save.last_unlocked_track);
 
+		int update_save = 0;
+		if (ctx->race.race_time_ms <
+		    ctx->save.tracks_time[ctx->track.track_selected]) {
+			ctx->save.tracks_time[ctx->track.track_selected] =
+				(Uint32)ctx->race.race_time_ms;
+			update_save = 1;
+		}
 
-		if (ctx->last_unlocked_car > 0 ||
-		    ctx->last_unlocked_track > 0) {
+		if (ctx->pcar.player_place <
+		    ctx->save.tracks_position[ctx->track.track_selected]) {
+			ctx->save.tracks_position[ctx->track.track_selected] =
+				(Uint8)ctx->pcar.player_place;
+			update_save = 1;
+		}
 
-			// save unlocked in file
-			SDL_RWops *file = SDL_RWFromFile(SAVE_FILE, "w+b");
-			if (file != NULL) {
-				SDL_RWwrite(file,
-					    &ctx->cars_available,
-					    sizeof(Uint16),
-					    1);
-				SDL_RWwrite(file,
-					    &ctx->tracks_available,
-					    sizeof(Uint16),
-					    1);
-
-				// Close file handler
-				SDL_RWclose(file);
-			} else {
-				SDL_Log("[%s] Error: Unable to save file! %s\n",
-					__func__,
-					SDL_GetError());
-			}
-
+		if (ctx->save.last_unlocked_car > 0 ||
+		    ctx->save.last_unlocked_track > 0) {
+			update_save = 1;
 			event_update_game_state(ctx,
 						GAME_STATE_RACE_ANIM_UNLOCK);
 		} else {
@@ -1285,6 +1275,22 @@ static int logic_race_anim_end(struct game_context *ctx)
 			sound_load_resources_menu(ctx);
 
 			main_ctx_init_menu_main(ctx);
+		}
+
+		// save updated data in file
+		if (update_save) {
+			SDL_RWops *file = SDL_RWFromFile(SAVE_FILE, "w+b");
+			if (file != NULL) {
+				SDL_RWwrite(file,
+					    &ctx->save,
+					    sizeof(struct save_data),
+					    1);
+				SDL_RWclose(file);
+			} else {
+				SDL_Log("[%s] Error: Unable to save file! %s\n",
+					__func__,
+					SDL_GetError());
+			}
 		}
 
 		return 0;

@@ -388,17 +388,9 @@ static int save_load(struct game_context *ctx)
 		if (file != NULL) {
 			SDL_Log("New file created!\n");
 			// Initialize data
-			ctx->cars_available = CAR_MASK_DELTA | CAR_MASK_TRUENO;
-			ctx->tracks_available =
-				TRACK_MASK_DIJON | TRACK_MASK_SPEEDWAY;
-			//ctx->cars_available = 0xffff;
-			//ctx->tracks_available = 0xffff;
+			memset(&ctx->save, 0xff, sizeof(struct save_data));
 			SDL_RWwrite(
-				file, &ctx->cars_available, sizeof(Uint16), 1);
-			SDL_RWwrite(file,
-				    &ctx->tracks_available,
-				    sizeof(Uint16),
-				    1);
+				file, &ctx->save, sizeof(struct save_data), 1);
 			// Close file handler
 			SDL_RWclose(file);
 		} else {
@@ -411,12 +403,12 @@ static int save_load(struct game_context *ctx)
 	else {
 		// Load data
 		SDL_Log("Reading file...!\n");
-		SDL_RWread(file, &ctx->cars_available, sizeof(Uint32), 1);
-		SDL_RWread(file, &ctx->tracks_available, sizeof(Uint32), 1);
+		SDL_RWread(file, &ctx->save, sizeof(struct save_data), 1);
 
-		SDL_Log("ctx->cars_available = 0x%x\n", ctx->cars_available);
-		SDL_Log("ctx->tracks_available = 0x%x\n",
-			ctx->tracks_available);
+		SDL_Log("ctx->save.cars_available = 0x%x\n",
+			ctx->save.cars_available);
+		SDL_Log("ctx->save.tracks_available = 0x%x\n",
+			ctx->save.tracks_available);
 
 		// Close file handler
 		SDL_RWclose(file);

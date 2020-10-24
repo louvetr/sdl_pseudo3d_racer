@@ -324,7 +324,7 @@ int display_menu_car_bordered_pict(struct game_context *ctx,
 		0);
 
 
-	if (!(1 << ctx->pcar.car_player_model & ctx->cars_available) &&
+	if (!(1 << ctx->pcar.car_player_model & ctx->save.cars_available) &&
 	    ctx->status_cur == GAME_STATE_MENU_SELECT_CAR) {
 
 		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
@@ -408,7 +408,7 @@ int display_menu_track_bordered_pict(struct game_context *ctx,
 		0);
 
 
-	if (!(1 << ctx->track.track_selected & ctx->tracks_available) &&
+	if (!(1 << ctx->track.track_selected & ctx->save.tracks_available) &&
 	    ctx->status_cur == GAME_STATE_MENU_SELECT_TRACK) {
 
 		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
@@ -561,23 +561,34 @@ int display_menu_track_stats(struct game_context *ctx)
 				 str_y,
 				 0.f);
 
-	int race_time_ms = 666666;
+	Uint32 race_time_ms = ctx->save.tracks_time[ctx->track.track_selected];
 	char time_str[16];
-	int time_min = race_time_ms / 60000;
-	int time_sec = (race_time_ms - time_min * 60000) / 1000;
-	int time_ms = (race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
+	Uint32 time_min = race_time_ms / 60000;
+	Uint32 time_sec = (race_time_ms - time_min * 60000) / 1000;
+	Uint32 time_ms =
+		(race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
 
 	sprintf(time_str, "%02d'%02d\"%02d", time_min, time_sec, time_ms);
 
-	display_load_render_text(ctx,
-				 font_small,
-				 &ttext,
-				 // time_str,
-				 DEFAULT_BEST_TIME,
-				 &text_color_front_1,
-				 car_bg_x + ttext.w,
-				 str_y,
-				 0.f);
+	display_load_render_text(
+		ctx,
+		font_small,
+		&ttext,
+		ctx->save.tracks_time[ctx->track.track_selected] == 0xffffffff
+			? DEFAULT_BEST_TIME
+			: time_str,
+		&text_color_front_1,
+		car_bg_x + ttext.w,
+		str_y,
+		0.f);
+
+
+	char str_pos[16];
+	sprintf(str_pos,
+		"%d%s",
+		ctx->save.tracks_position[ctx->track.track_selected],
+		logic_get_player_place_suffix(
+			ctx->save.tracks_position[ctx->track.track_selected]));
 
 	str_y += ttext.h;
 	display_load_render_text(ctx,
@@ -588,26 +599,45 @@ int display_menu_track_stats(struct game_context *ctx)
 				 car_bg_x,
 				 str_y,
 				 0.f);
-	display_load_render_text(ctx,
-				 font_small,
-				 &ttext,
-				 DEFAULT_BEST_POSITION,
-				 &text_color_front_1,
-				 car_bg_x + ttext.w,
-				 str_y,
-				 0.f);
+	display_load_render_text(
+		ctx,
+		font_small,
+		&ttext,
+		ctx->save.tracks_position[ctx->track.track_selected] == 0xff
+			? DEFAULT_BEST_POSITION
+			: str_pos,
+		&text_color_front_1,
+		car_bg_x + ttext.w,
+		str_y,
+		0.f);
 
 	float scale_trophy = 1.f;
-	texture_render(ctx,
-		       &ctx->gfx.gui_trophy_gold,
-		       r.x + r.w - ctx->gfx.gui_trophy_gold.w,
-		       r.y /*+ r.h - ctx->gfx.gui_trophy_gold.h*/,
-		       NULL,
-		       0.f,
-		       scale_trophy,
-		       0,
-		       NULL);
+	struct texture *ttrophy;
+	switch (ctx->save.tracks_position[ctx->track.track_selected]) {
+	case 1:
+		ttrophy = &ctx->gfx.gui_trophy_gold;
+		break;
+	case 2:
+		ttrophy = &ctx->gfx.gui_trophy_silver;
+		break;
+	case 3:
+		ttrophy = &ctx->gfx.gui_trophy_bronze;
+		break;
+	default:
+		ttrophy = NULL;
+	}
 
+	if (ttrophy) {
+		texture_render(ctx,
+			       ttrophy,
+			       r.x + r.w - ttrophy->w,
+			       r.y /*+ r.h - ctx->gfx.gui_trophy_gold.h*/,
+			       NULL,
+			       0.f,
+			       scale_trophy,
+			       0,
+			       NULL);
+	}
 
 	scale_car = 1.f;
 
@@ -627,7 +657,7 @@ int display_menu_track_stats(struct game_context *ctx)
 		0);
 
 
-	if (!(1 << ctx->track.track_selected & ctx->tracks_available) &&
+	if (!(1 << ctx->track.track_selected & ctx->save.tracks_available) &&
 	    ctx->status_cur == GAME_STATE_MENU_SELECT_TRACK) {
 
 		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);

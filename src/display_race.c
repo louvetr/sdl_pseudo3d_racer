@@ -387,7 +387,7 @@ static int display_render_anim_unlock(struct game_context *ctx)
 		ctx,
 		font,
 		&ctx->gfx.font_race_anim,
-		ctx->last_unlocked_car > 0 ? "New Car Unlocked!"
+		ctx->save.last_unlocked_car > 0 ? "New Car Unlocked!"
 					   : "New Track Unlocked!",
 		//&text_color_shadow,
 		&text_color_front_1,
@@ -410,11 +410,11 @@ static int display_render_anim_unlock(struct game_context *ctx)
 
 	SDL_RenderFillRect(ctx->renderer, &r);
 
-	if (ctx->last_unlocked_car > 0)
-		display_menu_car_bordered_pict(ctx, ctx->last_unlocked_car, 1);
-	else if (ctx->last_unlocked_track > 0)
+	if (ctx->save.last_unlocked_car > 0)
+		display_menu_car_bordered_pict(ctx, ctx->save.last_unlocked_car, 1);
+	else if (ctx->save.last_unlocked_track > 0)
 		display_menu_track_bordered_pict(
-			ctx, ctx->last_unlocked_track, 1);
+			ctx, ctx->save.last_unlocked_track, 1);
 
 	TTF_CloseFont(font);
 
