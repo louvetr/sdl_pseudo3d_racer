@@ -833,7 +833,7 @@ static int display_render_hud(struct game_context *ctx)
 		(ctx->race.race_time_ms - time_min * 60000 - time_sec * 1000) /
 		10;
 
-	sprintf(time_str, "%02d:%02d.%02d", time_min, time_sec, time_ms);
+	sprintf(time_str, "%02d'%02d\"%02d", time_min, time_sec, time_ms);
 
 	display_load_render_text_with_shade(ctx,
 					    ctx->sc_font_medium,

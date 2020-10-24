@@ -67,11 +67,11 @@ static struct track_build_info track_build_tab[TRACK_LAST] = {
 	{.nb_sector = NB_SECTOR_SPEEDWAY, .nb_segment = NB_SEGMENT_SPEEDWAY},
 	{.nb_sector = NB_SECTOR_FORK, .nb_segment = NB_SEGMENT_FORK},
 	{.nb_sector = NB_SECTOR_FROST, .nb_segment = NB_SEGMENT_FROST},
-	{.nb_sector = NB_SECTOR_WHALE, .nb_segment = NB_SEGMENT_WHALE},
+	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
 	{.nb_sector = NB_SECTOR_CURVES, .nb_segment = NB_SEGMENT_CURVES},
 	{.nb_sector = NB_SECTOR_HORNS, .nb_segment = NB_SEGMENT_HORNS},
 	{.nb_sector = NB_SECTOR_SQUARES, .nb_segment = NB_SEGMENT_SQUARES},
-	{.nb_sector = NB_SECTOR_STONE, .nb_segment = NB_SEGMENT_STONE},
+	{.nb_sector = NB_SECTOR_WHALE, .nb_segment = NB_SEGMENT_WHALE},
 	{.nb_sector = NB_SECTOR_CARMONA, .nb_segment = NB_SEGMENT_CARMONA}};
 
 

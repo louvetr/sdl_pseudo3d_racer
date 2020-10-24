@@ -176,6 +176,9 @@ struct game_graphics{
 	struct texture gui_down;
 	struct texture gui_pause;
 	struct texture gui_lock;
+	struct texture gui_trophy_gold;
+	struct texture gui_trophy_silver;
+	struct texture gui_trophy_bronze;
 
 	struct texture gui_case;
 	struct texture gui_accel;

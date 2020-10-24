@@ -197,8 +197,10 @@
 #define PNG_STATS_LOTUS "./media/stats/stats_lotus.png"
 #define PNG_STATS_VIPER "./media/stats/stats_viper.png"
 
-
 #define PNG_GUI_LOCK "./media/gui/lock_bright.png"
+#define PNG_GUI_TROPHY_GOLD "./media/gui/trophy-gold.png"
+#define PNG_GUI_TROPHY_SILVER "./media/gui/trophy-silver.png"
+#define PNG_GUI_TROPHY_BRONZE "./media/gui/trophy-bronze.png"
 #define PNG_GUI_PAUSE "./media/gui/pause_grey.png"
 #define PNG_GUI_SETTINGS "./media/gui/settings.png"
 #define PNG_GUI_EXIT "./media/gui/exit.png"
@@ -773,6 +775,11 @@ static int gfx_load_gui(struct game_context *ctx)
 	gfx_load_texture(ctx, PNG_GUI_CASE, &ctx->gfx.gui_case);
 
 	gfx_load_texture(ctx, PNG_GUI_LOCK, &ctx->gfx.gui_lock);
+
+	gfx_load_texture(ctx, PNG_GUI_TROPHY_GOLD, &ctx->gfx.gui_trophy_gold);
+	gfx_load_texture(ctx, PNG_GUI_TROPHY_SILVER, &ctx->gfx.gui_trophy_silver);
+	gfx_load_texture(ctx, PNG_GUI_TROPHY_BRONZE, &ctx->gfx.gui_trophy_bronze);
+
 	return 0;
 }
 
@@ -1032,6 +1039,9 @@ int gfx_unload_resources(struct game_context *ctx)
 		SDL_DestroyTexture(ctx->gfx.track_thumbnail[i].texture);
 
 
+	SDL_DestroyTexture(ctx->gfx.gui_trophy_gold.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_trophy_silver.texture);
+	SDL_DestroyTexture(ctx->gfx.gui_trophy_bronze.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_lock.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_pause.texture);
 	SDL_DestroyTexture(ctx->gfx.gui_credit.texture);

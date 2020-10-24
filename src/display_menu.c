@@ -14,6 +14,10 @@
 #define CREDIT_MUSIC_NB 6
 #define CREDIT_SFX_NB 2
 
+#define DEFAULT_BEST_TIME "--'--\"--"
+#define DEFAULT_BEST_POSITION "?"
+
+
 static char *CREDIT_MUSIC_TAB[CREDIT_MUSIC_NB] = {CREDIT_MUSIC_01,
 						  CREDIT_MUSIC_02,
 						  CREDIT_MUSIC_03,
@@ -22,6 +26,28 @@ static char *CREDIT_MUSIC_TAB[CREDIT_MUSIC_NB] = {CREDIT_MUSIC_01,
 						  CREDIT_MUSIC_06};
 
 static char *CREDIT_SFX_TAB[CREDIT_SFX_NB] = {CREDIT_SFX_01, CREDIT_SFX_02};
+
+enum track_desc_item {
+	TRACK_DESC_NAME,
+	TRACK_DESC_DIFFICULTY,
+	TRACK_DESC_LENGTH,
+	TRACK_DESC_LAST,
+};
+
+
+static char *track_desc_tab[TRACK_LAST][TRACK_DESC_LAST] = {
+	{"Countryside", "Easy", "2.570 km"},
+	{"Sea Shore", "Easy", "2.400 km"},
+	{"Great Canyon", "Easy", "2.700 km"},
+	{"Arctic Circle", "Medium", "3.200 km"},
+	{"Ionic Ruins", "Medium", "2.725 km"},
+	{"Castle Forest", "Medium", "2.850 km"},
+	{"Desert", "Hard", "2.850 km"},
+	{"Soopky Woods", "Hard", "3.450 km"},
+	{"City", "Expert", "3.080 km"},
+	{"Fun Fair", "Expert", "3.300 km"},
+};
+
 
 static int display_menu_sliding_grid(SDL_Renderer *renderer,
 				     int width_num,
@@ -427,6 +453,216 @@ int display_menu_track_bordered_pict(struct game_context *ctx,
 	return 0;
 }
 
+int display_menu_track_stats(struct game_context *ctx)
+{
+	int bwidth = 5;
+	int offset = 30;
+	struct texture ttext = {.w = 0, .h = 0, .texture = NULL};
+
+	int car_bg_x = SCREEN_WIDTH * offset / 100 -
+		       (int)((float)ctx->gfx.car_side_bg.w / 2.f);
+	int car_bg_y =
+		SCREEN_HEIGHT / 2 - (int)((float)ctx->gfx.car_side_bg.h / 2.f);
+
+	float scale_car = 1.f;
+
+	SDL_Rect r = {
+		.x = car_bg_x,
+		.y = car_bg_y,
+		.w = (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+		.h = (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+	};
+
+	SDL_SetRenderDrawColor(ctx->renderer, 255, 255, 255, 255);
+
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+
+	SDL_Color text_color_front_1 = {0x0, 0x0, 0x0};
+	int font_size_big = 64;
+	int font_size_small = 32;
+	TTF_Font *font_big = NULL;
+	TTF_Font *font_small = NULL;
+
+	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
+	if (!font_big) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
+	if (!font_small) {
+		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
+			__func__,
+			TTF_GetError());
+		return -EINVAL;
+	}
+
+	display_load_render_text(
+		ctx,
+		font_big,
+		&ttext,
+		track_desc_tab[ctx->track.track_selected][TRACK_DESC_NAME],
+		&text_color_front_1,
+		car_bg_x,
+		car_bg_y,
+		0.f);
+
+	int str_y;
+
+	str_y = car_bg_y + ttext.h * 3 / 2;
+
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 " Lap Length    : ",
+				 &text_color_front_1,
+				 car_bg_x,
+				 str_y,
+				 0.f);
+	display_load_render_text(
+		ctx,
+		font_small,
+		&ttext,
+		track_desc_tab[ctx->track.track_selected][TRACK_DESC_LENGTH],
+		&text_color_front_1,
+		car_bg_x + ttext.w,
+		str_y,
+		0.f);
+
+
+	str_y += ttext.h;
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 " Difficulty    : ",
+				 &text_color_front_1,
+				 car_bg_x,
+				 str_y,
+				 0.f);
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 track_desc_tab[ctx->track.track_selected]
+					       [TRACK_DESC_DIFFICULTY],
+				 &text_color_front_1,
+				 car_bg_x + ttext.w,
+				 str_y,
+				 0.f);
+
+	str_y += ttext.h;
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 " Best Time     : ",
+				 &text_color_front_1,
+				 car_bg_x,
+				 str_y,
+				 0.f);
+
+	int race_time_ms = 666666;
+	char time_str[16];
+	int time_min = race_time_ms / 60000;
+	int time_sec = (race_time_ms - time_min * 60000) / 1000;
+	int time_ms = (race_time_ms - time_min * 60000 - time_sec * 1000) / 10;
+
+	sprintf(time_str, "%02d'%02d\"%02d", time_min, time_sec, time_ms);
+
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 // time_str,
+				 DEFAULT_BEST_TIME,
+				 &text_color_front_1,
+				 car_bg_x + ttext.w,
+				 str_y,
+				 0.f);
+
+	str_y += ttext.h;
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 " Best Position : ",
+				 &text_color_front_1,
+				 car_bg_x,
+				 str_y,
+				 0.f);
+	display_load_render_text(ctx,
+				 font_small,
+				 &ttext,
+				 DEFAULT_BEST_POSITION,
+				 &text_color_front_1,
+				 car_bg_x + ttext.w,
+				 str_y,
+				 0.f);
+
+	float scale_trophy = 1.f;
+	texture_render(ctx,
+		       &ctx->gfx.gui_trophy_gold,
+		       r.x + r.w - ctx->gfx.gui_trophy_gold.w,
+		       r.y /*+ r.h - ctx->gfx.gui_trophy_gold.h*/,
+		       NULL,
+		       0.f,
+		       scale_trophy,
+		       0,
+		       NULL);
+
+
+	scale_car = 1.f;
+
+	display_screen_rect_border(
+		ctx,
+		car_bg_x,
+		car_bg_y,
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+		car_bg_y,
+		car_bg_x,
+		car_bg_y + (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+		car_bg_y,
+		bwidth,
+		0,
+		0,
+		0);
+
+
+	if (!(1 << ctx->track.track_selected & ctx->tracks_available) &&
+	    ctx->status_cur == GAME_STATE_MENU_SELECT_TRACK) {
+
+		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
+		SDL_SetRenderDrawBlendMode(ctx->renderer, SDL_BLENDMODE_BLEND);
+		SDL_Rect r = {
+			.x = car_bg_x,
+			.y = car_bg_y,
+			.w = (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+			.h = (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+		};
+		SDL_RenderFillRect(ctx->renderer, &r);
+
+		float scale_lock = 3.f;
+		int pos_x = r.x + r.w / 2 -
+			    (int)((float)ctx->gfx.gui_lock.w * scale_lock) / 2;
+		int pos_y = r.y + r.h / 2 -
+			    (int)((float)ctx->gfx.gui_lock.h * scale_lock) / 2;
+
+		texture_render(ctx,
+			       &ctx->gfx.gui_lock,
+			       pos_x,
+			       pos_y,
+			       NULL,
+			       0.f,
+			       scale_lock,
+			       0,
+			       NULL);
+	}
+
+	TTF_CloseFont(font_big);
+	TTF_CloseFont(font_small);
+
+	return 0;
+}
+
 
 int display_screen_menu_select_car(struct game_context *ctx)
 {
@@ -550,6 +786,8 @@ int display_screen_menu_select_track(struct game_context *ctx)
 		       1.f,
 		       0,
 		       NULL);
+
+	display_menu_track_stats(ctx);
 
 	SDL_RenderPresent(ctx->renderer);
 
