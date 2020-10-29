@@ -262,6 +262,43 @@ static int display_menu_stats_bordered_pict(struct game_context *ctx)
 		0,
 		0);
 
+	if (!(1 << ctx->pcar.car_player_model & ctx->save.cars_available) &&
+	    ctx->status_cur == GAME_STATE_MENU_SELECT_CAR) {
+
+		SDL_SetRenderDrawColor(ctx->renderer, 0, 0, 0, 150);
+		SDL_SetRenderDrawBlendMode(ctx->renderer, SDL_BLENDMODE_BLEND);
+		SDL_Rect r = {
+			.x = car_x,
+			.y = car_y,
+			.w = (int)((float)ctx->gfx
+				      .cars_stats[ctx->pcar.car_player_model]
+				      .w *
+			      scale_car),
+			.h = (int)((float)ctx->gfx
+				      .cars_stats[ctx->pcar.car_player_model]
+				      .h *
+			      scale_car),
+		};
+
+		SDL_RenderFillRect(ctx->renderer, &r);
+
+		float scale_lock = 3.f;
+		int pos_x = r.x + r.w / 2 -
+			    (int)((float)ctx->gfx.gui_lock.w * scale_lock) / 2;
+		int pos_y = r.y + r.h / 2 -
+			    (int)((float)ctx->gfx.gui_lock.h * scale_lock) / 2;
+
+		texture_render(ctx,
+			       &ctx->gfx.gui_lock,
+			       pos_x,
+			       pos_y,
+			       NULL,
+			       0.f,
+			       scale_lock,
+			       0,
+			       NULL);
+	}
+
 	return 0;
 }
 
