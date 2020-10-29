@@ -544,11 +544,11 @@ int ai_car_init(struct game_context *ctx)
 
 		// TODO: change the idx of each car randomly
 		ctx->ai_cars[i].car_x_scale_coef =
-			(float)SCREEN_WIDTH * 2.f *
-			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
+			(float)ctx->display.screen_width * 2.f *
+			ctx->display.scale_ai_car[ctx->ai_cars[i].car_model];
 		ctx->ai_cars[i].ai_car_scale_coef =
-			(float)SCREEN_WIDTH * 2.f *
-			ctx->scale_ai_car[ctx->ai_cars[i].car_model];
+			(float)ctx->display.screen_width * 2.f *
+			ctx->display.scale_ai_car[ctx->ai_cars[i].car_model];
 
 		/*SDL_Log("ctx->ai_cars[%d].distance = %d\n",
 			i,

@@ -1,5 +1,6 @@
 
 #include "main.h"
+#include <SDL2/SDL2_rotozoom.h>
 
 //#define SOFACHROME_FONT "./media/font/GeneraleStation-Regular.otf"
 //#define SOFACHROME_FONT "./media/font/01 DigitMono.ttf"
@@ -232,14 +233,24 @@ load_texture_from_file(struct game_context *ctx, char *path, struct texture *in)
 		return -EINVAL;
 	}
 
+	SDL_Surface *scaled_surface = rotozoomSurface(
+		loaded_surface, 0.f, ctx->display.screen_scale, 0);
+	if (!scaled_surface) {
+		SDL_Log("[%s] Unable to resize image %s! SDL_image Error: %s\n",
+			__func__,
+			path,
+			IMG_GetError());
+		return -EINVAL;
+	}
+
 	// set color key to cyan
-	SDL_SetColorKey(loaded_surface,
+	SDL_SetColorKey(scaled_surface,
 			SDL_TRUE,
-			SDL_MapRGB(loaded_surface->format, 0, 0xFF, 0xFF));
+			SDL_MapRGB(scaled_surface->format, 0, 0xFF, 0xFF));
 
 	// create texture from surface pixels
 	new_texture =
-		SDL_CreateTextureFromSurface(ctx->renderer, loaded_surface);
+		SDL_CreateTextureFromSurface(ctx->renderer, scaled_surface);
 	if (!new_texture) {
 		SDL_Log("[%s] Unable to create texture from %s! SDL Error: %s\n",
 			__func__,
@@ -249,11 +260,13 @@ load_texture_from_file(struct game_context *ctx, char *path, struct texture *in)
 	}
 
 	// get image dimensions
-	in->w = loaded_surface->w;
-	in->h = loaded_surface->h;
+	in->w = scaled_surface->w;
+	in->h = scaled_surface->h;
+
 
 	// discard old surface
 	SDL_FreeSurface(loaded_surface);
+	SDL_FreeSurface(scaled_surface);
 
 	in->texture = new_texture;
 
@@ -683,7 +696,7 @@ static int gfx_load_scene_sprites(struct game_context *ctx)
 static int gfx_load_font(struct game_context *ctx)
 {
 	// Open the font
-	ctx->sc_font_big = TTF_OpenFont(SOFACHROME_FONT, 72);
+	ctx->sc_font_big = TTF_OpenFont(SOFACHROME_FONT, 72 * ctx->display.screen_height / SCREEN_HEIGHT_DEFAULT);
 	if (!ctx->sc_font_big) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -691,7 +704,7 @@ static int gfx_load_font(struct game_context *ctx)
 		return -EINVAL;
 	}
 
-	ctx->sc_font_medium = TTF_OpenFont(SOFACHROME_FONT, 36);
+	ctx->sc_font_medium = TTF_OpenFont(SOFACHROME_FONT, 36 * ctx->display.screen_height / SCREEN_HEIGHT_DEFAULT);
 	if (!ctx->sc_font_medium) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -777,8 +790,10 @@ static int gfx_load_gui(struct game_context *ctx)
 	gfx_load_texture(ctx, PNG_GUI_LOCK, &ctx->gfx.gui_lock);
 
 	gfx_load_texture(ctx, PNG_GUI_TROPHY_GOLD, &ctx->gfx.gui_trophy_gold);
-	gfx_load_texture(ctx, PNG_GUI_TROPHY_SILVER, &ctx->gfx.gui_trophy_silver);
-	gfx_load_texture(ctx, PNG_GUI_TROPHY_BRONZE, &ctx->gfx.gui_trophy_bronze);
+	gfx_load_texture(
+		ctx, PNG_GUI_TROPHY_SILVER, &ctx->gfx.gui_trophy_silver);
+	gfx_load_texture(
+		ctx, PNG_GUI_TROPHY_BRONZE, &ctx->gfx.gui_trophy_bronze);
 
 	return 0;
 }

@@ -23,10 +23,26 @@
 // defines
 /////////////////////////////////////////////////////////////////
 
+#define SCREEN_WIDTH_DEFAULT 1280
+#define SCREEN_HEIGHT_DEFAULT 720
 
-#define SCREEN_WIDTH 1280
+//#define SCREEN_WIDTH 1280 
+//#define SCREEN_WIDTH 1920 
+//#define SCREEN_HEIGHT 720
+
 //#define SCREEN_WIDTH 1680
-#define SCREEN_HEIGHT 720
+//#define SCREEN_HEIGHT 1080
+
+/*#define SCREEN_WIDTH  2800 
+#define SCREEN_HEIGHT 1200*/
+
+//#define SCREEN_WIDTH 640
+/*#define SCREEN_WIDTH 720
+#define SCREEN_HEIGHT 360*/
+
+#define SCREEN_WIDTH  1920
+//#define SCREEN_WIDTH  2560
+#define SCREEN_HEIGHT  1080
 
 #define FPS 30
 #define MS_PER_SEC 1000
@@ -143,16 +159,6 @@ enum scene_sprite_type {
 /////////////////////////////////////////////////////////////////
 // structures
 /////////////////////////////////////////////////////////////////
-
-
-
-
-/*struct car_model_texture{
-    // image textures
-	struct texture rear;
-	struct texture right_1;
-	struct texture right_2;
-};*/
 
 
 struct race_info {
@@ -326,6 +332,14 @@ struct save_data {
 	Uint8 tracks_position[TRACK_LAST];
 };
 
+struct display_info {
+	int screen_width;
+	int screen_height;
+	float screen_scale;
+	float scale_player_car[CAR_MODEL_LAST];
+	float scale_ai_car[CAR_MODEL_LAST];
+};
+
 
 // game context, contains all information of the game
 struct game_context {
@@ -362,9 +376,6 @@ struct game_context {
 
 	struct keys_status keys;
 	struct keys_status keys_backup;
-
-	float scale_player_car[CAR_MODEL_LAST];
-	float scale_ai_car[CAR_MODEL_LAST];
 
     // quit game when set to 1
     int exit;
@@ -412,6 +423,7 @@ struct game_context {
 
 	struct save_data save;
 
+	struct display_info display;
 };
 
 

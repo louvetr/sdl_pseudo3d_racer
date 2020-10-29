@@ -49,7 +49,8 @@ static char *track_desc_tab[TRACK_LAST][TRACK_DESC_LAST] = {
 };
 
 
-static int display_menu_sliding_grid(SDL_Renderer *renderer,
+static int display_menu_sliding_grid(struct display_info display,
+				     SDL_Renderer *renderer,
 				     int width_num,
 				     int width_den,
 				     int x_gap,
@@ -65,7 +66,7 @@ static int display_menu_sliding_grid(SDL_Renderer *renderer,
 
 	// static uint32_t cpt = 0;
 	SDL_Rect r;
-	int width = SCREEN_HEIGHT * width_num / width_den;
+	int width = display.screen_height * width_num / width_den;
 
 	int i = *cpt % (y_gap);
 	int j = *cpt % (x_gap);
@@ -74,20 +75,20 @@ static int display_menu_sliding_grid(SDL_Renderer *renderer,
 
 	if (y_dir > 0) {
 		int y = i;
-		while (y < SCREEN_HEIGHT + width) {
+		while (y < display.screen_height + width) {
 			r.x = 0;
 			r.y = y - width;
-			r.w = SCREEN_WIDTH;
+			r.w = display.screen_width;
 			r.h = width;
 			SDL_RenderFillRect(renderer, &r);
 			y = y + y_gap;
 		}
 	} else {
-		int y = SCREEN_HEIGHT - i + width;
+		int y = display.screen_height - i + width;
 		while (y > 0 - width) {
 			r.x = 0;
 			r.y = y - width;
-			r.w = SCREEN_WIDTH;
+			r.w = display.screen_width;
 			r.h = width;
 			SDL_RenderFillRect(renderer, &r);
 			y = y - y_gap;
@@ -96,21 +97,21 @@ static int display_menu_sliding_grid(SDL_Renderer *renderer,
 
 	if (x_dir > 0) {
 		int x = j;
-		while (x < SCREEN_WIDTH + width) {
+		while (x < display.screen_width + width) {
 			r.x = x - width;
 			r.y = 0;
 			r.w = width;
-			r.h = SCREEN_HEIGHT;
+			r.h = display.screen_height;
 			SDL_RenderFillRect(renderer, &r);
 			x = x + x_gap;
 		}
 	} else {
-		int x = SCREEN_WIDTH - j + width;
+		int x = display.screen_width - j + width;
 		while (x > 0 - width) {
 			r.x = x - width;
 			r.y = 0;
 			r.w = width;
-			r.h = SCREEN_HEIGHT;
+			r.h = display.screen_height;
 			SDL_RenderFillRect(renderer, &r);
 			x = x - x_gap;
 		}
@@ -130,13 +131,11 @@ static int display_menu_animated_background(struct game_context *ctx)
 	static int cpt1 = 0;
 	static int cpt2 = 0;
 
-	/*int y_gap_1 = SCREEN_HEIGHT / 5;
-	int x_gap_1 = SCREEN_WIDTH / 7;*/
+	int y_gap_2 = ctx->display.screen_height / 2;
+	int x_gap_2 = ctx->display.screen_width / 3;
 
-	int y_gap_2 = SCREEN_HEIGHT / 2;
-	int x_gap_2 = SCREEN_WIDTH / 3;
-
-	display_menu_sliding_grid(ctx->renderer,
+	display_menu_sliding_grid(ctx->display,
+				  ctx->renderer,
 				  100, // 140,
 				  10000,
 				  x_gap_2,
@@ -149,7 +148,8 @@ static int display_menu_animated_background(struct game_context *ctx)
 				  0,
 				  255);
 
-	display_menu_sliding_grid(ctx->renderer,
+	display_menu_sliding_grid(ctx->display,
+				  ctx->renderer,
 				  100,
 				  10000,
 				  x_gap_2,
@@ -216,15 +216,15 @@ static int display_menu_stats_bordered_pict(struct game_context *ctx)
 	int bwidth = 5;
 
 	float scale_car =
-		(float)SCREEN_WIDTH / 3.2f /
+		(float)ctx->display.screen_width / 3.2f /
 		(float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].w;
 
 	int car_x =
-		SCREEN_WIDTH * 80 / 100 -
+		ctx->display.screen_width * 80 / 100 -
 		(int)((float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].w *
 		      scale_car / 2.f);
 	int car_y =
-		SCREEN_HEIGHT / 2 -
+		ctx->display.screen_height / 2 -
 		(int)((float)ctx->gfx.cars_stats[ctx->pcar.car_player_model].h *
 		      scale_car / 2.f);
 
@@ -272,10 +272,10 @@ int display_menu_car_bordered_pict(struct game_context *ctx,
 	int bwidth = 5;
 	int offset = centered ? 50 : 30;
 
-	int car_bg_x = SCREEN_WIDTH * offset / 100 -
+	int car_bg_x = ctx->display.screen_width * offset / 100 -
 		       (int)((float)ctx->gfx.car_side_bg.w / 2.f);
-	int car_bg_y =
-		SCREEN_HEIGHT / 2 - (int)((float)ctx->gfx.car_side_bg.h / 2.f);
+	int car_bg_y = ctx->display.screen_height / 2 -
+		       (int)((float)ctx->gfx.car_side_bg.h / 2.f);
 
 	texture_render(ctx,
 		       &ctx->gfx.car_side_bg,
@@ -287,14 +287,14 @@ int display_menu_car_bordered_pict(struct game_context *ctx,
 		       0,
 		       NULL);
 
-	float scale_car =
-		(float)SCREEN_WIDTH / 1.8f / (float)ctx->gfx.cars_side[car].w;
-
-
-	int car_x = SCREEN_WIDTH * offset / 100 -
-		    (int)((float)ctx->gfx.cars_side[car].w * scale_car / 2.f);
-	int car_y = SCREEN_HEIGHT / 2 -
-		    (int)((float)ctx->gfx.cars_side[car].h * scale_car / 2.f);
+	float scale_car = (float)ctx->gfx.car_side_bg.w /
+			  (float)ctx->gfx.cars_side[car].w;
+	int car_x = car_bg_x + ctx->gfx.car_side_bg.w / 2 -
+		    ctx->gfx.cars_side[car].w / 2 * ctx->gfx.car_side_bg.w /
+			    ctx->gfx.cars_side[car].w;
+	int car_y = car_bg_y + ctx->gfx.car_side_bg.h / 2 -
+		    ctx->gfx.cars_side[car].h / 2 * ctx->gfx.car_side_bg.w /
+			    ctx->gfx.cars_side[car].w;
 
 	texture_render(ctx,
 		       &ctx->gfx.cars_side[car],
@@ -306,17 +306,15 @@ int display_menu_car_bordered_pict(struct game_context *ctx,
 		       0,
 		       NULL);
 
-	scale_car = 1.f;
-
 	display_screen_rect_border(
 		ctx,
 		car_bg_x,
 		car_bg_y,
-		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w),
 		car_bg_y,
 		car_bg_x,
-		car_bg_y + (int)((float)ctx->gfx.car_side_bg.h * scale_car),
-		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w * scale_car),
+		car_bg_y + (int)((float)ctx->gfx.car_side_bg.h),
+		car_bg_x + (int)((float)ctx->gfx.car_side_bg.w),
 		car_bg_y,
 		bwidth,
 		0,
@@ -335,9 +333,10 @@ int display_menu_car_bordered_pict(struct game_context *ctx,
 		SDL_Rect r = {
 			.x = car_bg_x,
 			.y = car_bg_y,
-			.w = (int)((float)ctx->gfx.car_side_bg.w * scale_car),
-			.h = (int)((float)ctx->gfx.car_side_bg.h * scale_car),
+			.w = (int)((float)ctx->gfx.car_side_bg.w),
+			.h = (int)((float)ctx->gfx.car_side_bg.h),
 		};
+
 		SDL_RenderFillRect(ctx->renderer, &r);
 
 		float scale_lock = 3.f;
@@ -368,14 +367,14 @@ int display_menu_track_bordered_pict(struct game_context *ctx,
 	int bwidth = 5;
 	int offset = centered ? 50 : 80;
 
-	float scale_track = (float)SCREEN_WIDTH / 3.0f /
+	float scale_track = (float)ctx->display.screen_width / 3.0f /
 			    (float)ctx->gfx.track_thumbnail[track].w;
 
-	int track_x = SCREEN_WIDTH * offset / 100 -
+	int track_x = ctx->display.screen_width * offset / 100 -
 		      (int)((float)ctx->gfx.track_thumbnail[track].w *
 			    scale_track / 2.f);
 
-	int track_y = SCREEN_HEIGHT / 2 -
+	int track_y = ctx->display.screen_height / 2 -
 		      (int)((float)ctx->gfx.track_thumbnail[track].h *
 			    scale_track / 2.f);
 
@@ -459,10 +458,10 @@ int display_menu_track_stats(struct game_context *ctx)
 	int offset = 30;
 	struct texture ttext = {.w = 0, .h = 0, .texture = NULL};
 
-	int car_bg_x = SCREEN_WIDTH * offset / 100 -
+	int car_bg_x = ctx->display.screen_width * offset / 100 -
 		       (int)((float)ctx->gfx.car_side_bg.w / 2.f);
-	int car_bg_y =
-		SCREEN_HEIGHT / 2 - (int)((float)ctx->gfx.car_side_bg.h / 2.f);
+	int car_bg_y = ctx->display.screen_height / 2 -
+		       (int)((float)ctx->gfx.car_side_bg.h / 2.f);
 
 	float scale_car = 1.f;
 
@@ -484,14 +483,18 @@ int display_menu_track_stats(struct game_context *ctx)
 	TTF_Font *font_big = NULL;
 	TTF_Font *font_small = NULL;
 
-	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
+	font_big = TTF_OpenFont(SOFACHROME_FONT,
+				font_size_big * ctx->display.screen_height /
+					SCREEN_HEIGHT_DEFAULT);
 	if (!font_big) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
 			TTF_GetError());
 		return -EINVAL;
 	}
-	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
+	font_small = TTF_OpenFont(SOFACHROME_FONT,
+				  font_size_small * ctx->display.screen_height /
+					  SCREEN_HEIGHT_DEFAULT);
 	if (!font_small) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -705,10 +708,10 @@ int display_screen_menu_select_car(struct game_context *ctx)
 	// animated background
 	display_menu_animated_background(ctx);
 
-	SDL_Rect r = {.x = SCREEN_WIDTH * 20 / 100,
+	SDL_Rect r = {.x = ctx->display.screen_width * 20 / 100,
 		      .y = 0,
-		      .w = SCREEN_WIDTH * 20 / 100,
-		      .h = SCREEN_HEIGHT};
+		      .w = ctx->display.screen_width * 20 / 100,
+		      .h = ctx->display.screen_height};
 
 	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
 
@@ -721,9 +724,9 @@ int display_screen_menu_select_car(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_up,
-		       SCREEN_WIDTH * 30 / 100 -
+		       ctx->display.screen_width * 30 / 100 -
 			       (int)((float)ctx->gfx.gui_up.w / 2.f * scale),
-		       SCREEN_HEIGHT * 15 / 100 -
+		       ctx->display.screen_height * 15 / 100 -
 			       (int)((float)ctx->gfx.gui_up.h / 2.f * scale),
 		       NULL,
 		       0.f,
@@ -733,9 +736,9 @@ int display_screen_menu_select_car(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_down,
-		       SCREEN_WIDTH * 30 / 100 -
+		       ctx->display.screen_width * 30 / 100 -
 			       (int)((float)ctx->gfx.gui_down.w / 2.f * scale),
-		       SCREEN_HEIGHT * 85 / 100 -
+		       ctx->display.screen_height * 85 / 100 -
 			       (int)((float)ctx->gfx.gui_up.h / 2.f * scale),
 		       NULL,
 		       0.f,
@@ -745,7 +748,7 @@ int display_screen_menu_select_car(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_prev,
-		       0, // SCREEN_WIDTH - ctx->gfx.gui_prev.w,
+		       0,
 		       0,
 		       NULL,
 		       0.f,
@@ -770,10 +773,10 @@ int display_screen_menu_select_track(struct game_context *ctx)
 	// animated background
 	display_menu_animated_background(ctx);
 
-	SDL_Rect r = {.x = SCREEN_WIDTH * 70 / 100,
+	SDL_Rect r = {.x = ctx->display.screen_width * 70 / 100,
 		      .y = 0,
-		      .w = SCREEN_WIDTH * 20 / 100,
-		      .h = SCREEN_HEIGHT};
+		      .w = ctx->display.screen_width * 20 / 100,
+		      .h = ctx->display.screen_height};
 
 	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
 
@@ -785,9 +788,9 @@ int display_screen_menu_select_track(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_up,
-		       SCREEN_WIDTH * 80 / 100 -
+		       ctx->display.screen_width * 80 / 100 -
 			       (int)((float)ctx->gfx.gui_up.w / 2.f * scale),
-		       SCREEN_HEIGHT * 15 / 100 -
+		       ctx->display.screen_height * 15 / 100 -
 			       (int)((float)ctx->gfx.gui_up.h / 2.f * scale),
 		       NULL,
 		       0.f,
@@ -797,9 +800,9 @@ int display_screen_menu_select_track(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_down,
-		       SCREEN_WIDTH * 80 / 100 -
+		       ctx->display.screen_width * 80 / 100 -
 			       (int)((float)ctx->gfx.gui_down.w / 2.f * scale),
-		       SCREEN_HEIGHT * 85 / 100 -
+		       ctx->display.screen_height * 85 / 100 -
 			       (int)((float)ctx->gfx.gui_up.h / 2.f * scale),
 		       NULL,
 		       0.f,
@@ -809,7 +812,7 @@ int display_screen_menu_select_track(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_prev,
-		       0, // SCREEN_WIDTH - ctx->gfx.gui_prev.w,
+		       0,
 		       0,
 		       NULL,
 		       0.f,
@@ -838,9 +841,10 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	SDL_Rect r = {
 		.x = 0,
-		.y = SCREEN_HEIGHT / 2 - SCREEN_HEIGHT * 10 / 100,
-		.w = SCREEN_WIDTH,
-		.h = SCREEN_HEIGHT * 20 / 100,
+		.y = ctx->display.screen_height / 2 -
+		     ctx->display.screen_height * 10 / 100,
+		.w = ctx->display.screen_width,
+		.h = ctx->display.screen_height * 20 / 100,
 	};
 
 	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
@@ -856,7 +860,7 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_credit,
-		       (SCREEN_WIDTH - ctx->gfx.gui_credit.w) / 2,
+		       (ctx->display.screen_width - ctx->gfx.gui_credit.w) / 2,
 		       0,
 		       NULL,
 		       0.f,
@@ -866,7 +870,7 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_exit,
-		       SCREEN_WIDTH - ctx->gfx.gui_exit.w,
+		       ctx->display.screen_width - ctx->gfx.gui_exit.w,
 		       0,
 		       NULL,
 		       0.f,
@@ -878,10 +882,10 @@ int display_screen_menu_main(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_play,
-		       SCREEN_WIDTH / 2 -
+		       ctx->display.screen_width / 2 -
 			       (int)((float)ctx->gfx.gui_play.w / 2.f *
 				     scale_play), /* 1/2 * 1.5f*/
-		       SCREEN_HEIGHT * 80 / 100,
+		       ctx->display.screen_height * 80 / 100,
 		       NULL,
 		       0.f,
 		       scale_play,
@@ -904,10 +908,10 @@ int display_screen_menu_option(struct game_context *ctx)
 	// animated background
 	display_menu_animated_background(ctx);
 
-	SDL_Rect r = {.x = SCREEN_WIDTH * 40 / 100,
+	SDL_Rect r = {.x = ctx->display.screen_width * 40 / 100,
 		      .y = 0,
-		      .w = SCREEN_WIDTH * 20 / 100,
-		      .h = SCREEN_HEIGHT};
+		      .w = ctx->display.screen_width * 20 / 100,
+		      .h = ctx->display.screen_height};
 
 	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
 
@@ -918,9 +922,9 @@ int display_screen_menu_option(struct game_context *ctx)
 	////////////////////////////////////////////////////////////
 	// music volume
 
-	int pos_x = SCREEN_WIDTH * 50 / 100 -
+	int pos_x = ctx->display.screen_width * 50 / 100 -
 		    (int)((float)ctx->gfx.gui_case.w / 2.f * scale);
-	int pos_y = SCREEN_HEIGHT * 20 / 100 -
+	int pos_y = ctx->display.screen_height * 20 / 100 -
 		    (int)((float)ctx->gfx.gui_case.h / 2.f * scale);
 
 	texture_render(ctx,
@@ -938,7 +942,9 @@ int display_screen_menu_option(struct game_context *ctx)
 	int font_size = 64;
 	TTF_Font *finish_font = NULL;
 
-	finish_font = TTF_OpenFont(SOFACHROME_FONT, font_size);
+	finish_font = TTF_OpenFont(SOFACHROME_FONT,
+				   font_size * ctx->display.screen_height /
+					   SCREEN_HEIGHT_DEFAULT);
 	if (!finish_font) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -949,14 +955,36 @@ int display_screen_menu_option(struct game_context *ctx)
 	display_load_render_text_with_shade(ctx,
 					    finish_font,
 					    &ctx->gfx.font_race_anim,
+					    ":",
+					    &text_color_front_1,
+					    &text_color_shadow,
+					    ctx->display.screen_width,
+					    ctx->display.screen_height,
+					    4,
+					    200,
+					    0.f);
+
+	int char_w = ctx->gfx.font_race_anim.w;
+
+	int txt_x_left = pos_x + ctx->gfx.gui_case.w / 2;
+	int txt_x = txt_x_left - char_w * (int)strlen("Music:") / 2;
+
+	display_load_render_text_with_shade(ctx,
+					    finish_font,
+					    &ctx->gfx.font_race_anim,
 					    "Music:",
 					    &text_color_front_1,
 					    &text_color_shadow,
-					    pos_x * 115 / 100,
+					    txt_x,
 					    pos_y * 110 / 100,
 					    4,
 					    200,
 					    0.f);
+
+	txt_x = txt_x_left - char_w *
+				     (int)strlen(sound_volume2string(
+					     ctx->sound.volume_music)) /
+				     2;
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -965,7 +993,7 @@ int display_screen_menu_option(struct game_context *ctx)
 		sound_volume2string(ctx->sound.volume_music),
 		&text_color_front_1,
 		&text_color_shadow,
-		pos_x * 125 / 100,
+		txt_x,
 		pos_y * 200 / 100,
 		4,
 		200,
@@ -974,7 +1002,7 @@ int display_screen_menu_option(struct game_context *ctx)
 	////////////////////////////////////////////////////////////
 	// SFX volume
 
-	pos_y = SCREEN_HEIGHT * 50 / 100 -
+	pos_y = ctx->display.screen_height * 50 / 100 -
 		(int)((float)ctx->gfx.gui_case.h / 2.f * scale);
 
 	texture_render(ctx,
@@ -987,17 +1015,24 @@ int display_screen_menu_option(struct game_context *ctx)
 		       0,
 		       NULL);
 
+	txt_x = txt_x_left - char_w * (int)strlen("SFX:") / 2;
+
 	display_load_render_text_with_shade(ctx,
 					    finish_font,
 					    &ctx->gfx.font_race_anim,
 					    "SFX:",
 					    &text_color_front_1,
 					    &text_color_shadow,
-					    pos_x * 125 / 100,
+					    txt_x,
 					    pos_y * 102 / 100,
 					    4,
 					    200,
 					    0.f);
+
+	txt_x = txt_x_left - char_w *
+				     (int)strlen(sound_volume2string(
+					     ctx->sound.volume_sfx)) /
+				     2;
 
 	display_load_render_text_with_shade(
 		ctx,
@@ -1006,7 +1041,7 @@ int display_screen_menu_option(struct game_context *ctx)
 		sound_volume2string(ctx->sound.volume_sfx),
 		&text_color_front_1,
 		&text_color_shadow,
-		pos_x * 125 / 100,
+		txt_x,
 		pos_y * 125 / 100,
 		4,
 		200,
@@ -1015,7 +1050,7 @@ int display_screen_menu_option(struct game_context *ctx)
 	////////////////////////////////////////////////////////////
 	// reset progression
 
-	pos_y = SCREEN_HEIGHT * 80 / 100 -
+	pos_y = ctx->display.screen_height * 80 / 100 -
 		(int)((float)ctx->gfx.gui_case.h / 2.f * scale);
 
 	texture_render(ctx,
@@ -1028,17 +1063,21 @@ int display_screen_menu_option(struct game_context *ctx)
 		       0,
 		       NULL);
 
+	txt_x = txt_x_left - char_w * (int)strlen("Delete") / 2;
+
 	display_load_render_text_with_shade(ctx,
 					    finish_font,
 					    &ctx->gfx.font_race_anim,
 					    "Delete",
 					    &text_color_front_1,
 					    &text_color_shadow,
-					    pos_x * 115 / 100,
+					    txt_x,
 					    pos_y * 102 / 100,
 					    4,
 					    200,
 					    0.f);
+
+	txt_x = txt_x_left - char_w * (int)strlen("Save") / 2;
 
 	display_load_render_text_with_shade(ctx,
 					    finish_font,
@@ -1046,7 +1085,7 @@ int display_screen_menu_option(struct game_context *ctx)
 					    "Save",
 					    &text_color_front_1,
 					    &text_color_shadow,
-					    pos_x * 125 / 100,
+					    txt_x,
 					    pos_y * 114 / 100,
 					    4,
 					    200,
@@ -1054,7 +1093,7 @@ int display_screen_menu_option(struct game_context *ctx)
 
 	texture_render(ctx,
 		       &ctx->gfx.gui_prev,
-		       0, // SCREEN_WIDTH - ctx->gfx.gui_prev.w,
+		       0,
 		       0,
 		       NULL,
 		       0.f,
@@ -1087,21 +1126,28 @@ int display_screen_menu_credit(struct game_context *ctx)
 	TTF_Font *font_medium = NULL;
 	TTF_Font *font_small = NULL;
 
-	font_big = TTF_OpenFont(SOFACHROME_FONT, font_size_big);
+	font_big = TTF_OpenFont(SOFACHROME_FONT,
+				font_size_big * ctx->display.screen_height /
+					SCREEN_HEIGHT_DEFAULT);
 	if (!font_big) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
 			TTF_GetError());
 		return -EINVAL;
 	}
-	font_medium = TTF_OpenFont(SOFACHROME_FONT, font_size_medium);
+	font_medium =
+		TTF_OpenFont(SOFACHROME_FONT,
+			     font_size_medium * ctx->display.screen_height /
+				     SCREEN_HEIGHT_DEFAULT);
 	if (!font_medium) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
 			TTF_GetError());
 		return -EINVAL;
 	}
-	font_small = TTF_OpenFont(SOFACHROME_FONT, font_size_small);
+	font_small = TTF_OpenFont(SOFACHROME_FONT,
+				  font_size_small * ctx->display.screen_height /
+					  SCREEN_HEIGHT_DEFAULT);
 	if (!font_small) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -1114,24 +1160,25 @@ int display_screen_menu_credit(struct game_context *ctx)
 				 &ctx->gfx.font_race_anim,
 				 "Credits",
 				 &text_color_front_1,
-				 SCREEN_WIDTH * 40 / 100,
-				 SCREEN_HEIGHT * 2 / 100,
+				 ctx->display.screen_width * 40 / 100,
+				 ctx->display.screen_height * 2 / 100,
 				 0.f);
 	display_load_render_text(ctx,
 				 font_medium,
 				 &ctx->gfx.font_race_anim,
 				 "Music:",
 				 &text_color_front_1,
-				 SCREEN_WIDTH * 2 / 100,
-				 SCREEN_HEIGHT * 20 / 100,
+				 ctx->display.screen_width * 2 / 100,
+				 ctx->display.screen_height * 20 / 100,
 				 0.f);
 
 	int offset_num = 28;
 	int step = 5;
 	SDL_Rect r = {.x = 0,
-		      .y = SCREEN_HEIGHT * offset_num / 100,
-		      .w = SCREEN_WIDTH,
-		      .h = SCREEN_HEIGHT * (step * CREDIT_MUSIC_NB + 1) / 100};
+		      .y = ctx->display.screen_height * offset_num / 100,
+		      .w = ctx->display.screen_width,
+		      .h = ctx->display.screen_height *
+			   (step * CREDIT_MUSIC_NB + 1) / 100};
 	SDL_SetRenderDrawColor(ctx->renderer, 255, 0, 0, 255);
 	SDL_RenderFillRect(ctx->renderer, &r);
 
@@ -1141,8 +1188,8 @@ int display_screen_menu_credit(struct game_context *ctx)
 					 &ctx->gfx.font_race_anim,
 					 CREDIT_MUSIC_TAB[i],
 					 &text_color_front_1,
-					 SCREEN_WIDTH * 2 / 100,
-					 SCREEN_HEIGHT *
+					 ctx->display.screen_width * 2 / 100,
+					 ctx->display.screen_height *
 						 (offset_num + step * i) / 100,
 					 0.f);
 	}
@@ -1153,13 +1200,13 @@ int display_screen_menu_credit(struct game_context *ctx)
 				 &ctx->gfx.font_race_anim,
 				 "SFX:",
 				 &text_color_front_1,
-				 SCREEN_WIDTH * 2 / 100,
-				 SCREEN_HEIGHT * 70 / 100,
+				 ctx->display.screen_width * 2 / 100,
+				 ctx->display.screen_height * 70 / 100,
 				 0.f);
 
 	offset_num = 78;
-	r.y = SCREEN_HEIGHT * offset_num / 100;
-	r.h = SCREEN_HEIGHT * (step * CREDIT_SFX_NB + 1) / 100;
+	r.y = ctx->display.screen_height * offset_num / 100;
+	r.h = ctx->display.screen_height * (step * CREDIT_SFX_NB + 1) / 100;
 	SDL_RenderFillRect(ctx->renderer, &r);
 
 	for (int i = 0; i < CREDIT_SFX_NB; i++) {
@@ -1168,8 +1215,8 @@ int display_screen_menu_credit(struct game_context *ctx)
 					 &ctx->gfx.font_race_anim,
 					 CREDIT_SFX_TAB[i],
 					 &text_color_front_1,
-					 SCREEN_WIDTH * 2 / 100,
-					 SCREEN_HEIGHT *
+					 ctx->display.screen_width * 2 / 100,
+					 ctx->display.screen_height *
 						 (offset_num + step * i) / 100,
 					 0.f);
 	}
@@ -1190,8 +1237,8 @@ int display_screen_title(struct game_context *ctx)
 	int ret = 0;
 	static int clkcpt = 0;
 	static int invcolors = 0;
-	int nb_seg = 10;
-	int segw = SCREEN_WIDTH / nb_seg;
+	int nb_seg = 10 * ctx->display.screen_width / SCREEN_WIDTH_DEFAULT;
+	int segw = ctx->display.screen_width / nb_seg;
 	SDL_Rect r;
 
 	// clear screen
@@ -1199,9 +1246,9 @@ int display_screen_title(struct game_context *ctx)
 	SDL_RenderClear(ctx->renderer);
 
 	filledCircleRGBA(ctx->renderer,
-			 (int16_t)(SCREEN_WIDTH * 85 / 100),
-			 (int16_t)(SCREEN_HEIGHT * 15 / 100),
-			 SCREEN_HEIGHT * 10 / 100,
+			 (int16_t)(ctx->display.screen_width * 85 / 100),
+			 (int16_t)(ctx->display.screen_height * 15 / 100),
+			 (Sint16)(ctx->display.screen_height * 10 / 100),
 			 250,
 			 253,
 			 15,
@@ -1210,9 +1257,9 @@ int display_screen_title(struct game_context *ctx)
 
 	// draw grass
 	r.x = 0;
-	r.y = SCREEN_HEIGHT * 50 / 100;
+	r.y = ctx->display.screen_height * 50 / 100;
 	r.w = segw;
-	r.h = SCREEN_HEIGHT * 7 / 100;
+	r.h = ctx->display.screen_height * 7 / 100;
 
 	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
 		if (i % 2 == invcolors)
@@ -1226,9 +1273,9 @@ int display_screen_title(struct game_context *ctx)
 
 	// draw rumble
 	r.x = 0;
-	r.y = SCREEN_HEIGHT * 57 / 100;
+	r.y = ctx->display.screen_height * 57 / 100;
 	r.w = segw;
-	r.h = SCREEN_HEIGHT * 4 / 100;
+	r.h = ctx->display.screen_height * 4 / 100;
 	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
 
 		if (i % 2 == invcolors)
@@ -1243,9 +1290,9 @@ int display_screen_title(struct game_context *ctx)
 
 	// draw road
 	r.x = 0;
-	r.y = SCREEN_HEIGHT * 60 / 100;
+	r.y = ctx->display.screen_height * 60 / 100;
 	r.w = segw;
-	r.h = SCREEN_HEIGHT * 40 / 100;
+	r.h = ctx->display.screen_height * 40 / 100;
 
 	for (int i = 0; i < nb_seg + nb_seg / 2; i++) {
 		if (i % 2 == invcolors)
@@ -1269,7 +1316,7 @@ int display_screen_title(struct game_context *ctx)
 
 	// draw trees
 	float scale_oak = 0.5f;
-	int nb_oak = 4;
+	int nb_oak = 6;
 	int segw_oak =
 		(int)((float)ctx->gfx.scene_tree_oak.h * scale_oak) * 3 / 2;
 
@@ -1279,7 +1326,7 @@ int display_screen_title(struct game_context *ctx)
 			ctx,
 			&ctx->gfx.scene_tree_oak,
 			r.x,
-			SCREEN_HEIGHT * 53 / 100 -
+			ctx->display.screen_height * 53 / 100 -
 				(int)((float)ctx->gfx.scene_tree_oak.h *
 				      scale_oak),
 			NULL,
@@ -1304,7 +1351,7 @@ int display_screen_title(struct game_context *ctx)
 		ctx,
 		&ctx->gfx.cars_side[car_model],
 		x_car,
-		SCREEN_HEIGHT * y_car / 100 -
+		ctx->display.screen_height * y_car / 100 -
 			(int)((float)ctx->gfx.cars_side[car_model].h *
 			      scale_car),
 		NULL,
@@ -1314,7 +1361,7 @@ int display_screen_title(struct game_context *ctx)
 		NULL);
 
 
-	clkcpt += 20;
+	clkcpt += 20 * ctx->display.screen_height / SCREEN_HEIGHT_DEFAULT;
 	if (clkcpt > segw_oak) {
 		clkcpt = 0;
 		invcolors = invcolors ? 0 : 1;
@@ -1322,9 +1369,9 @@ int display_screen_title(struct game_context *ctx)
 	if (clkcpt % segw == 0)
 		invcolors = invcolors ? 0 : 1;
 
-	x_car_cpt += 80;
+	x_car_cpt += 80 * ctx->display.screen_height / SCREEN_HEIGHT_DEFAULT;
 	if (x_car_cpt >
-	    SCREEN_WIDTH +
+	    ctx->display.screen_width +
 		    (int)((float)ctx->gfx.cars_side[car_model].w * scale_car)) {
 		x_car_cpt = 0;
 		car_model = rand() % CAR_MODEL_LAST;
@@ -1356,7 +1403,10 @@ int display_screen_title(struct game_context *ctx)
 		}
 	}
 
-	finish_font = TTF_OpenFont(SOFACHROME_FONT, finish_font_size);
+	finish_font =
+		TTF_OpenFont(SOFACHROME_FONT,
+			     finish_font_size * ctx->display.screen_height /
+				     SCREEN_HEIGHT_DEFAULT);
 	if (!finish_font) {
 		SDL_Log("[%s] Failed to load font! SDL_ttf Error: %s\n",
 			__func__,
@@ -1371,8 +1421,10 @@ int display_screen_title(struct game_context *ctx)
 		"Thrill",
 		&text_color_front_1,
 		&text_color_shadow,
-		SCREEN_WIDTH * 25 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
-		SCREEN_HEIGHT * 30 / 100 - ctx->gfx.font_race_anim.h / 2,
+		ctx->display.screen_width * 25 /
+			100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		ctx->display.screen_height * 30 / 100 -
+			ctx->gfx.font_race_anim.h / 2,
 		4,
 		200,
 		angle);
@@ -1384,8 +1436,10 @@ int display_screen_title(struct game_context *ctx)
 		"of",
 		&text_color_front_1,
 		&text_color_shadow,
-		SCREEN_WIDTH * 42 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
-		SCREEN_HEIGHT * 43 / 100 /*+ ctx->gfx.font_race_anim.h / 2*/,
+		ctx->display.screen_width * 42 /
+			100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		ctx->display.screen_height * 43 /
+			100 /*+ ctx->gfx.font_race_anim.h / 2*/,
 		4,
 		200,
 		angle);
@@ -1397,8 +1451,10 @@ int display_screen_title(struct game_context *ctx)
 		"Speed",
 		&text_color_front_1,
 		&text_color_shadow,
-		SCREEN_WIDTH * 30 / 100 /*- ctx->gfx.font_race_anim.w / 2*/,
-		SCREEN_HEIGHT * 50 / 100 + ctx->gfx.font_race_anim.h / 2,
+		ctx->display.screen_width * 30 /
+			100 /*- ctx->gfx.font_race_anim.w / 2*/,
+		ctx->display.screen_height * 50 / 100 +
+			ctx->gfx.font_race_anim.h / 2,
 		10,
 		200,
 		angle);

@@ -202,11 +202,11 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 			}
 
 			int sprite_left_hb_x = 0;
-			int sprite_right_hb_x = SCREEN_WIDTH;
+			int sprite_right_hb_x = ctx->display.screen_width;
 
 			// TODO: recheck hitbox
 			if (sprite_left && sprite_left->collide &&
-			    sprite_left->scaled_x < SCREEN_WIDTH &&
+			    sprite_left->scaled_x < ctx->display.screen_width &&
 			    sprite_left->scale > 0) {
 				if (sprite_left->hitbox)
 					if (sprite_left->flip ==
@@ -233,8 +233,6 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 							      sprite_left
 								      ->scale);
 				else
-					// if (sprite_left->scaled_x <
-					// SCREEN_WIDTH)
 					sprite_left_hb_x =
 						sprite_left->scaled_x +
 						(int)((float)sprite_left->t->w *
@@ -243,7 +241,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 
 			if (sprite_right && sprite_right->collide &&
 			    sprite_right->scaled_x > 0 &&
-			    sprite_right->scaled_x < SCREEN_WIDTH &&
+			    sprite_right->scaled_x <
+				    ctx->display.screen_width &&
 			    sprite_right->scale > 0) {
 				if (sprite_right->hitbox)
 					sprite_right_hb_x =
@@ -251,9 +250,7 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 						(int)((float)sprite_right
 							      ->hitbox->x *
 						      sprite_right->scale);
-				else /*if (sprite_right->scaled_x > 0 &&
-					 sprite_right->scaled_x <
-					SCREEN_WIDTH)*/
+				else
 					sprite_right_hb_x =
 						sprite_right->scaled_x;
 			}
@@ -298,7 +295,8 @@ static int logic_race_check_collision_with_scene(struct game_context *ctx)
 			int sprite_center_hb_x_right = 0;
 
 			if (sprite_center && sprite_center->collide &&
-			    sprite_center->scaled_x < SCREEN_WIDTH &&
+			    sprite_center->scaled_x <
+				    ctx->display.screen_width &&
 			    sprite_center->scale > 0 && sprite_center->hitbox) {
 				sprite_center_hb_x_left =
 					sprite_center->scaled_x +
@@ -688,13 +686,14 @@ static int logic_race(struct game_context *ctx)
 		ret = logic_race_ai_cars(ctx);
 	}
 
-	// Either check collision with scene or manage collision state
-	if (ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE)
-		ret = logic_race_collision_scene_ongoing(ctx);
-	else
-		ret = logic_race_check_collision_with_scene(ctx);
-
 	if (ctx->status_cur != GAME_STATE_RACE_ANIM_START) {
+		// Either check collision with scene or manage collision state
+		if (ctx->status_cur == GAME_STATE_RACE_COLLISION_SCENE)
+			ret = logic_race_collision_scene_ongoing(ctx);
+		else
+			ret = logic_race_check_collision_with_scene(ctx);
+
+		// if (ctx->status_cur != GAME_STATE_RACE_ANIM_START) {
 		// check collision with other cars
 		ret = logic_race_check_collision_with_cars(ctx);
 	}

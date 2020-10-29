@@ -59,8 +59,8 @@ static int main_init(struct game_context *ctx)
 	ctx->window = SDL_CreateWindow("SDL_pseudo3Dracer",
 				       SDL_WINDOWPOS_UNDEFINED,
 				       SDL_WINDOWPOS_UNDEFINED,
-				       SCREEN_WIDTH,
-				       SCREEN_HEIGHT,
+				       ctx->display.screen_width,
+				       ctx->display.screen_height,
 				       SDL_WINDOW_SHOWN);
 	if (!ctx->window) {
 		SDL_Log("[%s] SDL_SetVideoMode ERROR: %s\n",
@@ -197,20 +197,11 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->pcar.car_orientation_cur = PLAYER_SPRITE_STRAIGHT;
 	ctx->pcar.car_orientation_prev = PLAYER_SPRITE_STRAIGHT;
 	ctx->pcar.same_car_orientation_in_frame = 0;
-
-	// ctx->pcar.car_player_model = CAR_MODEL_NSX;
-	// ctx->pcar.car_player_model = CAR_MODEL_FALCON;
-	// ctx->pcar.car_player_model = CAR_MODEL_VIPER;
-	// ctx->pcar.car_player_model = CAR_MODEL_IMPREZIA;
-	// ctx->pcar.car_player_model = CAR_MODEL_LANCER;
-	// ctx->pcar.car_player_model = CAR_MODEL_DELTA;
 	ctx->pcar.car_player_sprite_idx = CAR_SPRITE_REAR;
 	ctx->pcar.car_player_flip = SDL_FLIP_NONE;
 
 	ctx->status_cur = GAME_STATE_RACE_ANIM_START;
 	ctx->status_prev = GAME_STATE_UNKNOWN;
-	/*ctx->status_cur = GAME_STATE_RACE;
-	ctx->status_prev = GAME_STATE_RACE;*/
 
 	ctx->race.nb_lap_logic = 0;
 	ctx->race.nb_lap = 3;
@@ -218,30 +209,51 @@ int main_ctx_init_race(struct game_context *ctx)
 	ctx->race.player_lap = 0;
 	ctx->pcar.player_place = NB_AI_CARS + 1;
 
-	ctx->scale_player_car[CAR_MODEL_IMPREZIA] = PLAYER_CAR_SCALE_IMPREZIA;
-	ctx->scale_player_car[CAR_MODEL_LOTUS] = PLAYER_CAR_SCALE_LOTUS;
-	ctx->scale_player_car[CAR_MODEL_FALCON] = PLAYER_CAR_SCALE_FALCON;
-	ctx->scale_player_car[CAR_MODEL_TT] = PLAYER_CAR_SCALE_TT;
-	ctx->scale_player_car[CAR_MODEL_TRUENO] = PLAYER_CAR_SCALE_TRUENO;
-	ctx->scale_player_car[CAR_MODEL_NSX] = PLAYER_CAR_SCALE_NSX;
-	ctx->scale_player_car[CAR_MODEL_VIPER] = PLAYER_CAR_SCALE_VIPER;
-	ctx->scale_player_car[CAR_MODEL_HART] = PLAYER_CAR_SCALE_HART;
-	ctx->scale_player_car[CAR_MODEL_DELTA] = PLAYER_CAR_SCALE_DELTA;
-	ctx->scale_player_car[CAR_MODEL_LANCER] = PLAYER_CAR_SCALE_LANCER;
 
-	ctx->scale_ai_car[CAR_MODEL_IMPREZIA] = AI_CAR_SCALE_IMPREZIA;
-	ctx->scale_ai_car[CAR_MODEL_LOTUS] = AI_CAR_SCALE_LOTUS;
-	ctx->scale_ai_car[CAR_MODEL_FALCON] = AI_CAR_SCALE_FALCON;
-	ctx->scale_ai_car[CAR_MODEL_TT] = AI_CAR_SCALE_TT;
-	ctx->scale_ai_car[CAR_MODEL_TRUENO] = AI_CAR_SCALE_TRUENO;
-	ctx->scale_ai_car[CAR_MODEL_NSX] = AI_CAR_SCALE_NSX;
-	ctx->scale_ai_car[CAR_MODEL_VIPER] = AI_CAR_SCALE_VIPER;
-	ctx->scale_ai_car[CAR_MODEL_HART] = AI_CAR_SCALE_HART;
-	ctx->scale_ai_car[CAR_MODEL_DELTA] = AI_CAR_SCALE_DELTA;
-	ctx->scale_ai_car[CAR_MODEL_LANCER] = AI_CAR_SCALE_LANCER;
+	////////////////////////////////////////// scale init
 
 
-	ctx->scene_sprite_coef = (float)SCREEN_WIDTH / 2.f;
+	ctx->display.scale_player_car[CAR_MODEL_IMPREZIA] = PLAYER_CAR_SCALE_IMPREZIA;
+	ctx->display.scale_player_car[CAR_MODEL_LOTUS] = PLAYER_CAR_SCALE_LOTUS;
+	ctx->display.scale_player_car[CAR_MODEL_FALCON] = PLAYER_CAR_SCALE_FALCON;
+	ctx->display.scale_player_car[CAR_MODEL_TT] = PLAYER_CAR_SCALE_TT;
+	ctx->display.scale_player_car[CAR_MODEL_TRUENO] = PLAYER_CAR_SCALE_TRUENO;
+	ctx->display.scale_player_car[CAR_MODEL_NSX] = PLAYER_CAR_SCALE_NSX;
+	ctx->display.scale_player_car[CAR_MODEL_VIPER] = PLAYER_CAR_SCALE_VIPER;
+	ctx->display.scale_player_car[CAR_MODEL_HART] = PLAYER_CAR_SCALE_HART;
+	ctx->display.scale_player_car[CAR_MODEL_DELTA] = PLAYER_CAR_SCALE_DELTA;
+	ctx->display.scale_player_car[CAR_MODEL_LANCER] = PLAYER_CAR_SCALE_LANCER;
+
+	ctx->display.scale_ai_car[CAR_MODEL_IMPREZIA] = AI_CAR_SCALE_IMPREZIA;
+	ctx->display.scale_ai_car[CAR_MODEL_LOTUS] = AI_CAR_SCALE_LOTUS;
+	ctx->display.scale_ai_car[CAR_MODEL_FALCON] = AI_CAR_SCALE_FALCON;
+	ctx->display.scale_ai_car[CAR_MODEL_TT] = AI_CAR_SCALE_TT;
+	ctx->display.scale_ai_car[CAR_MODEL_TRUENO] = AI_CAR_SCALE_TRUENO;
+	ctx->display.scale_ai_car[CAR_MODEL_NSX] = AI_CAR_SCALE_NSX;
+	ctx->display.scale_ai_car[CAR_MODEL_VIPER] = AI_CAR_SCALE_VIPER;
+	ctx->display.scale_ai_car[CAR_MODEL_HART] = AI_CAR_SCALE_HART;
+	ctx->display.scale_ai_car[CAR_MODEL_DELTA] = AI_CAR_SCALE_DELTA;
+	ctx->display.scale_ai_car[CAR_MODEL_LANCER] = AI_CAR_SCALE_LANCER;
+
+
+	for(int i = 0; i < CAR_MODEL_LAST; i++) {
+		//ctx->display.scale_player_car[i] *= ctx->display.screen_scale;
+		//ctx->display.scale_ai_car[i] *= ctx->display.screen_scale;
+		//ctx->display.scale_ai_car[i] *= (ctx->display.screen_scale * 2.f);
+		//ctx->display.scale_ai_car[i] *= powf(ctx->display.screen_scale, .5f);
+		//ctx->display.scale_ai_car[i] *= powf(ctx->display.screen_scale, .01f);
+		float scale_w = (float) ctx->display.screen_width / (float) SCREEN_WIDTH_DEFAULT;
+		//ctx->display.scale_ai_car[i] /= ctx->display.screen_scale;
+		//ctx->display.scale_ai_car[i] /= scale_w;
+		//ctx->display.scale_ai_car[i] /= powf(scale_w, .5f);
+		//ctx->display.scale_ai_car[i] /= powf(scale_w, .3f);
+		ctx->display.scale_ai_car[i] /= powf(scale_w, .8f);
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////
+
+	ctx->scene_sprite_coef = (float)ctx->display.screen_width / 2.f;
 
 	// track info init
 	// ctx->track.track_selected = TRACK_DIJON;
@@ -252,7 +264,7 @@ int main_ctx_init_race(struct game_context *ctx)
 	// player sprite constant values
 
 	/*ctx->pcar.player_sprite_y =
-		SCREEN_HEIGHT -
+		ctx->display.screen_height -
 		(int)((float)ctx->gfx
 			      .cars[ctx->pcar.car_player_model]
 				   [ctx->pcar.car_player_sprite_idx]
@@ -265,30 +277,30 @@ int main_ctx_init_race(struct game_context *ctx)
 			      .cars[ctx->pcar.car_player_model]
 				   [ctx->pcar.car_player_sprite_idx]
 			      .w *
-		      ctx->scale_player_car[ctx->pcar.car_player_model]);
+		      ctx->display.scale_player_car[ctx->pcar.car_player_model]);
 
 	ctx->pcar.player_sprite_h =
 		(int)((float)ctx->gfx
 			      .cars[ctx->pcar.car_player_model]
 				   [ctx->pcar.car_player_sprite_idx]
 			      .h *
-		      ctx->scale_player_car[ctx->pcar.car_player_model]);
+		      ctx->display.scale_player_car[ctx->pcar.car_player_model]);
 
 
 	// just draw the player in middle of the screen. It doesn't
 	// move, that's
 	// the world around it which moves.
 	ctx->pcar.player_sprite_x =
-		SCREEN_WIDTH / 2 - ctx->pcar.player_sprite_w / 2;
+		ctx->display.screen_width / 2 - ctx->pcar.player_sprite_w / 2;
 
 	ctx->pcar.player_sprite_y =
-		SCREEN_HEIGHT -
+		ctx->display.screen_height -
 		(int)((float)ctx->gfx
 			      .cars[ctx->pcar.car_player_model]
 				   [ctx->pcar.car_player_sprite_idx]
 			      .h *
-		      ctx->scale_player_car[ctx->pcar.car_player_model]) -
-		SCREEN_HEIGHT * 4 / 100;
+		      ctx->display.scale_player_car[ctx->pcar.car_player_model]) -
+		ctx->display.screen_height * 4 / 100;
 	/*- 30*/;
 
 
@@ -427,6 +439,10 @@ int main()
 
 	ctx = calloc(1, sizeof(*ctx));
 
+	ctx->display.screen_width = SCREEN_WIDTH;
+	ctx->display.screen_height = SCREEN_HEIGHT;
+	ctx->display.screen_scale = (float) ctx->display.screen_height / (float) SCREEN_HEIGHT_DEFAULT;
+
 	// init
 	main_init(ctx);
 
@@ -445,6 +461,8 @@ int main()
 	gfx_load_resources_title(ctx);
 	sound_load_resources_title(ctx);
 	main_ctx_init_title(ctx);
+
+
 
 	// main_build_track(ctx);
 	// track_build(ctx);
