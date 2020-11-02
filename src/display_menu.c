@@ -1192,6 +1192,7 @@ int display_screen_menu_credit(struct game_context *ctx)
 		return -EINVAL;
 	}
 
+	int offset_num = 25;
 	display_load_render_text(ctx,
 				 font_big,
 				 &ctx->gfx.font_race_anim,
@@ -1206,10 +1207,9 @@ int display_screen_menu_credit(struct game_context *ctx)
 				 "Music:",
 				 &text_color_front_1,
 				 ctx->display.screen_width * 2 / 100,
-				 ctx->display.screen_height * 20 / 100,
+				 ctx->display.screen_height * (offset_num - 8) / 100,
 				 0.f);
 
-	int offset_num = 28;
 	int step = 5;
 	SDL_Rect r = {.x = 0,
 		      .y = ctx->display.screen_height * offset_num / 100,
@@ -1232,16 +1232,16 @@ int display_screen_menu_credit(struct game_context *ctx)
 	}
 
 	// Display SFX list
+	offset_num = 68;
 	display_load_render_text(ctx,
 				 font_medium,
 				 &ctx->gfx.font_race_anim,
 				 "SFX:",
 				 &text_color_front_1,
 				 ctx->display.screen_width * 2 / 100,
-				 ctx->display.screen_height * 70 / 100,
+				 ctx->display.screen_height * (offset_num - 8) / 100,
 				 0.f);
 
-	offset_num = 78;
 	r.y = ctx->display.screen_height * offset_num / 100;
 	r.h = ctx->display.screen_height * (step * CREDIT_SFX_NB + 1) / 100;
 	SDL_RenderFillRect(ctx->renderer, &r);
@@ -1257,6 +1257,32 @@ int display_screen_menu_credit(struct game_context *ctx)
 						 (offset_num + step * i) / 100,
 					 0.f);
 	}
+
+	// Display Icons list
+	offset_num = 90;
+	display_load_render_text(ctx,
+				 font_medium,
+				 &ctx->gfx.font_race_anim,
+				 "ICONS:",
+				 &text_color_front_1,
+				 ctx->display.screen_width * 2 / 100,
+				 ctx->display.screen_height * (offset_num - 8) / 100,
+				 0.f);
+
+	r.y = ctx->display.screen_height * offset_num / 100;
+	r.h = ctx->display.screen_height * (step + 1) / 100;
+	SDL_RenderFillRect(ctx->renderer, &r);
+
+		display_load_render_text(ctx,
+					 font_small,
+					 &ctx->gfx.font_race_anim,
+					 "'engine' by daggerconnect - vecteezy.com",
+					 &text_color_front_1,
+					 ctx->display.screen_width * 2 / 100,
+					 ctx->display.screen_height *
+						 offset_num  / 100,
+					 0.f);
+
 
 	// back button
 	texture_render(ctx, &ctx->gfx.gui_prev, 0, 0, NULL, 0.f, 1.f, 0, NULL);
